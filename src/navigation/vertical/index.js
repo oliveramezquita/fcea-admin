@@ -1,12 +1,17 @@
 export default [
   {
-    title: 'Home',
-    to: { name: 'root' },
-    icon: { icon: 'tabler-smart-home' },
+    title: 'Proyectos',
+    to: { name: 'apps-projects-list' },
+    icon: { icon: 'tabler-category' },
   },
   {
-    title: 'Second page',
-    to: { name: 'second-page' },
-    icon: { icon: 'tabler-file' },
+    title: 'Usuarios',
+    to: { name: 'apps-users-list' },
+    icon: { icon: 'tabler-users' },
+  },
+  {
+    title: 'Catálogos',
+    to: { name: 'apps-catalogs-list' },
+    icon: { icon: 'tabler-list-details' },
   },
 ]

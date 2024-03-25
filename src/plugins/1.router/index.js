@@ -1,5 +1,6 @@
 import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
+import { redirects } from './additional-routes'
 
 function recursiveLayouts(route) {
   if (route.children) {
@@ -21,10 +22,14 @@ const router = createRouter({
     return { top: 0 }
   },
   extendRoutes: pages => [
-    ...[...pages].map(route => recursiveLayouts(route)),
+    ...redirects,
+    ...[
+      ...pages
+    ].map(route => recursiveLayouts(route)),
   ],
 })
 
+//setupGuards(router)
 export { router }
 export default function (app) {
   app.use(router)
