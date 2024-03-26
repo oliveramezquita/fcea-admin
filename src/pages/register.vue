@@ -196,7 +196,7 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.firstName"
+                    v-model="form.name"
                     label="Nombre(s)"
                     placeholder="John"
                   />
@@ -218,7 +218,7 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.mobile"
+                    v-model="form.phone"
                     type="number"
                     label="Teléfono"
                     placeholder="+1 123 456 7890"
@@ -227,15 +227,7 @@ const onSubmit = () => {
 
                 <VCol cols="12">
                   <AppTextField
-                    v-model="form.address"
-                    label="Dirección"
-                    placeholder="1234 Main St, New York, NY 10001, USA"
-                  />
-                </VCol>
-
-                <VCol cols="12">
-                  <AppTextField
-                    v-model="form.landmark"
+                    v-model="form.institution"
                     label="Institución Goburnamental o Educativa"
                     placeholder="Near Central Park"
                   />
