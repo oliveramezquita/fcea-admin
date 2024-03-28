@@ -13,6 +13,8 @@ const page = ref(1)
 const sortBy = ref()
 const orderBy = ref()
 
+const isUserInfoEditDialogVisible = ref(false)
+
 const updateOptions = options => {
   sortBy.value = options.sortBy[0]?.key
   orderBy.value = options.sortBy[0]?.order
@@ -139,6 +141,23 @@ const isAddNewUserDrawerVisible = ref(false)
 const addNewUser = async userData => {
   await $api('api/users', {
     method: 'POST',
+    body: userData,
+  })
+
+  // refetch User
+  fetchUsers()
+}
+
+const userDetail = ref()
+
+const shoewUserEditor = async user => {
+  userDetail.value = user
+  isUserInfoEditDialogVisible.value = true
+}
+
+const editUser = async userData => {
+  await $api('api/users', {
+    method: 'PATCH',
     body: userData,
   })
 
@@ -324,46 +343,13 @@ const deleteUser = async id => {
             <VIcon icon="tabler-eye" />
           </IconBtn>
 
-          <IconBtn>
+          <IconBtn @click="shoewUserEditor(item)">
             <VIcon icon="tabler-pencil" />
           </IconBtn>
 
           <IconBtn @click="deleteUser(item._id)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
-
-          <VBtn
-            icon
-            variant="text"
-            color="medium-emphasis"
-          >
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem :to="{ name: 'apps-users-view-id', params: { id: item._id } }">
-                  <template #prepend>
-                    <VIcon icon="tabler-eye" />
-                  </template>
-
-                  <VListItemTitle>Ver</VListItemTitle>
-                </VListItem>
-
-                <VListItem link>
-                  <template #prepend>
-                    <VIcon icon="tabler-pencil" />
-                  </template>
-                  <VListItemTitle>Editar</VListItemTitle>
-                </VListItem>
-
-                <VListItem @click="deleteUser(item._id)">
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Eliminar</VListItemTitle>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </VBtn>
         </template>
 
         <!-- pagination -->
@@ -382,5 +368,11 @@ const deleteUser = async id => {
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
       @user-data="addNewUser"
     />
+    <UserInfoEditDialog
+      v-model:isDialogVisible="isUserInfoEditDialogVisible"
+      v-model:userDetail="userDetail"
+      @user-data="editUser"
+    />
+    
   </section>
 </template>

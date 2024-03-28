@@ -105,7 +105,7 @@ const handleDrawerModelValueUpdate = val => {
                 <VBtn
                   type="reset"
                   variant="tonal"
-                  color="error"
+                  color="secondary"
                   @click="closeNavigationDrawer"
                 >
                   Cancelar

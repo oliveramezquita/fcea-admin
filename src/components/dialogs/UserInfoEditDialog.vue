@@ -4,24 +4,12 @@ const props = defineProps({
     type: Object,
     required: false,
     default: () => ({
-      id: 0,
-      fullName: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      role: '',
-      username: '',
-      country: '',
-      contact: '',
-      email: '',
-      currentPlan: '',
-      status: '',
-      avatar: '',
-      taskDone: null,
-      projectDone: null,
-      taxId: '',
-      language: '',
+      name: '',
     }),
+  },
+  userDetail: {
+    type: Object,
+    required: true,
   },
   isDialogVisible: {
     type: Boolean,
@@ -29,21 +17,24 @@ const props = defineProps({
   },
 })
 
+const user = ref()
+
 const emit = defineEmits([
-  'submit',
+  'userData',
   'update:isDialogVisible',
+  'update:userDetail',
 ])
 
 const userData = ref(structuredClone(toRaw(props.userData)))
-const isUseAsBillingAddress = ref(false)
 
 watch(props, () => {
   userData.value = structuredClone(toRaw(props.userData))
+  user.value = props.userDetail
 })
 
 const onFormSubmit = () => {
   emit('update:isDialogVisible', false)
-  emit('submit', userData.value)
+  emit('userData', user.value)
 }
 
 const onFormReset = () => {
@@ -69,11 +60,8 @@ const dialogModelValueUpdate = val => {
       <VCardText>
         <!-- 👉 Title -->
         <h4 class="text-h4 text-center mb-2">
-          Edit User Information
+          Editar información de usuario
         </h4>
-        <p class="text-body-1 text-center mb-6">
-          Updating user details will receive a privacy audit.
-        </p>
 
         <!-- 👉 Form -->
         <VForm
@@ -87,9 +75,9 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <AppTextField
-                v-model="userData.firstName"
-                label="First Name"
-                placeholder="John"
+                v-model="user.name"
+                label="Nombre(s)"
+                placeholder=""
               />
             </VCol>
 
@@ -99,30 +87,46 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <AppTextField
-                v-model="userData.lastName"
-                label="Last Name"
-                placeholder="Doe"
+                v-model="user.last_name"
+                label="Apellidos"
+                placeholder=""
               />
             </VCol>
 
-            <!-- 👉 Username -->
-            <VCol cols="12">
-              <AppTextField
-                v-model="userData.username"
-                label="Username"
-                placeholder="john.doe.007"
-              />
-            </VCol>
-
-            <!-- 👉 Billing Email -->
+            <!-- Email -->
             <VCol
               cols="12"
               md="6"
             >
               <AppTextField
-                v-model="userData.email"
+                v-model="user.email"
                 label="Email"
-                placeholder="johndoe@email.com"
+                placeholder=""
+              />
+            </VCol>
+
+            <!-- Phone -->
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <AppTextField
+                v-model="user.phone"
+                label="Teléfono"
+                type="number"
+                placeholder=""
+              />
+            </VCol>
+
+            <!-- 👉 Institution -->
+            <VCol 
+              cols="12"
+              md="6"
+            >
+              <AppTextField
+                v-model="user.institution"
+                label="Institución"
+                placeholder=""
               />
             </VCol>
 
@@ -132,22 +136,22 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <AppSelect
-                v-model="userData.status"
-                label="Status"
+                v-model="user.activated"
+                label="Estatus"
                 placeholder="Active"
-                :items="['Active', 'Inactive', 'Pending']"
+                :items="[{ title: 'Activo', value: true}, { title: 'Desactivo', value: false }]"
               />
             </VCol>
 
-            <!-- 👉 Tax Id -->
+            <!-- 👉 City -->
             <VCol
               cols="12"
               md="6"
             >
               <AppTextField
-                v-model="userData.taxId"
-                label="Tax ID"
-                placeholder="123456789"
+                v-model="user.city"
+                label="Ciudad"
+                placeholder=""
               />
             </VCol>
 
@@ -157,47 +161,9 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <AppTextField
-                v-model="userData.contact"
-                label="Phone Number"
-                placeholder="+1 9876543210"
-              />
-            </VCol>
-
-            <!-- 👉 Language -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppSelect
-                v-model="userData.language"
-                closable-chips
-                chips
-                multiple
-                label="Language"
-                placeholder="English"
-                :items="['English', 'Spanish', 'French']"
-              />
-            </VCol>
-
-            <!-- 👉 Country -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppSelect
-                v-model="userData.country"
-                label="Country"
-                placeholder="United States"
-                :items="['United States', 'United Kingdom', 'France']"
-              />
-            </VCol>
-
-            <!-- 👉 Switch -->
-            <VCol cols="12">
-              <VSwitch
-                v-model="isUseAsBillingAddress"
-                density="compact"
-                label="Use as a billing address?"
+                v-model="user.state"
+                label="Estado"
+                placeholder=""
               />
             </VCol>
 
@@ -207,7 +173,7 @@ const dialogModelValueUpdate = val => {
               class="d-flex flex-wrap justify-center gap-4"
             >
               <VBtn type="submit">
-                Submit
+                Actualizar
               </VBtn>
 
               <VBtn
@@ -215,7 +181,7 @@ const dialogModelValueUpdate = val => {
                 variant="tonal"
                 @click="onFormReset"
               >
-                Cancel
+                Cancelar
               </VBtn>
             </VCol>
           </VRow>
