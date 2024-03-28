@@ -5,6 +5,8 @@ import registerMultiStepBgDark from '@images/pages/register-multi-step-bg-dark.p
 import registerMultiStepBgLight from '@images/pages/register-multi-step-bg-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import CryptoJS from 'crypto-js'
+
 
 const registerMultiStepBg = useGenerateImageVariant(registerMultiStepBgLight, registerMultiStepBgDark)
 
@@ -13,25 +15,17 @@ definePage({ meta: { layout: 'blank' } })
 const currentStep = ref(0)
 const isPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
+const isCurrentStepValid = ref(true)
+const isBeenRegister = ref(false)
 const registerMultiStepIllustration = useGenerateImageVariant(registerMultiStepIllustrationLight, registerMultiStepIllustrationDark)
 
-const radioContent = [
-  {
-    title: 'Starter',
-    desc: 'A simple start for everyone.',
-    value: '0',
-  },
-  {
-    title: 'Standard',
-    desc: 'For small to medium businesses.',
-    value: '99',
-  },
-  {
-    title: 'Enterprise',
-    desc: 'Solution for big organizations.',
-    value: '499',
-  },
-]
+const route = useRoute()
+const registerToken = route.query.rt
+
+let key = import.meta.env.VITE_ENCRYPT_KEY
+key = CryptoJS.enc.Utf8.parse(key)
+const decrypted =  CryptoJS.AES.decrypt(registerToken, key, {mode:CryptoJS.mode.ECB})
+const email = decrypted.toString(CryptoJS.enc.Utf8)
 
 const items = [
   {
@@ -46,43 +40,65 @@ const items = [
   },
 ]
 
-const form = ref({
-  username: '',
-  email: '',
+const refAccountForm = ref()
+const refPersonalForm = ref()
+
+const accountForm = ref({
+  email: email,
   password: '',
-  confirmPassword: '',
-  link: '',
-  firstName: '',
-  lastName: '',
-  mobile: '',
-  pincode: '',
-  address: '',
-  landmark: '',
-  city: '',
-  state: null,
-  selectedPlan: '0',
-  cardNumber: '',
-  cardName: '',
-  expiryDate: '',
-  cvv: '',
+  confirm_password: '',
 })
 
-const onSubmit = () => {
+const personalForm = ref({
+  name: '',
+  last_name: '',
+  phone: '',
+  institution: '',
+  city: '',
+  state: '',
+})
 
-  // eslint-disable-next-line no-alert
-  alert('Submitted..!!')
+const validateAccountForm = () => {
+  refAccountForm.value?.validate().then(valid => {
+    if (valid.valid) {
+      currentStep.value++
+      isCurrentStepValid.value = true
+    } else {
+      isCurrentStepValid.value = false
+    }
+  })
+}
+
+const validatePersonalForm = () => {
+  refPersonalForm.value?.validate().then(valid => {
+    if (valid.valid) {
+      isCurrentStepValid.value = true
+      const data = {
+        ...accountForm.value,
+        ...personalForm.value,
+      }
+      $api('api/users', {
+        method: 'PATCH',
+        body: data,
+      })
+      nextTick(() => {
+        isBeenRegister.value = true
+      })
+    } else {
+      isCurrentStepValid.value = false
+    }
+  })
 }
 </script>
 
 <template>
-  <RouterLink to="/">
-    <div class="auth-logo d-flex align-center gap-x-3">
-      <VNodeRenderer :nodes="themeConfig.app.logo" />
-      <h1 class="auth-title">
-        {{ themeConfig.app.title }}
-      </h1>
-    </div>
-  </RouterLink>
+  
+  <div class="auth-logo d-flex align-center gap-x-3">
+    <VNodeRenderer :nodes="themeConfig.app.logo" />
+    <h1 class="auth-title">
+      {{ themeConfig.app.title }}
+    </h1>
+  </div>
 
   <VRow
     no-gutters
@@ -117,11 +133,13 @@ const onSubmit = () => {
       <VCard
         flat
         class="mt-12 mt-sm-10"
+        v-show="!isBeenRegister"
       >
         <AppStepper
           v-model:current-step="currentStep"
           :items="items"
           :direction="$vuetify.display.smAndUp ? 'horizontal' : 'vertical'"
+          :is-active-step-valid="isCurrentStepValid"
           icon-size="22"
           class="stepper-icon-step-bg mb-12"
         />
@@ -131,8 +149,11 @@ const onSubmit = () => {
           class="disable-tab-transition"
           style="min-inline-size: 681px;"
         >
-          <VForm>
-            <VWindowItem>
+          <VWindowItem>
+            <VForm
+              ref="refAccountForm"
+              @submit.prevent="validateAccountForm"
+            >
               <h4 class="text-h4">
                 Información de la cuenta
               </h4>
@@ -146,9 +167,10 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.email"
+                    v-model="accountForm.email"
                     label="Correo electrónico"
-                    placeholder="johndoe@email.com"
+                    :value="email"
+                    :readonly="true"
                   />
                 </VCol>
 
@@ -157,9 +179,10 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.password"
+                    v-model="accountForm.password"
                     label="Contraseña"
                     placeholder="············"
+                    :rules="[requiredValidator, passwordValidator]"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
@@ -171,23 +194,54 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.confirmPassword"
+                    v-model="accountForm.confirm_password"
                     label="Confirmar contraseña"
                     placeholder="············"
+                    :rules="[requiredValidator, confirmedValidator(accountForm.confirm_password, accountForm.password)]"
                     :type="isConfirmPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                     @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
                   />
                 </VCol>
-              </VRow>
-            </VWindowItem>
+                <VCol cols="12">
+                  <div class="d-flex flex-wrap gap-4 justify-sm-space-between justify-center mt-8">
+                    <VBtn
+                      color="secondary"
+                      variant="tonal"
+                      disabled
+                    >
+                      <VIcon
+                        icon="tabler-arrow-left"
+                        start
+                        class="flip-in-rtl"
+                      />
+                      Anterior
+                    </VBtn>
 
-            <VWindowItem>
+                    <VBtn type="submit">
+                      Siguiente
+                      <VIcon
+                        icon="tabler-arrow-right"
+                        end
+                        class="flip-in-rtl"
+                      />
+                    </VBtn>
+                  </div>
+                </VCol>
+              </VRow>
+            </VForm>
+          </VWindowItem>
+
+          <VWindowItem>
+            <VForm
+              ref="refPersonalForm"
+              @submit.prevent="validatePersonalForm"
+            >
               <h4 class="text-h4">
                 Información personal
               </h4>
               <p>
-                Ingrese su información personal
+                * Campos obligatorios
               </p>
 
               <VRow>
@@ -196,9 +250,10 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.name"
-                    label="Nombre(s)"
-                    placeholder="John"
+                    v-model="personalForm.name"
+                    label="Nombre(s) *"
+                    placeholder=""
+                    :rules="[requiredValidator]"
                   />
                 </VCol>
 
@@ -207,9 +262,10 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.lastName"
-                    label="Apellidos"
-                    placeholder="Doe"
+                    v-model="personalForm.last_name"
+                    label="Apellidos *"
+                    placeholder=""
+                    :rules="[requiredValidator]"
                   />
                 </VCol>
 
@@ -218,18 +274,19 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.phone"
+                    v-model="personalForm.phone"
                     type="number"
-                    label="Teléfono"
-                    placeholder="+1 123 456 7890"
+                    label="Teléfono *"
+                    placeholder=""
+                    :rules="[requiredValidator]"
                   />
                 </VCol>
 
                 <VCol cols="12">
                   <AppTextField
-                    v-model="form.institution"
+                    v-model="personalForm.institution"
                     label="Institución Goburnamental o Educativa"
-                    placeholder="Near Central Park"
+                    placeholder=""
                   />
                 </VCol>
 
@@ -238,9 +295,9 @@ const onSubmit = () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="form.city"
+                    v-model="personalForm.city"
                     label="Ciudad"
-                    placeholder="New York"
+                    placeholder=""
                   />
                 </VCol>
 
@@ -248,57 +305,53 @@ const onSubmit = () => {
                   cols="12"
                   md="6"
                 >
-                  <AppSelect
-                    v-model="form.state"
+                <AppTextField
+                    v-model="personalForm.state"
                     label="Estado"
-                    placeholder="Seleccionar estado"
-                    :items="['New York', 'California', 'Florida', 'Washington', 'Texas']"
+                    placeholder=""
                   />
                 </VCol>
+                <VCol cols="12">
+                <div class="d-flex flex-wrap gap-4 justify-sm-space-between justify-center mt-8">
+                  <VBtn
+                    color="secondary"
+                    variant="tonal"
+                    @click="currentStep--"
+                  >
+                    <VIcon
+                      icon="tabler-arrow-left"
+                      start
+                      class="flip-in-rtl"
+                    />
+                    Anterior
+                  </VBtn>
+
+                  <VBtn
+                    color="success"
+                    type="submit"
+                  >
+                    Registrar
+                  </VBtn>
+                </div>
+              </VCol>
               </VRow>
-            </VWindowItem>
-
-            
-          </VForm>
+            </VForm>
+          </VWindowItem>
         </VWindow>
-
-        <div class="d-flex flex-wrap justify-space-between gap-x-4 mt-6">
-          <VBtn
-            color="secondary"
-            :disabled="currentStep === 0"
-            variant="tonal"
-            @click="currentStep--"
-          >
-            <VIcon
-              icon="tabler-arrow-left"
-              start
-              class="flip-in-rtl"
-            />
-            Atrás
-          </VBtn>
-
-          <VBtn
-            v-if="items.length - 1 === currentStep"
-            color="success"
-            @click="onSubmit"
-          >
-            Enviar
-          </VBtn>
-
-          <VBtn
-            v-else
-            @click="currentStep++"
-          >
-            Siguiente
-
-            <VIcon
-              icon="tabler-arrow-right"
-              end
-              class="flip-in-rtl"
-            />
-          </VBtn>
-        </div>
       </VCard>
+      <VCardText 
+        v-show="isBeenRegister"
+        class="text-center py-4">
+        <h4 class="text-h4 text-center">
+          Tu registrado se ha realizado exitosamente 
+        </h4>
+        <p class="my-4 text-body-1">
+          Ahora ya eres parte del administrador del Monitoreo de Ecosistemas Acuáticos
+        </p>
+        <div class="d-flex justify-center gap-4 flex-wrap mt-7">
+          <VBtn to="/">Iniciar sesión</VBtn>
+        </div>
+      </VCardText>
     </VCol>
   </VRow>
 </template>

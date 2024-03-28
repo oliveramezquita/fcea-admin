@@ -3,9 +3,9 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './helpers'
 // 👉 Required Validator
 export const requiredValidator = value => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
-    return 'This field is required'
+    return 'Este campo es obligatorio'
   
-  return !!String(value).trim().length || 'This field is required'
+  return !!String(value).trim().length || 'Este campo es obligatorio'
 }
 
 // 👉 Email Validator
@@ -14,21 +14,21 @@ export const emailValidator = value => {
     return true
   const re = /^(?:[^<>()[\]\\.,;:\s@"]+(?:\.[^<>()[\]\\.,;:\s@"]+)*|".+")@(?:\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]|(?:[a-z\-\d]+\.)+[a-z]{2,})$/i
   if (Array.isArray(value))
-    return value.every(val => re.test(String(val))) || 'The Email field must be a valid email'
+    return value.every(val => re.test(String(val))) || 'El campo debe ser un correo electrónico válido'
   
-  return re.test(String(value)) || 'The Email field must be a valid email'
+  return re.test(String(value)) || 'El campo debe ser un correo electrónico válido'
 }
 
 // 👉 Password Validator
 export const passwordValidator = password => {
-  const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/
+  const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
   const validPassword = regExp.test(password)
   
-  return validPassword || 'Field must contain at least one uppercase, lowercase, special character and digit with min 8 chars'
+  return validPassword || 'El campo debe contener al menos una mayúscula, una minúscula y un dígito con un mínimo de 8 caracteres'
 }
 
 // 👉 Confirm Password Validator
-export const confirmedValidator = (value, target) => value === target || 'The Confirm Password field confirmation does not match'
+export const confirmedValidator = (value, target) => value === target || 'El campo de confirmación de contraseña no la contraseña coincide'
 
 // 👉 Between Validator
 export const betweenValidator = (value, min, max) => {
