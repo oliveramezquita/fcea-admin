@@ -156,7 +156,7 @@ const shoewUserEditor = async user => {
 }
 
 const editUser = async userData => {
-  await $api('api/users', {
+  await $api(`api/user/${userData._id}`, {
     method: 'PATCH',
     body: userData,
   })
