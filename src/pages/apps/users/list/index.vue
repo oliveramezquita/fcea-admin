@@ -1,10 +1,12 @@
 <script setup>
+import { useApi } from '@/composables/useApi';
 import AddNewUserDrawer from '@/views/apps/users/list/AddNewUserDrawer.vue';
+import { computed } from 'vue';
 
 // 👉 Store
 const searchQuery = ref('')
 const selectedRole = ref()
-const selectedPlan = ref()
+const selectedInstitution = ref()
 const selectedStatus = ref()
 
 // Data table options
@@ -50,7 +52,18 @@ const headers = [
 const {
   data: usersData,
   execute: fetchUsers,
-} = await useApi(createUrl('api/users'))
+} = await useApi(createUrl('api/users', {
+  query: {
+    q: searchQuery,
+    status: selectedStatus,
+    institution: selectedInstitution,
+    role: selectedRole,
+    itemsPerPage,
+    page,
+    sortBy,
+    orderBy,
+  }
+}))
 
 const users = computed(() => usersData.value.data)
 const totalUsers = computed(() => usersData.value.total_elements)
@@ -67,24 +80,7 @@ const roles = [
   },
 ]
 
-const plans = [
-  {
-    title: 'Basic',
-    value: 'basic',
-  },
-  {
-    title: 'Company',
-    value: 'company',
-  },
-  {
-    title: 'Enterprise',
-    value: 'enterprise',
-  },
-  {
-    title: 'Team',
-    value: 'team',
-  },
-]
+const { data: institutionsList } = await useApi(`api/institutions-list`)
 
 const status = [
   {
@@ -209,9 +205,9 @@ const deleteUser = async id => {
             sm="4"
           >
             <AppSelect
-              v-model="selectedPlan"
+              v-model="selectedInstitution"
               placeholder="Seleccionar institución"
-              :items="plans"
+              :items="institutionsList"
               clearable
               clear-icon="tabler-x"
             />
