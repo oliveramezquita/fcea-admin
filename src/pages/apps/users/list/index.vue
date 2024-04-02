@@ -14,6 +14,8 @@ const sortBy = ref()
 const orderBy = ref()
 
 const isUserInfoEditDialogVisible = ref(false)
+const isUserDeleteDialogVisible = ref(false)
+const isUserEditable = ref()
 
 const updateOptions = options => {
   sortBy.value = options.sortBy[0]?.key
@@ -150,8 +152,9 @@ const addNewUser = async userData => {
 
 const userDetail = ref()
 
-const shoewUserEditor = async user => {
+const showUserEditor = async (user, editable) => {
   userDetail.value = user
+  isUserEditable.value = editable
   isUserInfoEditDialogVisible.value = true
 }
 
@@ -165,8 +168,13 @@ const editUser = async userData => {
   fetchUsers()
 }
 
+const showDeleteUserConfirmation = async user => {
+  userDetail.value = user
+  isUserDeleteDialogVisible.value = true
+}
+
 const deleteUser = async id => {
-  await $api(`/apps/users/${ id }`, { method: 'DELETE' })
+  await $api(`api/user/${ id }`, { method: 'DELETE' })
 
   // refetch User
   fetchUsers()
@@ -339,15 +347,15 @@ const deleteUser = async id => {
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn>
+          <IconBtn @click="showUserEditor(item, false)"> 
             <VIcon icon="tabler-eye" />
           </IconBtn>
 
-          <IconBtn @click="shoewUserEditor(item)">
+          <IconBtn @click="showUserEditor(item, true)">
             <VIcon icon="tabler-pencil" />
           </IconBtn>
 
-          <IconBtn @click="deleteUser(item._id)">
+          <IconBtn @click="showDeleteUserConfirmation(item)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
         </template>
@@ -370,8 +378,14 @@ const deleteUser = async id => {
     />
     <UserInfoEditDialog
       v-model:isDialogVisible="isUserInfoEditDialogVisible"
+      v-model:isUserEditable="isUserEditable"
       v-model:userDetail="userDetail"
       @user-data="editUser"
+    />
+    <DeleteUserDialog
+      v-model:isDialogVisible="isUserDeleteDialogVisible"
+      v-model:userDetail="userDetail"
+      @user-data="deleteUser"
     />
     
   </section>

@@ -3,18 +3,22 @@ const props = defineProps({
   userData: {
     type: Object,
     required: false,
-    default: () => ({
-      name: '',
-    }),
   },
   userDetail: {
     type: Object,
     required: true,
+    default: () => ({
+      name: '',
+    }),
   },
   isDialogVisible: {
     type: Boolean,
     required: true,
   },
+  isUserEditable: {
+    type: Boolean,
+    required: true,
+  }
 })
 
 const user = ref()
@@ -22,6 +26,7 @@ const user = ref()
 const emit = defineEmits([
   'userData',
   'update:isDialogVisible',
+  'update:isUserEditable',
   'update:userDetail',
 ])
 
@@ -60,7 +65,7 @@ const dialogModelValueUpdate = val => {
       <VCardText>
         <!-- 👉 Title -->
         <h4 class="text-h4 text-center mb-2">
-          Editar información de usuario
+          {{ props.isUserEditable ? 'Editar información de usuario' : 'Información de usuario' }} 
         </h4>
 
         <!-- 👉 Form -->
@@ -172,7 +177,9 @@ const dialogModelValueUpdate = val => {
               cols="12"
               class="d-flex flex-wrap justify-center gap-4"
             >
-              <VBtn type="submit">
+              <VBtn 
+                v-if="props.isUserEditable"
+                type="submit">
                 Actualizar
               </VBtn>
 
@@ -181,7 +188,7 @@ const dialogModelValueUpdate = val => {
                 variant="tonal"
                 @click="onFormReset"
               >
-                Cancelar
+                Cerrar
               </VBtn>
             </VCol>
           </VRow>

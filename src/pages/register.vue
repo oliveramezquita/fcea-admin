@@ -7,7 +7,7 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 import CryptoJS from 'crypto-js'
 
-
+const router = useRouter()
 const registerMultiStepBg = useGenerateImageVariant(registerMultiStepBgLight, registerMultiStepBgDark)
 
 definePage({ meta: { layout: 'blank' } })
@@ -22,10 +22,21 @@ const registerMultiStepIllustration = useGenerateImageVariant(registerMultiStepI
 const route = useRoute()
 const registerToken = route.query.rt
 
+if (!registerToken)
+  await router.push('*')
+
 let key = import.meta.env.VITE_ENCRYPT_KEY
 key = CryptoJS.enc.Utf8.parse(key)
 const decrypted =  CryptoJS.AES.decrypt(registerToken, key, {mode:CryptoJS.mode.ECB})
-const email = decrypted.toString(CryptoJS.enc.Utf8)
+const user_id = decrypted.toString(CryptoJS.enc.Utf8)
+
+if (!user_id)
+  await router.push('*') 
+
+const { data: userData } = await useApi(`api/user/${ user_id }`)
+
+if (!userData.value || userData.value.activated)
+  await router.push('*') 
 
 const items = [
   {
@@ -44,7 +55,7 @@ const refAccountForm = ref()
 const refPersonalForm = ref()
 
 const accountForm = ref({
-  email: email,
+  email: userData.value.email,
   password: '',
   confirm_password: '',
 })
@@ -169,7 +180,6 @@ const validatePersonalForm = () => {
                   <AppTextField
                     v-model="accountForm.email"
                     label="Correo electrónico"
-                    :value="email"
                     :readonly="true"
                   />
                 </VCol>

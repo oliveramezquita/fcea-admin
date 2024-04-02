@@ -24,16 +24,16 @@ definePage({
 
     <VBtn
       to="/"
-      class="mb-11"
+      class="mb-15"
     >
       Regresar al inicio
     </VBtn>
 
     <img
-      class="misc-footer-img d-none d-md-block"
+      class="misc-footer-img d-none d-md-block mt-5"
       :src="authThemeMask"
       alt="misc-footer-img"
-      height="320"
+      height="220"
     >
   </div>
 </template>
