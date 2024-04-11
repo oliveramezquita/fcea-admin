@@ -88,8 +88,8 @@ const validatePersonalForm = () => {
         ...accountForm.value,
         ...personalForm.value,
       }
-      $api('api/users', {
-        method: 'PATCH',
+      $api(`api/user/${ user_id }`, {
+        method: 'PUT',
         body: data,
       })
       nextTick(() => {

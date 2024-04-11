@@ -293,12 +293,14 @@ const deleteUser = async id => {
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                <RouterLink
+                <!-- <RouterLink
                   :to="{ name: 'apps-users-view-id', params: { id: item._id } }"
                   class="font-weight-medium text-link"
-                >
+                > -->
+                <a href="#" @click.prevent="showUserEditor(item, false)" class="font-weight-medium text-link">
                   {{ resolveUserNameVariant(item.name, item.last_name, item.email) }}
-                </RouterLink>
+                </a>
+                <!-- </RouterLink> -->
               </h6>
               <div class="text-sm">
                 {{ resolveEmailVariant(item.name, item.last_name, item.email) }}
