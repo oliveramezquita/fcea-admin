@@ -33,7 +33,7 @@ const user_id = decrypted.toString(CryptoJS.enc.Utf8)
 if (!user_id)
   await router.push('*') 
 
-const { data: userData } = await useApi(`api/user/${ user_id }`)
+const { data: userData } = await useApi(`api/register/${ user_id }`)
 
 if (!userData.value || userData.value.activated)
   await router.push('*') 
@@ -88,7 +88,7 @@ const validatePersonalForm = () => {
         ...accountForm.value,
         ...personalForm.value,
       }
-      $api(`api/user/${ user_id }`, {
+      $api(`api/register/${ user_id }`, {
         method: 'PUT',
         body: data,
       })

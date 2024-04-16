@@ -86,8 +86,8 @@ const getNumOfUsers = project => {
           @mouseleave="project.isHover = false"
           :to="{ name: 'apps-projects-view-id', params: { id: project._id } }"
         >
-          <VImg :src="temporadaLluvias" v-if="project.temporada === 'Lluvias' " />
-          <VImg :src="temporadaSecas" v-if="project.temporada === 'Secas' " />
+          <VImg :src="temporadaLluvias" v-if="project.season === 'Lluvias' " />
+          <VImg :src="temporadaSecas" v-if="project.season === 'Secas' " />
           <VCardItem>
             <VCardTitle>{{ project.name }}</VCardTitle>
             <VCardSubtitle>SRF: {{ getSiteName(project.reference_sites_data) }}</VCardSubtitle>

@@ -137,7 +137,7 @@ const resolveUserStatusVariant = stat => {
 const isAddNewUserDrawerVisible = ref(false)
 
 const addNewUser = async userData => {
-  await $api('api/users', {
+  await $api('api/register/new', {
     method: 'POST',
     body: userData,
   })
@@ -238,7 +238,7 @@ const deleteUser = async id => {
               { value: 10, title: '10' },
               { value: 25, title: '25' },
               { value: 50, title: '50' },
-              { value: -1, title: 'All' },
+              { value: -1, title: 'Todos' },
             ]"
             style="inline-size: 6.25rem;"
             @update:model-value="itemsPerPage = parseInt($event, 10)"

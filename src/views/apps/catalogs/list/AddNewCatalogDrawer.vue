@@ -10,18 +10,13 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:isDrawerOpen',
-  'userData',
+  'catalogData',
 ])
 
 const isFormValid = ref(false)
 const refForm = ref()
-const email = ref('')
-const role = ref()
-const roles = ref([
-  { title: 'Super Administrador', value: 'SUPER_ADMIN'},
-  { title: 'Administrador', value: 'ADMIN' }, 
-  { title: 'Brigadista', value: 'BRIGADIER' },
-])
+const name = ref('')
+const type = ref()
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -35,9 +30,9 @@ const closeNavigationDrawer = () => {
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      emit('userData', {
-        role: role.value,
-        email: email.value,
+      emit('catalogData', {
+        name: name.value,
+        type: type.value,
       })
       emit('update:isDrawerOpen', false)
       nextTick(() => {
@@ -64,7 +59,7 @@ const handleDrawerModelValueUpdate = val => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Agregar nuevo usuario"
+      title="Agregar nuevo catálogo"
       @cancel="closeNavigationDrawer"
     />
 
@@ -82,21 +77,21 @@ const handleDrawerModelValueUpdate = val => {
             <VRow>
               <!-- 👉 Status -->
               <VCol cols="12">
-                <AppSelect
-                  v-model="role"
-                  label="Seleccionar cargo"
-                  placeholder="Seleccionar cargo"
+                <AppTextField
+                  v-model="name"
                   :rules="[requiredValidator]"
-                  :items="roles"
+                  label="Nombre"
+                  placeholder="Nombre del catálogo"
                 />
               </VCol>
               <!-- 👉 Email -->
               <VCol cols="12">
-                <AppTextField
-                  v-model="email"
-                  :rules="[requiredValidator, emailValidator]"
-                  label="Correo electrónico"
-                  placeholder="johndoe@email.com"
+                <AppSelect
+                  v-model="type"
+                  label="Tipo"
+                  placeholder="Selecciona un tipo"
+                  :rules="[requiredValidator]"
+                  :items="[{ title: 'Objeto', value: 'object' }, { title: 'Arreglo', value: 'array' }]"
                 />
               </VCol>
               <!-- 👉 Submit and Cancel -->

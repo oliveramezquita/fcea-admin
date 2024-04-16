@@ -351,6 +351,9 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "iframeResize": true,
+    "iframeResizer": true,
+    "useAbility": true
   }
 }

@@ -1,44 +1,49 @@
 <script setup>
 const props = defineProps({
-  userData: {
+  valueData: {
     type: Object,
     required: false,
   },
-  userDetail: {
+  valueDetail: {
     type: Object,
     required: true,
     default: () => ({
-      name: '',
+      key: '',
+      value: '',
     }),
   },
   isDialogVisible: {
     type: Boolean,
     required: true,
   },
+  isNewValue: {
+    type: Boolean,
+    required: true,
+  }
 })
 
-const user = ref()
-
+const value = ref()
 const emit = defineEmits([
-  'userData',
+  'valueData',
   'update:isDialogVisible',
-  'update:userDetail',
+  'update:isNewValue',
+  'update:valueDetail',
 ])
 
-const userData = ref(structuredClone(toRaw(props.userData)))
+const valueData = ref(structuredClone(toRaw(props.valueData)))
 
 watch(props, () => {
-  userData.value = structuredClone(toRaw(props.userData))
-  user.value = props.userDetail
+  valueData.value = structuredClone(toRaw(props.valueData))
+  value.value = props.valueDetail
 })
 
 const onFormSubmit = () => {
   emit('update:isDialogVisible', false)
-  emit('userData', user.value._id)
+  emit('valueData', value.value)
 }
 
 const onFormReset = () => {
-  userData.value = structuredClone(toRaw(props.userData))
+  valueData.value = structuredClone(toRaw(props.valueData))
   emit('update:isDialogVisible', false)
 }
 
@@ -49,20 +54,17 @@ const dialogModelValueUpdate = val => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 600"
+    :width="$vuetify.display.smAndDown ? 'auto' : 900"
     :model-value="props.isDialogVisible"
     @update:model-value="dialogModelValueUpdate"
   >
-    <!-- Dialog close btn -->
     <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard class="pa-sm-10 pa-2">
       <VCardText>
-        <!-- 👉 Title -->
-        <h4 class="text-h4 text-center mb-1">
-          Eliminar usuario 
+        <h4 class="text-h4 text-center mb-2">
+          {{ props.isNewValue ? 'Agregar valores al catálogo' : 'Editar valores del catálogo' }} 
         </h4>
-        <div class="text-center">{{ user.email }}</div>
 
         <!-- 👉 Form -->
         <VForm
@@ -70,18 +72,34 @@ const dialogModelValueUpdate = val => {
           @submit.prevent="onFormSubmit"
         >
           <VRow>
-            <VCol cols="12" class="text-center">
-              Al eliminar el usuario se designará de las cuencas a las que haya sido asignado y no se tomarán en cuenta los formularios llenados por el usuario.
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <AppTextField
+                v-model="value.key"
+                label="Llave"
+                placeholder=""
+              />
             </VCol>
 
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <AppTextField
+                v-model="value.value"
+                label="Valor"
+                placeholder=""
+              />
+            </VCol>
             <VCol
               cols="12"
               class="d-flex flex-wrap justify-center gap-4"
             >
               <VBtn 
-                color="error"
                 type="submit">
-                Eliminar
+                {{ props.isNewValue ? 'Guardar' : 'Actualizar' }}
               </VBtn>
 
               <VBtn

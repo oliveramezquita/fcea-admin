@@ -1,10 +1,10 @@
 <script setup>
 const props = defineProps({
-  userData: {
+  catalogData: {
     type: Object,
     required: false,
   },
-  userDetail: {
+  catalogDetail: {
     type: Object,
     required: true,
     default: () => ({
@@ -17,28 +17,28 @@ const props = defineProps({
   },
 })
 
-const user = ref()
+const catalog = ref()
 
 const emit = defineEmits([
-  'userData',
+  'catalogData',
   'update:isDialogVisible',
-  'update:userDetail',
+  'update:catalogDetail',
 ])
 
-const userData = ref(structuredClone(toRaw(props.userData)))
+const catalogData = ref(structuredClone(toRaw(props.catalogData)))
 
 watch(props, () => {
-  userData.value = structuredClone(toRaw(props.userData))
-  user.value = props.userDetail
+  catalogData.value = structuredClone(toRaw(props.catalogData))
+  catalog.value = props.catalogDetail
 })
 
 const onFormSubmit = () => {
   emit('update:isDialogVisible', false)
-  emit('userData', user.value._id)
+  emit('catalogData', catalog.value._id)
 }
 
 const onFormReset = () => {
-  userData.value = structuredClone(toRaw(props.userData))
+  catalogData.value = structuredClone(toRaw(props.catalogData))
   emit('update:isDialogVisible', false)
 }
 
@@ -60,9 +60,9 @@ const dialogModelValueUpdate = val => {
       <VCardText>
         <!-- 👉 Title -->
         <h4 class="text-h4 text-center mb-1">
-          Eliminar usuario 
+          Eliminar catálogo 
         </h4>
-        <div class="text-center">{{ user.email }}</div>
+        <div class="text-center">{{ catalog.name }}</div>
 
         <!-- 👉 Form -->
         <VForm
@@ -71,7 +71,7 @@ const dialogModelValueUpdate = val => {
         >
           <VRow>
             <VCol cols="12" class="text-center">
-              Al eliminar el usuario se designará de las cuencas a las que haya sido asignado y no se tomarán en cuenta los formularios llenados por el usuario.
+              Algunos valores de los proyectos o sitios dependen de los catálogos, ¿Estás seguro de eliminar el catálogo?
             </VCol>
 
             <VCol

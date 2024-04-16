@@ -1,23 +1,77 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import authV2LoginIllustrationDark from '@images/pages/auth-v2-two-step-illustration-dark.png'
-import authV2LoginIllustrationLight from '@images/pages/auth-v2-two-step-illustration-light.png'
+import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
+import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
+import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
+import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { VForm } from 'vuetify/components/VForm'
 
-definePage({ meta: { layout: 'blank' } })
+const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
+const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
-const form = ref({
-  email: '',
-  password: '',
-  remember: false,
+definePage({
+  meta: {
+    layout: 'blank',
+    unauthenticatedOnly: true,
+  },
 })
 
 const isPasswordVisible = ref(false)
-const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, true)
-const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+const route = useRoute()
+const router = useRouter()
+const ability = useAbility()
+
+const errors = ref({
+  email: undefined,
+  password: undefined,
+})
+
+const refVForm = ref()
+
+const credentials = ref({
+  email: '',
+  password: '',
+})
+
+const rememberMe = ref(false)
+
+const login = async () => {
+  try {
+    const res = await $api('api/login', {
+      method: 'POST',
+      body: {
+        email: credentials.value.email,
+        password: credentials.value.password,
+      },
+      onResponseError({ response }) {
+        errors.value = response._data.errors
+      },
+    })
+
+    const { accessToken, userData, userAbilityRules } = res
+
+    useCookie('userAbilityRules').value = userAbilityRules
+    ability.update(userAbilityRules)
+    useCookie('userData').value = userData
+    useCookie('accessToken').value = accessToken
+    await nextTick(() => {
+      router.replace(route.query.to ? String(route.query.to) : '/')
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const onSubmit = () => {
+  refVForm.value?.validate().then(({ valid: isValid }) => {
+    if (isValid)
+      login()
+  })
+}
 </script>
 
 <template>
@@ -79,46 +133,39 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
           </p>
         </VCardText>
         <VCardText>
-          <VAlert
-            color="primary"
-            variant="tonal"
+          <VForm
+            ref="refVForm"
+            @submit.prevent="onSubmit"
           >
-            <p class="text-sm mb-2">
-              Admin Email: <strong>admin@demo.com</strong> / Pass: <strong>admin</strong>
-            </p>
-            <p class="text-sm mb-0">
-              Client Email: <strong>client@demo.com</strong> / Pass: <strong>client</strong>
-            </p>
-          </VAlert>
-        </VCardText>
-        <VCardText>
-          <VForm @submit.prevent="() => { }">
             <VRow>
               <!-- email -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.email"
-                  autofocus
+                  v-model="credentials.email"
                   label="Correo electrónico"
                   type="email"
-                  placeholder="johndoe@email.com"
+                  autofocus
+                  :rules="[requiredValidator, emailValidator]"
+                  :error-messages="errors.email"
                 />
               </VCol>
 
               <!-- password -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.password"
+                  v-model="credentials.password"
                   label="Contraseña"
                   placeholder="············"
+                  :rules="[requiredValidator]"
                   :type="isPasswordVisible ? 'text' : 'password'"
+                  :error-messages="errors.password"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
 
                 <div class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4">
                   <VCheckbox
-                    v-model="form.remember"
+                    v-model="rememberMe"
                     label="Recordar"
                   />
                   <RouterLink

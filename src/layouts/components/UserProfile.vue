@@ -9,7 +9,7 @@ import avatar1 from '@images/avatars/avatar-1.png';
       color="primary"
       variant="tonal"
     >
-      <VImg :src="avatar1" />
+      <span>{{ avatarText('Oliver Amézquita') }}</span>
 
       <!-- SECTION Menu -->
       <VMenu
@@ -28,14 +28,14 @@ import avatar1 from '@images/avatars/avatar-1.png';
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="avatar1" />
+                    <span>{{ avatarText('Oliver Amézquita') }}</span>
                   </VAvatar>
                 
               </VListItemAction>
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              Oliver Amézquita
             </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>
