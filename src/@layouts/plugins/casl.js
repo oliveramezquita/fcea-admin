@@ -1,4 +1,3 @@
-import { useAbility } from '@casl/vue'
 
 /**
  * Returns ability result if ACL is configured or else just return true
@@ -36,6 +35,6 @@ export const canViewNavMenuGroup = item => {
 }
 export const canNavigate = to => {
   const ability = useAbility()
-    
+
   return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
 }

@@ -45,10 +45,13 @@ declare module 'vue-router/auto/routes' {
     'apps-projects-list': RouteRecordInfo<'apps-projects-list', '/apps/projects/list', Record<never, never>, Record<never, never>>,
     'apps-projects-view-id': RouteRecordInfo<'apps-projects-view-id', '/apps/projects/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'apps-users-list': RouteRecordInfo<'apps-users-list', '/apps/users/list', Record<never, never>, Record<never, never>>,
+    'apps-users-view-id': RouteRecordInfo<'apps-users-view-id', '/apps/users/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'faq': RouteRecordInfo<'faq', '/faq', Record<never, never>, Record<never, never>>,
     'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     'forms-interest-site': RouteRecordInfo<'forms-interest-site', '/forms/interest-site', Record<never, never>, Record<never, never>>,
     'forms-reference-site': RouteRecordInfo<'forms-reference-site', '/forms/reference-site', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
+    'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
     'reset-password': RouteRecordInfo<'reset-password', '/reset-password', Record<never, never>, Record<never, never>>,
   }

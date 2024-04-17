@@ -18,8 +18,18 @@ export default [
     title: 'Formato de campo',
     icon: { icon: 'tabler-notes' },
     children: [
-      { title: 'Sitio de referencia', to: 'forms-reference-site' },
-      { title: 'Sitio de interés', to: 'forms-interest-site'},
+      { 
+        title: 'Sitio de referencia', 
+        to: 'forms-reference-site',
+        action: 'read',
+        subject: 'brigadier'
+      },
+      { 
+        title: 'Sitio de interés', 
+        to: 'forms-interest-site',
+        action: 'read',
+        subject: 'brigadier'
+      },
     ],
   },
 ]

@@ -1,4 +1,4 @@
-import { canNavigate } from '@layouts/plugins/casl'
+import { canNavigate } from "@/@layouts/plugins/casl"
 
 export const setupGuards = router => {
   // 👉 router.beforeEach
@@ -28,18 +28,17 @@ export const setupGuards = router => {
       else
         return undefined
     }
+
     if (!canNavigate(to) && to.matched.length) {
-      /* eslint-disable indent */
-            return isLoggedIn
-                ? { name: 'not-authorized' }
-                : {
-                    name: 'login',
-                    query: {
-                        ...to.query,
-                        to: to.fullPath !== '/' ? to.path : undefined,
-                    },
-                }
-            /* eslint-enable indent */
+      return isLoggedIn
+          ? { name: 'not-authorized' }
+          : {
+              name: 'login',
+              query: {
+                  ...to.query,
+                  to: to.fullPath !== '/' ? to.path : undefined,
+              },
+          }
     }
   })
 }

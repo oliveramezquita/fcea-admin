@@ -1,6 +1,12 @@
 <script setup>
 import DialogInterestSiteForm from '@/views/forms/dialog/DialogInterestSiteForm.vue';
 import academyCourseIllustration1 from '@images/pages/academy-course-illustration1.png';
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'brigadier',
+  },
+})
 </script>
 <template>
   <div>

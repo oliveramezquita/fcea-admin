@@ -3,15 +3,17 @@ export const redirects = [
         path: '/',
         name: 'index',
         redirect: to => {
-            // const userData = userCookie('userData')
-            // const userRole = userData.value?.role
-            // if(userRole === 'admin')
-            //     return { name: 'apps-projects-list' }
-            // if(userRole === 'brigadier')
-            //     return { name: 'form' }
+            const userData = useCookie('userData')
+            const userRole = userData.value?.role
+            
+            if(['SUPER_ADMIN', 'ADMIN'].includes(userRole)){
+                return { name: 'apps-projects-list' }
+            }
+            if(userRole === 'BRIGADIER') {
+                return { name: 'forms-reference-site' }
+            }
 
-            //return { name: 'authentication/login', query: to.query }
-            return { name: 'apps-projects-list' }
+            return { name: 'login', query: to.query }
         },
     }
 ]
