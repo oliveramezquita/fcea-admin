@@ -10,7 +10,12 @@ import CryptoJS from 'crypto-js'
 const router = useRouter()
 const registerMultiStepBg = useGenerateImageVariant(registerMultiStepBgLight, registerMultiStepBgDark)
 
-definePage({ meta: { layout: 'blank' } })
+definePage({
+  meta: {
+    layout: 'blank',
+    public: true,
+  },
+})
 
 const currentStep = ref(0)
 const isPasswordVisible = ref(false)
