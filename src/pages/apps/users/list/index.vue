@@ -337,7 +337,7 @@ const deleteUser = async id => {
         <!-- Plan -->
         <template #item.institution="{ item }">
           <div class="text-body-1 text-high-emphasis">
-            {{ item.institution }}
+            {{ `${item.institution?.substring(0,20)}...` }}
           </div>
         </template>
 
