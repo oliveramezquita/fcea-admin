@@ -1,6 +1,12 @@
 <script setup>
+const props = defineProps({
+  urlFormsApp: {
+    type: String,
+    required: true,
+  },
+})
 const isDialogVisible = ref(false)
-const formUrl = ref('https://my.forms.app/fceamonitoreo/sitio-de-interes#660de40912e6a30b0371acb6=fcea.monitoreo%40gmail.com&65fb1147f6611a08cebe037c=Cuenca%20Prueba&65fb12f9f6611a08cebe03e0=La%20Granada')
+const formUrl = ref(structuredClone(toRaw(props.urlFormsApp)))
 </script>
 <template>
   <VDialog
@@ -32,7 +38,7 @@ const formUrl = ref('https://my.forms.app/fceamonitoreo/sitio-de-interes#660de40
             />
           </VBtn>
 
-          <VToolbarTitle>Formato de campo digital: Sitio de interés</VToolbarTitle>
+          <VToolbarTitle>Formato de campo digital</VToolbarTitle>
         </VToolbar>
       </div>
       <iframe

@@ -17,6 +17,16 @@ const isFormValid = ref(false)
 const refForm = ref()
 const name = ref('')
 const season = ref()
+const admins = ref()
+
+const {
+  data: usersData
+} = await useApi(createUrl('api/users', {
+  query: {
+    status: true,
+    role: 'ADMIN',
+  }
+}))
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -33,6 +43,7 @@ const onSubmit = () => {
       emit('projectData', {
         name: name.value,
         season: season.value,
+        admin_users: admins.value,
       })
       emit('update:isDrawerOpen', false)
       nextTick(() => {
@@ -93,6 +104,34 @@ const handleDrawerModelValueUpdate = val => {
                   :rules="[requiredValidator]"
                   :items="['Secas', 'Lluvias']"
                 />
+              </VCol>
+              <VCol cols="12">
+                <AppAutocomplete
+                  v-model="admins"
+                  multiple
+                  chips
+                  closable-chips
+                  :items="usersData.data"
+                  item-title="full_name"
+                  item-value="_id"
+                  placeholder="Selecciona un administrador"
+                  label="Administrador"
+                >
+                  <template #chip="{ props, item }">
+                    <VChip
+                      v-bind="props"
+                      :text="item.raw.full_name"
+                    />
+                  </template>
+
+                  <template #item="{ props, item }">
+                    <VListItem
+                      v-bind="props"
+                      :title="item?.raw?.full_name"
+                      :subtitle="item?.raw?.institution"
+                    />
+                  </template>
+                </AppAutocomplete>
               </VCol>
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">

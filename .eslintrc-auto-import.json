@@ -354,6 +354,8 @@
     "whenever": true,
     "iframeResize": true,
     "iframeResizer": true,
-    "useAbility": true
+    "useAbility": true,
+    "splitMulti": true,
+    "urlFormParse": true
   }
 }

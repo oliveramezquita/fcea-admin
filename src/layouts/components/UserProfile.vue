@@ -67,10 +67,7 @@ const userProfileList = [
         v-if="userData && userData.avatar"
         :src="userData.avatar"
       />
-      <VIcon
-        v-else
-        icon="tabler-user"
-      />
+      <span v-else>{{ avatarText(userData.username) }}</span>
 
       <!-- SECTION Menu -->
       <VMenu

@@ -11,7 +11,7 @@ const props = defineProps({
   usersData: {
     type: Array,
     required: true,
-  }
+  },
 })
 
 const projectData = ref(structuredClone(toRaw(props.projectData)))
@@ -41,7 +41,7 @@ const onSubmit = () => {
           'rfs_data': {
             'url_form': reference_sites_url.value,
             'users': [brigadiers.value],
-          }
+          },
         },
       })
     }

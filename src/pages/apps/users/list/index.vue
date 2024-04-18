@@ -71,6 +71,10 @@ const totalUsers = computed(() => usersData.value.total_elements)
 // 👉 search filters
 const roles = [
   {
+    title: 'Super Administrador',
+    value: 'SUPER_ADMIN',
+  },
+  {
     title: 'Administrador',
     value: 'ADMIN',
   },
@@ -107,11 +111,17 @@ const resolveEmailVariant = (name, last_name, email) => {
 
 const resolveUserRoleVariant = role => {
   const roleLowerCase = role.toLowerCase()
-  if (roleLowerCase === 'admin')
+  if (roleLowerCase === 'super_admin') {
+    return {
+      name: 'Super Administrador',
+      color: 'primary',
+      icon: 'tabler-user-shield',
+    }
+  } else if (roleLowerCase === 'admin')
     return {
       name: 'Administrador',
-      color: 'primary',
-      icon: 'tabler-crown',
+      color: 'success',
+      icon: 'tabler-user-cog',
     }
   
   return {

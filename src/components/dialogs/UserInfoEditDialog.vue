@@ -74,6 +74,22 @@ const dialogModelValueUpdate = val => {
           @submit.prevent="onFormSubmit"
         >
           <VRow>
+            <!-- Role -->
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <AppSelect
+                v-model="user.role"
+                label="Cargo"
+                placeholder="Seleccione un cargo"
+                :items="[
+                  { title: 'Super Administrador', value: 'SUPER_ADMIN'}, 
+                  { title: 'Administrador', value: 'ADMIN' }, 
+                  { title: 'Brigadista', value: 'BRIGADIER' }]"
+              />
+            </VCol>
+            <VCol cols="12" md="6"></VCol>
             <!-- 👉 First Name -->
             <VCol
               cols="12"

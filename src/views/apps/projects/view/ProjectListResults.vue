@@ -31,7 +31,7 @@ Object.keys(projectData.value).forEach(key => {
   if (key === 'user_id') {
     items.push({
       title: 'usuario',
-      subtitle: user[0]?.full_name,
+      subtitle: user[0]?.full_name ? user[0]?.full_name : projectData.value.user_id,
     })
     items.push({
       type: 'divider',
