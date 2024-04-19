@@ -35,7 +35,7 @@ projects.value.forEach(project => {
     referenceSites: JSON.parse(project.reference_sites_data).answers,
     interestSites: JSON.parse(project.interest_sites_data).answers,
   }
-  processedProject.referenceSites.forEach(site => {
+  processedProject.referenceSites?.forEach(site => {
     let feature = {
       type: 'Feature',
       geometry: {
@@ -80,7 +80,7 @@ projects.value.forEach(project => {
     }
     siteTrackingData.value.push(siteInfo)
   })
-  processedProject.interestSites.forEach(site => {
+  processedProject.interestSites?.forEach(site => {
     let feature = {
       type: 'Feature',
       geometry: {
