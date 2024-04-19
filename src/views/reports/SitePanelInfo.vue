@@ -177,7 +177,7 @@ const panel = ref(0)
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateOxygenGrade(siteInfo.dissolved_oxygen)"
+                  :color="calculateSaturationGrade(siteInfo.dissolved_oxygen, siteReference?.dissolved_oxygen)"
                 >
                   {{ siteInfo.dissolved_oxygen }} mg/L
                 </VChip>

@@ -370,6 +370,7 @@
     "calculateChGrade": true,
     "calculateCbrGrade": true,
     "calculateColiformsGrade": true,
-    "calculateBioticGrade": true
+    "calculateBioticGrade": true,
+    "calculateSaturationGrade": true
   }
 }

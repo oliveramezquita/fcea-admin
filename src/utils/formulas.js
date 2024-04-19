@@ -150,3 +150,18 @@ export const calculateBioticGrade = (macroinvertebrateScore) => {
     else
         return getColor(5)
 }
+
+
+export const calculateSaturationGrade = (saturation, saturationReference) => {
+    const change = saturation /saturationReference
+    if (change >= 0.8)
+        return getColor(1)
+    else if (change >= 0.6)
+        return getColor(2)
+    else if (change >= 0.4)
+        return getColor(3)
+    else if (change >= 0.2)
+        return getColor(4)
+    else
+        return getColor(5)
+}

@@ -25,6 +25,7 @@ declare global {
   const calculateOrthophosphatesGrade: typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']
   const calculateOxygenGrade: typeof import('./src/utils/formulas.js')['calculateOxygenGrade']
   const calculatePhGrade: typeof import('./src/utils/formulas.js')['calculatePhGrade']
+  const calculateSaturationGrade: typeof import('./src/utils/formulas.js')['calculateSaturationGrade']
   const calculateTemperatureGrade: typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']
   const calculateTurbidityGrade: typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']
   const computed: typeof import('vue')['computed']
@@ -396,6 +397,7 @@ declare module 'vue' {
     readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
     readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
     readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
+    readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -758,6 +760,7 @@ declare module '@vue/runtime-core' {
     readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
     readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
     readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
+    readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
