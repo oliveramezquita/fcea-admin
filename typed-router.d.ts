@@ -45,7 +45,7 @@ declare module 'vue-router/auto/routes' {
     'apps-projects-list': RouteRecordInfo<'apps-projects-list', '/apps/projects/list', Record<never, never>, Record<never, never>>,
     'apps-projects-view-id': RouteRecordInfo<'apps-projects-view-id', '/apps/projects/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'apps-users-list': RouteRecordInfo<'apps-users-list', '/apps/users/list', Record<never, never>, Record<never, never>>,
-    'apps-users-view-id': RouteRecordInfo<'apps-users-view-id', '/apps/users/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'apps-users-view-tab': RouteRecordInfo<'apps-users-view-tab', '/apps/users/view/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'faq': RouteRecordInfo<'faq', '/faq', Record<never, never>, Record<never, never>>,
     'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     'forms-interest-site': RouteRecordInfo<'forms-interest-site', '/forms/interest-site', Record<never, never>, Record<never, never>>,

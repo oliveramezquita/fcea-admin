@@ -34,8 +34,17 @@ const userProfileList = [
     icon: 'tabler-user',
     title: 'Perfil',
     to: {
-      name: 'apps-users-view-id',
-      params: { id: 21 },
+      name: 'apps-users-view-tab',
+      params: { tab: 'account' },
+    },
+  },
+  {
+    type: 'navItem',
+    icon: 'tabler-lock-cog',
+    title: 'Seguridad',
+    to: {
+      name: 'apps-users-view-tab',
+      params: { tab: 'security' },
     },
   },
   {

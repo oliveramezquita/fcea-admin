@@ -39,6 +39,9 @@ const credentials = ref({
 
 const rememberMe = ref(false)
 
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref()
 const login = async () => {
   try {
     const res = await $api('api/login', {
@@ -48,7 +51,14 @@ const login = async () => {
         password: credentials.value.password,
       },
       onResponseError({ response }) {
-        errors.value = response._data.errors
+        if (response.status === 403) {
+          alertType.value = "warning"
+          alertMessage.value = "Correo electrónico o contraseña incorrectos"
+        } else {
+          alertType.value = "error"
+          alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`
+        }
+        isAlertVisible.value = true
       },
     })
 
@@ -179,9 +189,19 @@ const onSubmit = () => {
                 <VBtn
                   block
                   type="submit"
+                  v-if="!isAlertVisible"
                 >
                   Acceder
                 </VBtn>
+                <VAlert
+                  v-model="isAlertVisible"
+                  closable
+                  close-label="Close Alert"
+                  class="mt-5"
+                  :type="alertType"
+                  variant="tonal">
+                  {{ alertMessage }}
+                </VAlert>
               </VCol>
             </VRow>
           </VForm>

@@ -52,7 +52,6 @@ const onSubmit = () => {
           if (response.ok) {
             alertType.value = "success"
             alertMessage.value = "El formato de campo digital para el sitio de referencia ha sido asignado exitosamente."
-            
           } else {
             alertType.value = "error"
             alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`
