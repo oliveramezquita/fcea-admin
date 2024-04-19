@@ -27,7 +27,7 @@ const featureCollection = ref({
 })
 const siteTrackingData = ref([])
 
-projects.value.forEach(project => {
+projects.value?.forEach(project => {
   let processedProject = {
     id: project._id,
     name: project.name,
