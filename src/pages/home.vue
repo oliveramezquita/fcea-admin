@@ -1,16 +1,17 @@
 <script setup>
-import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png'
+import fceaLogoWhite from '@images/fcea_logo_white.png';
+import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png';
 
 const faqSearchQuery = ref('')
 const faqs = ref([])
 
 const fetchFaqs = async () => {
-  const data = await $api('/pages/faq', { query: { q: faqSearchQuery.value } }).catch(err => console.log(err))
+  const data = await $api('api/faqs').catch(err => console.log(err))
 
-  faqs.value = data
+  faqs.value = data.faqs
 }
 
-const activeTab = ref('Payment')
+const activeTab = ref('Cuencas')
 const activeQuestion = ref(0)
 
 watch(activeTab, () => activeQuestion.value = 0)
@@ -19,29 +20,36 @@ watch(faqSearchQuery, fetchFaqs, { immediate: true })
 const contactUs = [
   {
     icon: 'tabler-phone',
-    via: '+ (810) 2548 2568',
-    tagLine: 'We are always happy to help!',
+    via: '55 4810 4412',
+    tagLine: '¡Siempre estaremos felices de ayudar!',
   },
   {
     icon: 'tabler-mail',
-    via: 'hello@help.com',
-    tagLine: 'Best way to get answer faster!',
+    via: 'karla.rivera@fcea.org.mx',
+    tagLine: '¡La mejor manera de obtener una respuesta más rápido!',
   },
 ]
 </script>
 
 <template>
   <section>
-    <!-- 👉 Search -->
-    <AppSearchHeader
-      title="Hello, how can we help?"
-      subtitle="or choose a category to quickly find the help you need"
-      custom-class="mb-6"
-      placeholder="Search Articles..."
-      density="comfortable"
-      is-reverse
-    />
-
+    <VCard class="mb-6" color="primary">
+      <VCardText class="py-12 position-relative">
+        <div
+          class="d-flex flex-column gap-y-4 mx-auto"
+          :class="$vuetify.display.mdAndUp ? 'w-50' : $vuetify.display.xs ? 'w-100' : 'w-75'"
+        >
+          <img :src="fceaLogoWhite" alt="Fondo para la Comunicación y la Educación Ambiental, A.C." width="250" class="mx-auto">
+          <h4
+            class="text-h4 text-center text-secondary text-wrap mx-auto">
+            Bienvenidos al<br><span class="text-white">Administrador para el Monitoreo de la Calidad del agua</span>
+          </h4>
+          <p class="text-center text-wrap text-secondary text-body-1 mx-auto mb-0">
+            La Plataforma de Monitoreo de Ecosistemas Acuáticos es una iniciativa del Fondo para la Comunicación y la Educación Ambiental, A.C.
+          </p>
+        </div>
+      </VCardText>
+    </VCard>
     <!-- 👉 Faq sections and questions -->
     <VRow>
       <VCol
@@ -150,20 +158,11 @@ const contactUs = [
 
     <!-- 👉 You still have a question? -->
     <div class="text-center pt-16">
-      <VChip
-        label
-        color="primary"
-        size="small"
-        class="mb-2"
-      >
-        Question
-      </VChip>
-
       <h4 class="text-h4 mb-2">
-        You still have a question?
+        ¿Aún tienes alguna otra pregunta?
       </h4>
       <p class="text-body-1 mb-6">
-        If you can't find question in our FAQ, you can contact us. We'll answer you shortly!
+        Si tienes alguna otra duda y no se encuentra en está sección puedes contactarnos. ¡Te responderemos en breve!
       </p>
 
       <!-- contacts -->

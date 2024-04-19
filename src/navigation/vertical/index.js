@@ -1,8 +1,15 @@
 export default [
   {
-    title: 'Proyectos',
+    title: 'Inicio',
+    to: { name: 'home' },
+    icon: { icon: 'tabler-ripple' },
+    action: 'read',
+    subject: 'brigadier'
+  },
+  {
+    title: 'Cuencas',
     to: { name: 'apps-projects-list' },
-    icon: { icon: 'tabler-category' },
+    icon: { icon: 'tabler-map-star' },
   },
   {
     title: 'Usuarios',

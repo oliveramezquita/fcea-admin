@@ -51,9 +51,11 @@ const login = async () => {
         password: credentials.value.password,
       },
       onResponseError({ response }) {
+        alertType.value = "warning"
         if (response.status === 403) {
-          alertType.value = "warning"
           alertMessage.value = "Correo electrónico o contraseña incorrectos"
+        } else if (response.status === 400) {
+          alertMessage.value = response._data.length > 0 ? response._data[0] : "Ocurrió un error al momento de iniciar sesión"
         } else {
           alertType.value = "error"
           alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`

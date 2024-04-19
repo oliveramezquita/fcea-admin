@@ -143,13 +143,13 @@ const getNumOfUsers = project => {
           <VCardText class="text-center">
             <div class="mt-5">
               <VBtn
-                icon="tabler-category-plus"
+                icon="tabler-map-plus"
                 size="42"
                 color="info"
                 variant="tonal"
               />
             </div>
-            <span class="v-card-title text-secondary mt-2 mb-3">Nuevo Projecto</span>
+            <span class="v-card-title text-secondary mt-2 mb-3">Nueva Cuenca</span>
           </VCardText>
         </VCard>
       </VCol>

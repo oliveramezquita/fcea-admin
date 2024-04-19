@@ -47,12 +47,6 @@ const userProfileList = [
       params: { tab: 'security' },
     },
   },
-  {
-    type: 'navItem',
-    icon: 'tabler-question-mark',
-    title: 'FAQ',
-    to: { name: 'faq' },
-  },
 ]
 </script>
 

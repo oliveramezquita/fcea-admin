@@ -70,7 +70,7 @@ const handleDrawerModelValueUpdate = val => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Agregar nuevo proyecto"
+      title="Agregar nueva cuenca"
       @cancel="closeNavigationDrawer"
     />
 
@@ -92,7 +92,7 @@ const handleDrawerModelValueUpdate = val => {
                   v-model="name"
                   :rules="[requiredValidator]"
                   label="Nombre"
-                  placeholder="Nombre del proyecto"
+                  placeholder="Nombre de la cuenca"
                 />
               </VCol>
               <!-- 👉 Email -->
