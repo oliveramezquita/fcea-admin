@@ -35,8 +35,6 @@ projects.value?.forEach(project => {
     referenceSites: JSON.parse(project.reference_sites_data).answers ? JSON.parse(project.reference_sites_data).answers : [],
     interestSites: JSON.parse(project.interest_sites_data).answers ? JSON.parse(project.interest_sites_data).answers : [],
   }
-  console.log(processedProject.referenceSites)
-  console.log(processedProject.interestSites)
   processedProject.referenceSites?.forEach(site => {
     let feature = {
       type: 'Feature',
