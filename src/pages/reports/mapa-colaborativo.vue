@@ -32,8 +32,8 @@ projects.value?.forEach(project => {
     id: project._id,
     name: project.name,
     season: project.season,
-    referenceSites: JSON.parse(project.reference_sites_data).answers,
-    interestSites: JSON.parse(project.interest_sites_data).answers,
+    referenceSites: JSON.parse(project.reference_sites_data).answers.length > 0 ? JSON.parse(project.reference_sites_data).answers : [],
+    interestSites: JSON.parse(project.interest_sites_data).answers.length > 0 ? JSON.parse(project.interest_sites_data).answers : [],
   }
   processedProject.referenceSites?.forEach(site => {
     let feature = {
