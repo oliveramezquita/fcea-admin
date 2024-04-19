@@ -8,6 +8,7 @@ declare global {
   const $api: typeof import('./src/utils/api.js')['$api']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']
   const EffectScope: typeof import('vue')['EffectScope']
+  const TotalScore: typeof import('./src/utils/formulas.js')['TotalScore']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const alphaDashValidator: typeof import('./src/@core/utils/validators.js')['alphaDashValidator']
   const alphaValidator: typeof import('./src/@core/utils/validators.js')['alphaValidator']
@@ -22,6 +23,7 @@ declare global {
   const calculateColiformsGrade: typeof import('./src/utils/formulas.js')['calculateColiformsGrade']
   const calculateLakeNitratesGrade: typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']
   const calculateLakeOxygenGrade: typeof import('./src/utils/formulas.js')['calculateLakeOxygenGrade']
+  const calculateNitratesGrade: typeof import('./src/utils/formulas.js')['calculateNitratesGrade']
   const calculateOrthophosphatesGrade: typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']
   const calculateOxygenGrade: typeof import('./src/utils/formulas.js')['calculateOxygenGrade']
   const calculatePhGrade: typeof import('./src/utils/formulas.js')['calculatePhGrade']
@@ -68,6 +70,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getPositionsDifference: typeof import('./src/utils/formulas.js')['getPositionsDifference']
+  const getScoreMessage: typeof import('./src/utils/formulas.js')['getScoreMessage']
   const h: typeof import('vue')['h']
   const iframeResize: typeof import('./src/@core/utils/iframeResize')['default']
   const iframeResizer: typeof import('./src/utils/iframeResizer')['default']
@@ -160,6 +163,7 @@ declare global {
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
   const toValue: typeof import('vue')['toValue']
+  const totalScore: typeof import('./src/utils/formulas.js')['totalScore']
   const triggerRef: typeof import('vue')['triggerRef']
   const tryOnBeforeMount: typeof import('@vueuse/core')['tryOnBeforeMount']
   const tryOnBeforeUnmount: typeof import('@vueuse/core')['tryOnBeforeUnmount']
@@ -393,7 +397,7 @@ declare module 'vue' {
     readonly calculateCbrGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateCbrGrade']>
     readonly calculateChGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateChGrade']>
     readonly calculateColiformsGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateColiformsGrade']>
-    readonly calculateLakeNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']>
+    readonly calculateNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateNitratesGrade']>
     readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
     readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
     readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
@@ -440,6 +444,7 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
+    readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -530,6 +535,7 @@ declare module 'vue' {
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
+    readonly totalScore: UnwrapRef<typeof import('./src/utils/formulas.js')['totalScore']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>
@@ -756,7 +762,7 @@ declare module '@vue/runtime-core' {
     readonly calculateCbrGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateCbrGrade']>
     readonly calculateChGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateChGrade']>
     readonly calculateColiformsGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateColiformsGrade']>
-    readonly calculateLakeNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']>
+    readonly calculateNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateNitratesGrade']>
     readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
     readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
     readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
@@ -803,6 +809,7 @@ declare module '@vue/runtime-core' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
+    readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -893,6 +900,7 @@ declare module '@vue/runtime-core' {
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
+    readonly totalScore: UnwrapRef<typeof import('./src/utils/formulas.js')['totalScore']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>

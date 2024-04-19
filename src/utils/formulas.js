@@ -3,6 +3,7 @@ export const getColor = (rating) => {
     return colors[rating-1]
 }
 export const calculatePhGrade = (ph, phReference) => {
+    if (phReference == null) return null
     const magnitudes = Math.abs(ph - phReference)
     if (magnitudes <= 0.5)
         return getColor(1)
@@ -17,6 +18,7 @@ export const calculatePhGrade = (ph, phReference) => {
 }
 
 export const calculateTemperatureGrade = (temperature, temperatureReference) => {
+    if (temperatureReference == null) return null
     if (temperature < temperatureReference)
         return getColor(1)
     const ratio = temperatureReference / temperature
@@ -43,6 +45,7 @@ export const calculateOxygenGrade = (disolvedOxygen) => {
 }
 
 export const calculateTurbidityGrade = (turbity, turbityReference) => {
+    if (turbityReference == null) return null
     const change = turbity - turbityReference
     if (change < 5)
         return getColor(1)
@@ -56,11 +59,19 @@ export const calculateTurbidityGrade = (turbity, turbityReference) => {
         return getColor(5)
 }
 
-export const calculateLakeNitratesGrade = (nitrates) => {
-    if (nitrates <= 1)
+export const calculateNitratesGrade = (nitrates, nitratesReference) => {
+    if (nitratesReference == null) return null
+    if (nitrates < nitratesReference)
+        return getColor(1)
+    const magnitudes = (nitrates, nitratesReference) / 0.2
+    if (magnitudes <= 0)
+        return getColor(1)
+    else if (magnitudes < 1)
         return getColor(2)
-    else if (nitrates <= 10)
+    else if (magnitudes < 2)
         return getColor(3)
+    else if (magnitudes < 3)
+        return getColor(4)
     else
         return getColor(5)
 }
@@ -79,6 +90,7 @@ export const getPositionsDifference = (ammonium, ammoniumReference) => {
 }
 
 export const calculateAmmoniumGrade = (ammonium, ammoniumReference) => {
+    if (ammoniumReference == null) return null
     const positionsDifference = getPositionsDifference(ammonium, ammoniumReference)
     if (positionsDifference <= 0)
         return getColor(1)
@@ -93,6 +105,7 @@ export const calculateAmmoniumGrade = (ammonium, ammoniumReference) => {
 }
 
 export const calculateOrthophosphatesGrade = (orthophosphates, orthophosphatesReference) => {
+    if (orthophosphatesReference == null) return null
     if (orthophosphates < orthophosphatesReference)
         return getColor(1)
     const magnitudes = (orthophosphates - orthophosphatesReference) / 0.2
@@ -153,6 +166,7 @@ export const calculateBioticGrade = (macroinvertebrateScore) => {
 
 
 export const calculateSaturationGrade = (saturation, saturationReference) => {
+    if (saturationReference == null) return null
     const change = saturation /saturationReference
     if (change >= 0.8)
         return getColor(1)
@@ -164,4 +178,34 @@ export const calculateSaturationGrade = (saturation, saturationReference) => {
         return getColor(4)
     else
         return getColor(5)
+}
+
+export const getScoreMessage = (grade) => {
+    const message = [
+        {category: 'Muy Buena', interpretation: 'El ecosistema acuático está conservado y sin contaminación. Los elementos físico-químicos, paisajísticos y biológicos no presentan alteraciones, esto permite el correcto funcionamiento de los elementos vivos y no vivos del ecosistema y la provisión de servicios ecosistémicos.'},
+        {category: 'Buena', interpretation: 'Los elementos físico-químicos, paisajísticos y biológicos del ecosistema acuático no presentan alteraciones destacadas. La influencia de las actividades humanas sobre el agua y el ecosistema es moderada, lo cual permite el correcto funcionamiento de los componentes vivos y no vivos del ecosistema.'},
+        {category: 'Media', interpretation: 'Los elementos físico-químicos, biológicos y paisajísticos presentan alteraciones que afectan la dinámica natural del ecosistema. El tipo e intensidad de las actividades humanas en la zona disminuyen la calidad del agua y del paisaje, ocasionando condiciones desfavorables para la vida acuática.'},
+        {category: 'Mala', interpretation: 'Los elementos físico-químicos, biológicos y paisajísticos del ecosistema acuático se encuentran muy alterados. La intensidad de las actividades humanas está afectando de manera importante al ecosistema, el cual presenta una contaminación alta, un paisaje alterado y condiciones adversas para la vida acuática.'},
+        {category: 'Muy Mala', interpretation: 'El ecosistema acuático está afectado drásticamente y presenta una contaminación muy alta. Los elementos físico-químicos, biológicos y paisajísticos se encuentran fuertemente alterados por la influencia humana, lo cual ha generado una ruptura en la dinámica natural del ecosistema con la consecuente disminución de la biodiversidad y pérdida de servicios ecosistémicos.'},
+    ]
+    return message[grade]
+}
+
+export const totalScore = (list) => {
+    const colors = ['very-good', 'good', 'average', 'bad', 'very-bad']
+    let total = 0
+    Object.values(list).forEach(value => {
+        if (value != null)
+            total = total + colors.indexOf(value)
+    })
+    let grade = 1
+    if (total > 15)
+        grade = 2
+    else if (total > 25)
+        grade = 3
+    else if (total > 35)
+        grade = 4
+    else if (total > 46)
+        grade = 5
+    return {total: total, color: getColor(grade), message: getScoreMessage(grade)}
 }

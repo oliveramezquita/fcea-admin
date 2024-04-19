@@ -8,6 +8,20 @@ const props = defineProps({
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
 const siteReference = ref(JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0])
 const panel = ref(0)
+const {total, color, message} = totalScore([
+  calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
+  calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),
+  calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.dissolved_oxygen),
+  calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidity),
+  calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitrates),
+  calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.ammonium),
+  calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.orthophosphates),
+  calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
+  calculateColiformsGrade(siteInfo.value.fecal_coliforms),
+  calculateChGrade(siteInfo.value.hydromorphological_quality),
+  calculateCbrGrade(siteInfo.value.riparian_forest_quality),
+])
+const full = ref(100)
 </script>
 <template>
   <VExpansionPanels
@@ -113,7 +127,29 @@ const panel = ref(0)
       </VExpansionPanelTitle>
 
       <VExpansionPanelText>
-        <h3>Parámetros físico-químicos</h3>
+        <VList class="card-list">
+          <VListItem>
+            <template #prepend>
+              <VProgressCircular
+                v-model="full"
+                :size="54"
+                class="me-4"
+                :color="color"
+              >
+                <span class="text-body-1 text-high-emphasis font-weight-medium">
+                  {{ total }}
+                </span>
+              </VProgressCircular>
+            </template>
+            <VListItemTitle class="font-weight-medium mb-2 me-2">
+              {{ message.category }}
+            </VListItemTitle>
+          </VListItem>
+        </VList>
+        <div class="text-body-2 mt-3">
+          {{ message.interpretation }}
+        </div>
+        <h3 class="mt-5">Parámetros físico-químicos</h3>
         <VDivider class="mt-3 mb-5" />
         <VList class="card-list mb-5">
           <VListItem>
@@ -211,7 +247,7 @@ const panel = ref(0)
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateLakeNitratesGrade(siteInfo.nitrates)"
+                  :color="calculateNitratesGrade(siteInfo.nitrates, siteReference?.nitrates)"
                 >
                   {{ siteInfo.nitrates }} mg/L
                 </VChip>

@@ -371,6 +371,10 @@
     "calculateCbrGrade": true,
     "calculateColiformsGrade": true,
     "calculateBioticGrade": true,
-    "calculateSaturationGrade": true
+    "calculateSaturationGrade": true,
+    "calculateNitratesGrade": true,
+    "TotalScore": true,
+    "totalScore": true,
+    "getScoreMessage": true
   }
 }
