@@ -1,13 +1,12 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
-import MapBox from "@core/components/MapBox.vue"
-import DataFilters from "@core/components/DataFilters.vue"
+import DataFilters from "@core/components/DataFilters.vue";
+import MapBox from "@core/components/MapBox.vue";
+import axios from 'axios';
+import { computed, onMounted, ref } from 'vue';
 
 definePage({
   meta: {
     layout: 'blank',
-    unauthenticatedOnly: true,
     public: true,
   },
 })

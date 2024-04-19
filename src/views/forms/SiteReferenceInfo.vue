@@ -4,7 +4,7 @@ import DialogFormsApp from '@/views/forms/dialog/DialogFormsApp.vue';
 import academyCourseIllustration1 from '@images/pages/academy-course-illustration1.png';
 const props = defineProps({
   projectData: {
-    type: Array,
+    type: Object,
     required: true,
   },
   userData: {
@@ -50,7 +50,7 @@ if (!referenceSiteData.hasOwnProperty('answers') && referenceSiteData.hasOwnProp
             color="secondary"
           >
             <template #text>
-              {{ `Al parecer el sitio de referencia ya ha sido llenado o la cuenca: ${projectData.name} no se encuentra activa.` }} 
+              {{ `Al parecer el sitio de referencia aún no cuenta con la URL de forms.app, ya haya sido llenado o la cuenca: ${projectData.name} no se encuentra activa.` }} 
             </template>
           </VAlert>
         </template>

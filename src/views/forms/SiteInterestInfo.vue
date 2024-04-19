@@ -4,7 +4,7 @@ import DialogFormsApp from '@/views/forms/dialog/DialogFormsApp.vue';
 import academyCourseIllustration1 from '@images/pages/academy-course-illustration1.png';
 const props = defineProps({
   projectData: {
-    type: Array,
+    type: Object,
     required: true,
   },
   userData: {

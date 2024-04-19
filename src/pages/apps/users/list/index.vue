@@ -17,7 +17,7 @@ const orderBy = ref()
 
 const isUserInfoEditDialogVisible = ref(false)
 const isUserDeleteDialogVisible = ref(false)
-const isUserEditable = ref()
+const isUserEditable = ref(false)
 
 const updateOptions = options => {
   sortBy.value = options.sortBy[0]?.key
@@ -185,6 +185,12 @@ const deleteUser = async id => {
   // refetch User
   fetchUsers()
 }
+
+const trimTextString = str => {
+  if (str) 
+    return str.length > 20 ? `${str?.substring(0,20)}...` : str
+  return null
+}
 </script>
 
 <template>
@@ -334,10 +340,10 @@ const deleteUser = async id => {
           </div>
         </template>
 
-        <!-- Plan -->
+        <!-- Institution -->
         <template #item.institution="{ item }">
           <div class="text-body-1 text-high-emphasis">
-            {{ item.institution ? `${item.institution?.substring(0,20)}...` : '' }}
+            {{ trimTextString(item.institution) }}
           </div>
         </template>
 

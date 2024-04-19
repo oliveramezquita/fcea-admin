@@ -21,8 +21,7 @@ if (project.value) {
 }
 const objReferenceSite = JSON.parse(project.value.reference_sites_data)
 const existsSiteReference = ref(objReferenceSite.hasOwnProperty('answers'))
-const adminUsers = ref(usersData.value.data.filter(user => user.role === 'ADMIN'))
-const brigadeUsers = ref(usersData.value.data.filter(user => user.role === 'BRIGADIER'))
+const adminUsers = ref(usersData.value.data.filter(user => user.role === 'ADMIN' && user.activated))
 const admins = ref()
 const isEditing = ref(false)
 

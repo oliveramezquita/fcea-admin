@@ -1,11 +1,12 @@
 <script setup>
 import ProjectListResults from '@/views/apps/projects/view/ProjectListResults.vue';
+import { ref } from 'vue';
 import { VForm } from 'vuetify/components/VForm';
 // import ProjectImagesSwiper from '@/views/apps/projects/view/ProjectImagesSwiper.vue'
 
 const props = defineProps({
   projectData: {
-    type: Array,
+    type: Object,
     required: true,
   },
   usersData: {
@@ -16,6 +17,7 @@ const props = defineProps({
 
 const projectData = ref(structuredClone(toRaw(props.projectData)))
 const usersData = ref(structuredClone(toRaw(props.usersData)))
+const brigadeUsers = ref(usersData.value.filter(user => user.role === 'BRIGADIER' && user.activated))
 const brigadiers = ref()
 const isFormValid = ref(false)
 const reference_sites_url = ref()
@@ -31,6 +33,9 @@ reference_sites.value = objReferenceSite.value.answers ? objReferenceSite.value.
 brigadiers.value = objReferenceSite.value.users ? objReferenceSite.value.users : null
 reference_sites_url.value = objReferenceSite.value.url_form ? objReferenceSite.value.url_form : null
 
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref()
 const onSubmit = () => {
   rfsForm.value?.validate().then(({ valid }) => {
     if (valid) {
@@ -42,6 +47,17 @@ const onSubmit = () => {
             'url_form': reference_sites_url.value,
             'users': [brigadiers.value],
           },
+        },
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "El formato de campo digital para el sitio de referencia ha sido asignado exitosamente."
+            
+          } else {
+            alertType.value = "error"
+            alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`
+          }
+          isAlertVisible.value = true
         },
       })
     }
@@ -75,7 +91,7 @@ const onSubmit = () => {
             v-model="brigadiers"
             chips
             closable-chips
-            :items="usersData"
+            :items="brigadeUsers"
             :rules="[requiredValidator]"
             item-title="full_name"
             item-value="_id"
@@ -101,10 +117,19 @@ const onSubmit = () => {
       </VRow>
     </div>
     <div class="mt-5">
-      <VBtn type="submit">
+      <VBtn v-if="!isAlertVisible" type="submit">
         Guardar
       </VBtn>
     </div>
+    <VAlert
+      v-model="isAlertVisible"
+      closable
+      close-label="Close Alert"
+      class="mt-5"
+      :type="alertType"
+      variant="tonal">
+      {{ alertMessage }}
+    </VAlert>
   </VForm>
   <VDivider class="mb-5 mt-5" />
   <div v-if="objReferenceSite.hasOwnProperty('answers')">

@@ -16,14 +16,14 @@ const refineProjects = projects => {
     add(projects[index], 'isHover', false)
     add(projects[index], 'color', project.activated ? 'success' : 'secondary')
     
-    const interestSites = project.interest_sites_data.answers ? JSON.parse(project.interest_sites_data.answers) : []
+    const interestSites = project.interest_sites_data ? JSON.parse(project.interest_sites_data) : []
   
     add(projects[index], 'info', [
       {
         avatarColor: 'primary',
         avatarIcon: 'tabler-map-check',
         title: 'Sitios de interés',
-        count: interestSites.length,
+        count: interestSites.answers ? interestSites.answers.length : 0,
       },
       {
         avatarColor: 'warning',
@@ -72,7 +72,7 @@ const getNumOfUsers = project => {
   <VRow>
     <template
       v-for="project in refineProjects(projects)"
-      :key="index"
+      :key="project._id"
     >
       <VCol
         lg="4"
