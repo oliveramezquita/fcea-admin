@@ -356,6 +356,20 @@
     "iframeResizer": true,
     "useAbility": true,
     "splitMulti": true,
-    "urlFormParse": true
+    "urlFormParse": true,
+    "calculatePhGrade": true,
+    "getColor": true,
+    "calculateTemperatureGrade": true,
+    "calculateLakeOxygenGrade": true,
+    "calculateOxygenGrade": true,
+    "calculateTurbidityGrade": true,
+    "calculateLakeNitratesGrade": true,
+    "calculateAmmoniumGrade": true,
+    "getPositionsDifference": true,
+    "calculateOrthophosphatesGrade": true,
+    "calculateChGrade": true,
+    "calculateCbrGrade": true,
+    "calculateColiformsGrade": true,
+    "calculateBioticGrade": true
   }
 }

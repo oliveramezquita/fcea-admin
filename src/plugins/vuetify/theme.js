@@ -41,6 +41,11 @@ export const themes = {
       'skin-bordered-background': '#fff',
       'skin-bordered-surface': '#fff',
       'expansion-panel-text-custom-bg': '#fafafa',
+      'very-good': '#5b961e',
+      'good': '#92d050',
+      'average': '#f6f602',
+      'bad': '#ffc000',
+      'very-bad': '#e92312',
     },
     variables: {
       'code-color': '#d400ff',

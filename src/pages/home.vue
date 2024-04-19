@@ -1,6 +1,12 @@
 <script setup>
 import fceaLogoWhite from '@images/fcea_logo_white.png';
 import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png';
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'brigadier',
+  },
+})
 
 const faqSearchQuery = ref('')
 const faqs = ref([])

@@ -15,6 +15,18 @@ declare global {
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const avatarText: typeof import('./src/@core/utils/formatters.js')['avatarText']
   const betweenValidator: typeof import('./src/@core/utils/validators.js')['betweenValidator']
+  const calculateAmmoniumGrade: typeof import('./src/utils/formulas.js')['calculateAmmoniumGrade']
+  const calculateBioticGrade: typeof import('./src/utils/formulas.js')['calculateBioticGrade']
+  const calculateCbrGrade: typeof import('./src/utils/formulas.js')['calculateCbrGrade']
+  const calculateChGrade: typeof import('./src/utils/formulas.js')['calculateChGrade']
+  const calculateColiformsGrade: typeof import('./src/utils/formulas.js')['calculateColiformsGrade']
+  const calculateLakeNitratesGrade: typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']
+  const calculateLakeOxygenGrade: typeof import('./src/utils/formulas.js')['calculateLakeOxygenGrade']
+  const calculateOrthophosphatesGrade: typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']
+  const calculateOxygenGrade: typeof import('./src/utils/formulas.js')['calculateOxygenGrade']
+  const calculatePhGrade: typeof import('./src/utils/formulas.js')['calculatePhGrade']
+  const calculateTemperatureGrade: typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']
+  const calculateTurbidityGrade: typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -51,8 +63,10 @@ declare global {
   const formatDate: typeof import('./src/@core/utils/formatters.js')['formatDate']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']
   const getActivePinia: typeof import('pinia')['getActivePinia']
+  const getColor: typeof import('./src/utils/formulas.js')['getColor']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getPositionsDifference: typeof import('./src/utils/formulas.js')['getPositionsDifference']
   const h: typeof import('vue')['h']
   const iframeResize: typeof import('./src/@core/utils/iframeResize')['default']
   const iframeResizer: typeof import('./src/utils/iframeResizer')['default']
@@ -373,6 +387,17 @@ declare module 'vue' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly avatarText: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['avatarText']>
     readonly betweenValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['betweenValidator']>
+    readonly calculateAmmoniumGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateAmmoniumGrade']>
+    readonly calculateBioticGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateBioticGrade']>
+    readonly calculateCbrGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateCbrGrade']>
+    readonly calculateChGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateChGrade']>
+    readonly calculateColiformsGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateColiformsGrade']>
+    readonly calculateLakeNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']>
+    readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
+    readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
+    readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
+    readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
+    readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -409,8 +434,10 @@ declare module 'vue' {
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
+    readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -722,6 +749,17 @@ declare module '@vue/runtime-core' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly avatarText: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['avatarText']>
     readonly betweenValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['betweenValidator']>
+    readonly calculateAmmoniumGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateAmmoniumGrade']>
+    readonly calculateBioticGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateBioticGrade']>
+    readonly calculateCbrGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateCbrGrade']>
+    readonly calculateChGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateChGrade']>
+    readonly calculateColiformsGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateColiformsGrade']>
+    readonly calculateLakeNitratesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateLakeNitratesGrade']>
+    readonly calculateOrthophosphatesGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOrthophosphatesGrade']>
+    readonly calculateOxygenGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateOxygenGrade']>
+    readonly calculatePhGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculatePhGrade']>
+    readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
+    readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -758,8 +796,10 @@ declare module '@vue/runtime-core' {
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
+    readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
