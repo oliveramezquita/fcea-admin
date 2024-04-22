@@ -1,4 +1,9 @@
 <script setup>
+definePage({
+  meta: {
+    layoutWrapperClasses: 'layout-content-height-fixed'
+  },
+})
 const props = defineProps({
   urlFormsApp: {
     type: String,
@@ -45,7 +50,7 @@ const formUrl = ref(structuredClone(toRaw(props.urlFormsApp)))
         v-if="formUrl"
         :src="formUrl"
         :scrolling="iframeScrollable"
-        :height="735"
+        class="h-100"
         allowtransparency="true"
         style="inline-size: 0; min-inline-size: 100% !important;"
         frameborder="0"
