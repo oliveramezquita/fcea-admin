@@ -1,6 +1,6 @@
 <script setup>
 import fceaLogoWhite from '@images/fcea_logo_white.png';
-import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png';
+import homeWater from '@images/illustrations/home_water.png';
 definePage({
   meta: {
     action: 'read',
@@ -89,7 +89,7 @@ const contactUs = [
         </VTabs>
         <VImg
           :width="245"
-          :src="sittingGirlWithLaptop"
+          :src="homeWater"
           class="d-none d-sm-block mt-4 mx-auto"
         />
       </VCol>
