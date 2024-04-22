@@ -48,6 +48,20 @@ const userProfileList = [
     },
   },
 ]
+const userRoleList = [
+  {
+    title: 'Super Administrador',
+    value: 'SUPER_ADMIN'
+  },
+  {
+    title: 'Administrador',
+    value: 'ADMIN'
+  },
+  {
+    title: 'Brigadista',
+    value: 'BRIGADIER'
+  },
+]
 </script>
 
 <template>
@@ -111,7 +125,7 @@ const userProfileList = [
             <VListItemTitle class="font-weight-medium">
               {{ userData.fullName || userData.username }}
             </VListItemTitle>
-            <VListItemSubtitle>{{ userData.role }}</VListItemSubtitle>
+            <VListItemSubtitle>{{ userRoleList.find(u => u.value === userData.role).title }}</VListItemSubtitle>
           </VListItem>
 
           <PerfectScrollbar :options="{ wheelPropagation: false }">

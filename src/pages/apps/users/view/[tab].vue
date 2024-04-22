@@ -3,7 +3,8 @@ import AccountSettingsAccount from '@/views/apps/users/view/AccountSettingsAccou
 import AccountSettingsSecurity from '@/views/apps/users/view/AccountSettingsSecurity.vue';
 
 const route = useRoute('pages-account-settings-tab')
-
+const userData = useCookie('userData')
+const { data: user } = await useApi(`api/user/${ userData.value._id }`)
 const activeTab = computed({
   get: () => route.params.tab,
   set: () => route.params.tab,
@@ -13,12 +14,12 @@ const activeTab = computed({
 const tabs = [
   {
     title: 'Perfil',
-    icon: 'tabler-users',
+    icon: 'tabler-user',
     tab: 'account',
   },
   {
     title: 'Seguridad',
-    icon: 'tabler-lock',
+    icon: 'tabler-lock-cog',
     tab: 'security',
   },
 ]
@@ -54,12 +55,12 @@ definePage({ meta: { navActiveLink: 'apps-users-view-tab' } })
     >
       <!-- Account -->
       <VWindowItem value="account">
-        <AccountSettingsAccount />
+        <AccountSettingsAccount :user-data="user" />
       </VWindowItem>
 
       <!-- Security -->
       <VWindowItem value="security">
-        <AccountSettingsSecurity />
+        <AccountSettingsSecurity :user-data="user" />
       </VWindowItem>
     </VWindow>
   </div>
