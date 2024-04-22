@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue';
+
 const props = defineProps({
   userData: {
     type: Object,
@@ -6,6 +8,31 @@ const props = defineProps({
   },
 })
 const userData = ref(structuredClone(toRaw(props.userData)))
+const isFormValid = ref(false)
+const refAccountForm = ref()
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref() 
+const onSubmit = () => {
+  refAccountForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      $api(`api/user/${userData.value._id}`, {
+        method: 'PATCH',
+        body: userData.value,
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "Los cambios han sido guardados exitosamente."
+          } else {
+            alertType.value = "error"
+            alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`
+          }
+          isAlertVisible.value = true
+        },
+      })
+    }
+  })
+}
 </script>
 
 <template>
@@ -14,7 +41,11 @@ const userData = ref(structuredClone(toRaw(props.userData)))
       <VCard>
         <VCardText class="pt-2">
           <!-- 👉 Form -->
-          <VForm class="mt-3">
+          <VForm
+            class="mt-3"
+            ref="refAccountForm"
+            v-model="isFormValid"
+            @submit.prevent="onSubmit">
             <VRow>
               <!-- 👉 First Name -->
               <VCol
@@ -23,8 +54,9 @@ const userData = ref(structuredClone(toRaw(props.userData)))
               >
                 <AppTextField
                   v-model="userData.name"
-                  placeholder="John"
+                  placeholder="Nombre"
                   label="Nombre"
+                  :rules="[requiredValidator]"
                 />
               </VCol>
 
@@ -35,8 +67,9 @@ const userData = ref(structuredClone(toRaw(props.userData)))
               >
                 <AppTextField
                   v-model="userData.last_name"
-                  placeholder="Doe"
+                  placeholder="Apellidos"
                   label="Apellidos"
+                  :rules="[requiredValidator]"
                 />
               </VCol>
 
@@ -50,6 +83,7 @@ const userData = ref(structuredClone(toRaw(props.userData)))
                   label="Correo electrónico"
                   placeholder="johndoe@gmail.com"
                   type="email"
+                  :readonly="true"
                 />
               </VCol>
 
@@ -61,7 +95,8 @@ const userData = ref(structuredClone(toRaw(props.userData)))
                 <AppTextField
                   v-model="userData.institution"
                   label="Institución goburnamental o educativa"
-                  placeholder="ThemeSelection"
+                  placeholder="Institución goburnamental o educativa"
+                  :rules="[requiredValidator]"
                 />
               </VCol>
 
@@ -73,7 +108,8 @@ const userData = ref(structuredClone(toRaw(props.userData)))
                 <AppTextField
                   v-model="userData.phone"
                   label="Teléfono"
-                  placeholder="+1 (917) 543-9876"
+                  placeholder="Teléfono"
+                  :rules="[requiredValidator]"
                 />
               </VCol>
 
@@ -106,7 +142,16 @@ const userData = ref(structuredClone(toRaw(props.userData)))
                 cols="12"
                 class="d-flex flex-wrap gap-4"
               >
-                <VBtn>Guardar cambios</VBtn>
+                <VBtn v-if="!isAlertVisible" type="submit">Guardar cambios</VBtn>
+                <VAlert
+                  v-model="isAlertVisible"
+                  closable
+                  close-label="Close Alert"
+                  class="mt-5"
+                  :type="alertType"
+                  variant="tonal">
+                  {{ alertMessage }}
+                </VAlert>
               </VCol>
             </VRow>
           </VForm>
