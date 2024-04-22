@@ -7,7 +7,7 @@ const props = defineProps({
 })
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
 const siteReference = ref(JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0])
-const panel = ref(0)
+const panel = ref()
 const {total, color, message} = totalScore([
   calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
   calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),

@@ -300,8 +300,9 @@ const validatePersonalForm = () => {
                 <VCol cols="12">
                   <AppTextField
                     v-model="personalForm.institution"
-                    label="Institución Goburnamental o Educativa"
+                    label="Institución Goburnamental o Educativa *"
                     placeholder=""
+                    :rules="[requiredValidator]"
                   />
                 </VCol>
 

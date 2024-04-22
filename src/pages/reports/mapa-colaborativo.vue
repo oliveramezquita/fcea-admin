@@ -1,10 +1,9 @@
 <script setup>
 import SitePanelInfo from '@/views/reports/SitePanelInfo.vue'
-import fleetImg from '@images/misc/markerMap.png'
 import mapboxgl from 'mapbox-gl'
 import {
   onMounted,
-  ref,
+  ref
 } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
@@ -16,26 +15,54 @@ definePage({
     layoutWrapperClasses: 'layout-content-height-fixed'
   },
 })
+const selectedProject = ref()
+const selectedState = ref()
+const selectedInstitution = ref()
+const selectedSites = ref()
+const dateRange = ref()
+const selectedParameter = ref()
 
 const {
-  data: projectsData,
-} = await useApi(createUrl('api/public-projects'))
-const projects = computed(() => projectsData.value)
+  data: siteFilters,
+  execute: fetchFilters,
+} = await useApi(createUrl(`api/site-filters`, {
+  query: {
+    project: selectedProject,
+  }
+}))
+const projectList = siteFilters.value?.projects
+const statesList = siteFilters.value?.states
+const institutionsList = siteFilters.value?.institution
+const sitesList = siteFilters.value?.sites
+
+selectedProject.value = siteFilters.value?.default_project 
+
+const {
+  data: sitesData,
+  execute: fetchSites,
+} = await useApi(createUrl('api/public-sites', {
+  query: {
+    project: selectedProject,
+    state: selectedState,
+    institution: selectedInstitution,
+    site: selectedSites,
+    dates: dateRange,
+  }
+}))
+const sites = computed(() => sitesData.value)
+
 const featureCollection = ref({
   type: 'FeatureCollection',
   features: []
 })
 const siteTrackingData = ref([])
+const showPanel = ref([])
 
-projects.value?.forEach(project => {
-  let processedProject = {
-    id: project._id,
-    name: project.name,
-    season: project.season,
-    referenceSites: JSON.parse(project.reference_sites_data).answers ? JSON.parse(project.reference_sites_data).answers : [],
-    interestSites: JSON.parse(project.interest_sites_data).answers ? JSON.parse(project.interest_sites_data).answers : [],
-  }
-  processedProject.referenceSites?.forEach(site => {
+const fetchFeatureAndTracking = async () => {
+  featureCollection.value.features = []
+  siteTrackingData.value = []
+  showPanel.value = []
+  sites.value?.forEach((site, index) => {
     let feature = {
       type: 'Feature',
       geometry: {
@@ -45,58 +72,19 @@ projects.value?.forEach(project => {
           site.latitud,
         ],
       },
+      properties: {
+        title: `${site.nombre_sitio} - ${site.codigo_sitio}`,
+        coordinates: `${site.latitud}, ${site.longitud}`,
+        description: `${site.ciudad}, ${site.estado}`,
+
+      }
     }
     featureCollection.value.features.push(feature)
     let siteInfo = {
       id: site._id,
       name: site.nombre_sitio,
-      type_site: 'Sitio de referencia',
-      icon: 'tabler-map-2',
-      latitude: site.latitud,
-      longitude: site.longitud,
-      altitude: site.altitud,
-      location: `${site.ciudad}, ${site.estado}`,
-      city: site.ciudad,
-      state: site.estado,
-      type_body_water: site.tipo_cuerpo_agua,
-      season: site.temporada,
-      photo1: site.fotografia1,
-      photo2: site.fotografia2,
-      ph: site.ph,
-      ammonium: site.amonio,
-      orthophosphates: site.ortofosfatos,
-      water_temperature: site.temperatura_agua,
-      environmental_temperature: site.temperatura_ambiental,
-      dissolved_oxygen: site.oxigeno_disuelto,
-      saturation: site.saturacion,
-      turbidity: site.turbidez,
-      nitrates: site.nitratos,
-      fecal_coliforms: site.coliformes_fecales,
-      total_coliforms: site.coliformes_totales,
-      macroinvertebrates_rating: site.calificacion_macroinvertebrados,
-      hydromorphological_quality: site.calidad_hidromorfologica,
-      riparian_forest_quality: site.calidad_bosque_ribera,
-      date: site.fecha, 
-    }
-    siteTrackingData.value.push(siteInfo)
-  })
-  processedProject.interestSites?.forEach(site => {
-    let feature = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [
-          site.longitud,
-          site.latitud,
-        ],
-      },
-    }
-    featureCollection.value.features.push(feature)
-    let siteInfo = {
-      id: site._id,
-      name: site.nombre_sitio,
-      type_site: 'Sitio de interés',
-      icon: 'tabler-map-check',
+      type_site: site.es_sitio_referencia ? 'Sitio de referencia' : 'Sitio de interés',
+      icon: site.es_sitio_referencia ? 'tabler-map-2' : 'tabler-map-check',
       latitude: site.latitud,
       longitude: site.longitud,
       altitude: site.altitud,
@@ -125,37 +113,25 @@ projects.value?.forEach(project => {
       site_reference: JSON.stringify(siteTrackingData.value.filter(s => s.id === site.sitio_referencia_id)),
     }
     siteTrackingData.value.push(siteInfo)
-  })  
-})
+    showPanel.value.push(false)
+  })
+}
 
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar()
 const accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 const map = ref()
 const vuetifyDisplay = useDisplay()
-
-const carImgs = ref([
-  fleetImg,
-  fleetImg,
-  fleetImg,
-  fleetImg,
-  fleetImg,
-  fleetImg,
-])
-
-const refCars = ref([])
-
-const showPanel = ref([
-  true,
-  false,
-  false,
-  false,
-  false
-])
-
 const geojson = featureCollection.value
 const activeIndex = ref(0)
 
+const fetchMapData = async () => {
+  const coordinates = geojson.features[0].geometry.coordinates
+  map.value.getSource('sites').setData(geojson);
+  map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 });
+}
+
 onMounted(() => {
+  fetchFeatureAndTracking()
   mapboxgl.accessToken = accessToken
   map.value = new mapboxgl.Map({
     container: 'mapContainer',
@@ -163,11 +139,107 @@ onMounted(() => {
     -101.252860,
       22.210026,
     ],
-    zoom: 5.5,
+    zoom: 4.5,
   })
-  for (let index = 0; index < geojson.features.length; index++)
-    new mapboxgl.Marker({ element: refCars.value[index] }).setLngLat(geojson.features[index].geometry.coordinates).addTo(map.value)
-  refCars.value[activeIndex.value].classList.add('marker-focus')
+  map.value.on('load', async () => {
+    map.value.addSource('sites', {
+      type: 'geojson',
+      data: null,
+      cluster: true,
+      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+    });
+    fetchMapData()
+    map.value.addLayer({
+      id: 'clusters',
+      type: 'circle',
+      source: 'sites',
+      filter: ['has', 'point_count'],
+      paint: {
+          'circle-color': [
+              'step',
+              ['get', 'point_count'],
+              '#51bbd6',
+              100,
+              '#f1f075',
+              750,
+              '#f28cb1'
+          ],
+          'circle-radius': [
+              'step',
+              ['get', 'point_count'],
+              20,
+              100,
+              30,
+              750,
+              40
+          ]
+      }
+    });
+    map.value.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'sites',
+      filter: ['has', 'point_count'],
+      layout: {
+          'text-field': ['get', 'point_count_abbreviated'],
+          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+          'text-size': 12
+      }
+    });
+    map.value.addLayer({
+      id: 'unclustered-point',
+      type: 'circle',
+      source: 'sites',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+          'circle-color': '#11b4da',
+          'circle-radius': 4,
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#fff'
+      }
+    });
+    map.value.on('click', 'clusters', (e) => {
+      const features = map.value.queryRenderedFeatures(e.point, {
+          layers: ['clusters']
+      });
+      const clusterId = features[0].properties.cluster_id;
+      map.value.getSource('sites').getClusterExpansionZoom(
+          clusterId,
+          (err, zoom) => {
+              if (err) return;
+
+              map.value.easeTo({
+                  center: features[0].geometry.coordinates,
+                  zoom: zoom
+              });
+          }
+      );
+    });
+    map.value.on('click', 'unclustered-point', (e) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const title = e.features[0].properties.title;
+      const cdts = e.features[0].properties.coordinates;
+      const description = e.features[0].properties.description;
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(
+              `<b>${title}</b><br>${cdts}<br>${description}`
+          )
+          .addTo(map.value);
+    });
+
+    map.value.on('mouseenter', 'clusters', () => {
+        map.value.getCanvas().style.cursor = 'pointer';
+    });
+    map.value.on('mouseleave', 'clusters', () => {
+        map.value.getCanvas().style.cursor = '';
+    });
+  })
 })
 
 const flyToLocation = (geolocation, index) => {
@@ -181,18 +253,100 @@ const flyToLocation = (geolocation, index) => {
     zoom: 16,
   })
 }
+const updateProjects = async () => {
+  await fetchFilters()
+  await fetchSites()
+}
 
-watch(activeIndex, () => {
-  refCars.value.forEach((car, index) => {
-    if (index === activeIndex.value)
-      car.classList.add('marker-focus')
-    else
-      car.classList.remove('marker-focus')
-  })
+watch(sites, () => {
+  fetchFeatureAndTracking()
+  fetchMapData()
 })
 </script>
 
 <template>
+  <VRow class="filters-layout">
+    <!-- 👉 Select Role -->
+    <VCol
+      cols="12"
+      sm="4"
+    >
+      <AppSelect
+        v-model="selectedProject"
+        placeholder="Seleccionar cuenca"
+        :items="projectList"
+        clearable
+        clear-icon="tabler-x"
+        @update:model-value="updateProjects"
+      />
+    </VCol>
+    <!-- 👉 Select Role -->
+    <VCol
+      cols="12"
+      sm="4"
+    >
+      <AppSelect
+        v-model="selectedState"
+        placeholder="Seleccionar estado"
+        :items="statesList"
+        clearable
+        clear-icon="tabler-x"
+        @update:model-value="updateProjects"
+      />
+    </VCol>
+    <!-- 👉 Select Plan -->
+    <VCol
+      cols="12"
+      sm="4"
+    >
+      <AppSelect
+        v-model="selectedInstitution"
+        placeholder="Seleccionar institución"
+        :items="institutionsList"
+        clearable
+        clear-icon="tabler-x"
+        @update:model-value="updateProjects"
+      />
+    </VCol>
+    <!-- 👉 Select Status -->
+    <VCol
+      cols="12"
+      sm="4"
+    >
+      <AppSelect
+        v-model="selectedSites"
+        placeholder="Seleccionar sitio"
+        :items="sitesList"
+        clearable
+        clear-icon="tabler-x"
+        @update:model-value="updateProjects"
+      />
+    </VCol>
+    <VCol
+      cols="12"
+      sm="4"
+    >
+    <AppDateTimePicker
+      v-model="dateRange"
+      placeholder="Selecciona una fecha"
+      :config="{ mode: 'range' }"
+      @update:model-value="updateProjects"
+    />
+    </VCol>
+    <VCol
+      cols="12"
+      sm="4"
+    >
+      <AppSelect
+        v-model="selectedParameter"
+        placeholder="Seleccionar parámetro"
+        :items="[]"
+        clearable
+        clear-icon="tabler-x"
+        @update:model-value="updateProjects"
+      />
+    </VCol>
+  </VRow> 
   <VLayout class="fleet-app-layout">
     <VNavigationDrawer
       v-model="isLeftSidebarOpen"
@@ -270,7 +424,6 @@ watch(activeIndex, () => {
         </PerfectScrollbar>
       </VCard>
     </VNavigationDrawer>
-
     <VMain>
       <div class="h-100">
         <IconBtn
@@ -285,16 +438,6 @@ watch(activeIndex, () => {
           id="mapContainer"
           class="basemap"
         />
-
-        <img
-          v-for="(car, index) in carImgs"
-          :key="index"
-          ref="refCars"
-          :src="car"
-          alt="car Img marker"
-          height="42"
-          width="42"
-        >
       </div>
     </VMain>
   </VLayout>
@@ -359,6 +502,12 @@ watch(activeIndex, () => {
       margin-block-end: 0.25rem;
     }
   }
+}
+
+.filters-layout {
+  background-color: white !important;
+  padding-block: 15px;
+  padding-inline: 10px;
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
