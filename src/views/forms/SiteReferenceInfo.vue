@@ -33,9 +33,9 @@ if (!referenceSiteData.hasOwnProperty('answers') && referenceSiteData.hasOwnProp
         :class="$vuetify.display.mdAndUp ? 'w-50' : $vuetify.display.xs ? 'w-100' : 'w-75'"
       >
         <h5 class="text-h5 text-center text-wrap mx-auto">
-          Formarto de campo digital para los sitios de referencia
+          Formato de campo digital para un sitio de referencia
         </h5>
-        <h4 class="text-h4 text-center text-wrap mx-auto text-primary">{{ projectData.name }}<br><small>Temporada {{ projectData.season }}</small></h4>
+        <h4 class="text-h4 text-center text-wrap mx-auto text-primary">Nombre de la cuenca: {{ projectData.name }}<br><small>Temporada: {{ projectData.season }}</small></h4>
         <p class="text-center text-wrap text-body-1 mx-auto mb-0">
           El formato de campo digital es un formulario con las preguntas necesarias para recolectar los datos del sitio de referencia
         </p>

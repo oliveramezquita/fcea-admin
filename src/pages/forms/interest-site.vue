@@ -33,10 +33,10 @@ projects.value.forEach(project => {
       :project-data="project"
       :user-data="userData" 
       v-if="checkInterestSite(project)" />
-    <VCard title="Sin cuenca o sitio de interés no asignado" v-if="emptyProjects">
-      <VCardText>
-        No cuentas con alguna cuenca activa asignada o algún sitio de interés asignado, para más información envíanos un correo a: <a href="mailto:karla.rivera@fcea.org.mx" target="_blank">karla.rivera@fcea.org.mx</a> o comunícate al teléfono: <a href="https://wa.me/525548104412" target="_blank">55 4810 4412</a>.
-      </VCardText>
-    </VCard>
   </template>
+  <VCard title="Sin cuenca o sitio de interés no asignado" v-if="emptyProjects">
+    <VCardText>
+      No cuentas con alguna cuenca activa asignada o algún sitio de interés asignado, para más información envíanos un correo a: <a href="mailto:karla.rivera@fcea.org.mx" target="_blank">karla.rivera@fcea.org.mx</a> o comunícate al teléfono: <a href="https://wa.me/525548104412" target="_blank">55 4810 4412</a>.
+    </VCardText>
+  </VCard>
 </template>

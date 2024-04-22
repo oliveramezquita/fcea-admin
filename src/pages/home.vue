@@ -25,13 +25,15 @@ watch(faqSearchQuery, fetchFaqs, { immediate: true })
 
 const contactUs = [
   {
-    icon: 'tabler-phone',
-    via: '55 4810 4412',
+    icon: 'tabler-world-www',
+    url: 'https://fcea.org.mx/contact/',
+    via: 'fcea.org.mx/contact',
     tagLine: '¡Siempre estaremos felices de ayudar!',
   },
   {
     icon: 'tabler-mail',
-    via: 'karla.rivera@fcea.org.mx',
+    url: 'mailto:info@fcea.org.mx',
+    via: 'info@fcea.org.mx',
     tagLine: '¡La mejor manera de obtener una respuesta más rápido!',
   },
 ]
@@ -47,10 +49,10 @@ const contactUs = [
         >
           <img :src="fceaLogoWhite" alt="Fondo para la Comunicación y la Educación Ambiental, A.C." width="250" class="mx-auto">
           <h4
-            class="text-h4 text-center text-secondary text-wrap mx-auto">
+            class="text-h4 text-center text-primary-darken-1 text-wrap mx-auto">
             Bienvenidos al<br><span class="text-white">Administrador para el Monitoreo de la Calidad del agua</span>
           </h4>
-          <p class="text-center text-wrap text-secondary text-body-1 mx-auto mb-0">
+          <p class="text-center text-wrap text-primary-darken-1 text-body-1 mx-auto mb-0">
             La Plataforma de Monitoreo de Ecosistemas Acuáticos es una iniciativa del Fondo para la Comunicación y la Educación Ambiental, A.C.
           </p>
         </div>
@@ -142,6 +144,7 @@ const contactUs = [
                 :text="item.answer"
               />
             </VExpansionPanels>
+            <img v-if="faq.faqTitle === 'Formato de campo'" src="https://calidadagua.mx/wp-content/uploads/2024/04/ruta_resguardo.png" width="100%">
           </VWindowItem>
         </VWindow>
       </VCol>
@@ -198,7 +201,7 @@ const contactUs = [
             </VCardText>
             <VCardText>
               <h5 class="text-h5 mb-1">
-                {{ contact.via }}
+                <a :href="contact.url" target="_blank">{{ contact.via }}</a>
               </h5>
               <div>{{ contact.tagLine }}</div>
             </VCardText>
