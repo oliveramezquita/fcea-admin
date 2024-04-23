@@ -17,13 +17,53 @@ const passwordRequirements = [
   'Mínimo 8 caracteres: cuantos más, mejor',
   'Al menos un carácter en mayúscula y minúscula',
 ]
+const settingsSecurityForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+const isFormValid = ref(false)
+const refSettingsSecurityForm = ref()
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref() 
+const onSubmit = () => {
+  refSettingsSecurityForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      $api('api/reset-password-inside', {
+        method: 'POST',
+        body: {
+          '_id': userData.value._id,
+          ...settingsSecurityForm.value
+        },
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "El cambio de la contraseña ha sido guardada con éxito."
+          } else if (response.status === 403) {
+            alertType.value = "warning"
+            alertMessage.value = "La contraseña actual es incorrecta"
+          } else {
+            console.log(response)
+            alertType.value = "error"
+            alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data[0]}`
+          }
+          isAlertVisible.value = true
+        },
+      })
+    }
+  })
+}
 </script>
 
 <template>
   <VRow>
     <VCol cols="12">
       <VCard title="Cambiar la contraseña">
-        <VForm>
+        <VForm
+          ref="refSettingsSecurityForm"
+          v-model="isFormValid"
+          @submit.prevent="onSubmit">
           <VCardText class="pt-0">
             <!-- 👉 Current Password -->
             <VRow>
@@ -33,7 +73,7 @@ const passwordRequirements = [
               >
                 <!-- 👉 current password -->
                 <AppTextField
-                  v-model="currentPassword"
+                  v-model="settingsSecurityForm.currentPassword"
                   :type="isCurrentPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isCurrentPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   :rules="[requiredValidator, passwordValidator]"
@@ -53,7 +93,7 @@ const passwordRequirements = [
               >
                 <!-- 👉 new password -->
                 <AppTextField
-                  v-model="newPassword"
+                  v-model="settingsSecurityForm.newPassword"
                   :type="isNewPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isNewPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   :rules="[requiredValidator, passwordValidator]"
@@ -70,10 +110,10 @@ const passwordRequirements = [
               >
                 <!-- 👉 confirm password -->
                 <AppTextField
-                  v-model="confirmPassword"
+                  v-model="settingsSecurityForm.confirmPassword"
                   :type="isConfirmPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  :rules="[requiredValidator, passwordValidator]"
+                  :rules="[requiredValidator, confirmedValidator(settingsSecurityForm.confirmPassword, settingsSecurityForm.newPassword)]"
                   label="Confirmar nueva contraseña"
                   autocomplete="on"
                   placeholder="············"
@@ -108,7 +148,16 @@ const passwordRequirements = [
 
           <!-- 👉 Action Buttons -->
           <VCardText class="d-flex flex-wrap gap-4">
-            <VBtn>Guardar cambios</VBtn>
+            <VBtn v-if="!isAlertVisible" type="submit">Guardar cambios</VBtn>
+            <VAlert
+              v-model="isAlertVisible"
+              closable
+              close-label="Close Alert"
+              class="mt-5"
+              :type="alertType"
+              variant="tonal">
+              {{ alertMessage }}
+            </VAlert>
           </VCardText>
         </VForm>
       </VCard>

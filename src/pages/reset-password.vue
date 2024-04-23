@@ -1,11 +1,11 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import authV2ResetPasswordIllustrationDark from '@images/pages/auth-v2-reset-password-illustration-dark.png'
-import authV2ResetPasswordIllustrationLight from '@images/pages/auth-v2-reset-password-illustration-light.png'
+import waterIntro from '@images/illustrations/water_intro.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import CryptoJS from 'crypto-js'
 
 definePage({
   meta: {
@@ -14,15 +14,63 @@ definePage({
   },
 })
 
-const form = ref({
+const formResetPassword = ref({
   newPassword: '',
   confirmPassword: '',
 })
 
-const authThemeImg = useGenerateImageVariant(authV2ResetPasswordIllustrationLight, authV2ResetPasswordIllustrationDark)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 const isPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
+const router = useRouter()
+const route = useRoute()
+const registerToken = route.query.rt
+
+if (!registerToken)
+  await router.push('*')
+
+let key = import.meta.env.VITE_ENCRYPT_KEY
+key = CryptoJS.enc.Utf8.parse(key)
+const decrypted =  CryptoJS.AES.decrypt(registerToken, key, {mode:CryptoJS.mode.ECB})
+const user_id = decrypted.toString(CryptoJS.enc.Utf8)
+
+if (!user_id)
+  await router.push('*')
+
+const { data: userData } = await useApi(`api/public-user/${ user_id }`)
+if (!userData.value || !userData.value.activated)
+  await router.push('*')
+
+const isFormValid = ref(false)
+const refFormResetPassword = ref()
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref() 
+const onSubmit = () => {
+  refFormResetPassword.value?.validate().then(({ valid }) => {
+    if (valid) {
+      $api('api/reset-password', {
+        method: 'POST',
+        body: {
+          '_id': userData.value._id,
+          ...formResetPassword.value
+        },
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "La contraseña ha sida restablecida con éxito."
+          } else {
+            console.log(response)
+            alertType.value = "error"
+            alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data[0]}`
+          }
+          isAlertVisible.value = true
+        },
+      })
+    }
+  })
+}
+
 </script>
 
 <template>
@@ -49,8 +97,7 @@ const isConfirmPasswordVisible = ref(false)
           style="padding-inline: 150px;"
         >
           <VImg
-            max-width="451"
-            :src="authThemeImg"
+            :src="waterIntro"
             class="auth-illustration mt-16 mb-2"
           />
         </div>
@@ -85,17 +132,20 @@ const isConfirmPasswordVisible = ref(false)
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="() => {}">
+          <VForm ref="refFormResetPassword"
+          v-model="isFormValid"
+          @submit.prevent="onSubmit">
             <VRow>
               <!-- password -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.newPassword"
+                  v-model="formResetPassword.newPassword"
                   autofocus
                   label="Nueva contraseña"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+                  :rules="[requiredValidator, passwordValidator]"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
               </VCol>
@@ -103,23 +153,30 @@ const isConfirmPasswordVisible = ref(false)
               <!-- Confirm Password -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.confirmPassword"
+                  v-model="formResetPassword.confirmPassword"
                   label="Confirmar contraseña"
                   placeholder="············"
                   :type="isConfirmPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+                  :rules="[requiredValidator, confirmedValidator(formResetPassword.confirmPassword, formResetPassword.newPassword)]"
                   @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
                 />
               </VCol>
 
               <!-- Set password -->
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                >
+                <VBtn block v-if="!isAlertVisible" type="submit">
                   Establecer nueva contraseña
                 </VBtn>
+                <VAlert
+                  v-model="isAlertVisible"
+                  closable
+                  close-label="Close Alert"
+                  class="mt-5"
+                  :type="alertType"
+                  variant="tonal">
+                  {{ alertMessage }}
+                </VAlert>
               </VCol>
 
               <!-- back to login -->

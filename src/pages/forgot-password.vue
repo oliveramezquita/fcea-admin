@@ -1,14 +1,16 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import authV2ForgotPasswordIllustrationDark from '@images/pages/auth-v2-forgot-password-illustration-dark.png'
-import authV2ForgotPasswordIllustrationLight from '@images/pages/auth-v2-forgot-password-illustration-light.png'
+import imageLogin2 from '@images/illustrations/login_water.png'
+import imageLogin3 from '@images/illustrations/water_intro.png'
+import imageLogin1 from '@images/illustrations/water_login_2.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 
 const email = ref('')
-const authThemeImg = useGenerateImageVariant(authV2ForgotPasswordIllustrationLight, authV2ForgotPasswordIllustrationDark)
+
+const authThemeImg = useGenerateImageVariant(imageLogin1, imageLogin2, imageLogin3)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 definePage({
@@ -17,6 +19,32 @@ definePage({
     public: true,
   },
 })
+const isFormValid = ref(false)
+const refForgotPasswordForm = ref()
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref() 
+const onSubmit = () => {
+  refForgotPasswordForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      $api('api/forgot-password', {
+        method: 'POST',
+        body: {email: email.value},
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "Se ha mandado un mensaje con el enlace al correo electrónico para restablecer la contraseña."
+          } else {
+            alertType.value = response.status === 404 ? "warning" : "error"
+            alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data?.message}`
+          }
+          isAlertVisible.value = true
+        },
+      })
+    }
+  })
+}
+
 </script>
 
 <template>
@@ -43,7 +71,6 @@ definePage({
           style="padding-inline: 150px;"
         >
           <VImg
-            max-width="468"
             :src="authThemeImg"
             class="auth-illustration mt-16 mb-2"
           />
@@ -79,27 +106,36 @@ definePage({
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="() => {}">
+          <VForm ref="refForgotPasswordForm"
+            v-model="isFormValid"
+            @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
               <VCol cols="12">
                 <AppTextField
                   v-model="email"
+                  :rules="[requiredValidator, emailValidator]"
                   autofocus
                   label="Correo electrónico"
                   type="email"
-                  placeholder="johndoe@email.com"
+                  placeholder="correo@email.com"
                 />
               </VCol>
 
               <!-- Reset link -->
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                >
+                <VBtn block v-if="!isAlertVisible" type="submit">
                   Enviar enlace
                 </VBtn>
+                <VAlert
+                  v-model="isAlertVisible"
+                  closable
+                  close-label="Close Alert"
+                  class="mt-5"
+                  :type="alertType"
+                  variant="tonal">
+                  {{ alertMessage }}
+                </VAlert>
               </VCol>
 
               <!-- back to login -->
