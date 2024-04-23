@@ -73,6 +73,7 @@ const onSubmit = () => {
           <VImg
             :src="authThemeImg"
             class="auth-illustration mt-16 mb-2"
+            max-width="740"
           />
         </div>
 

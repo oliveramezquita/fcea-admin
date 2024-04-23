@@ -99,6 +99,7 @@ const onSubmit = () => {
           <VImg
             :src="waterIntro"
             class="auth-illustration mt-16 mb-2"
+            max-height="680"
           />
         </div>
 

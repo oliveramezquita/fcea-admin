@@ -112,6 +112,7 @@ const onSubmit = () => {
         >
           <VImg
             :src="loginWater"
+            max-width="740"
             class="auth-illustration mt-16 mb-2"
           />
         </div>
