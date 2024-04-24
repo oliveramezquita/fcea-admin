@@ -1,7 +1,12 @@
 <script setup>
 import AccountSettingsAccount from '@/views/apps/users/view/AccountSettingsAccount.vue';
 import AccountSettingsSecurity from '@/views/apps/users/view/AccountSettingsSecurity.vue';
-
+definePage({
+  meta: {
+    action: 'read',
+    subject: ['admin', 'brigadier']
+  },
+})
 const route = useRoute('pages-account-settings-tab')
 const userData = useCookie('userData')
 const { data: user } = await useApi(`api/user/${ userData.value._id }`)
@@ -23,8 +28,6 @@ const tabs = [
     tab: 'security',
   },
 ]
-
-definePage({ meta: { navActiveLink: 'apps-users-view-tab' } })
 </script>
 
 <template>

@@ -4,17 +4,21 @@ export default [
     to: { name: 'home' },
     icon: { icon: 'tabler-ripple' },
     action: 'read',
-    subject: 'brigadier'
+    subject: ['admin', 'brigadier']
   },
   {
     title: 'Cuencas',
     to: { name: 'apps-projects-list' },
     icon: { icon: 'tabler-map-star' },
+    action: 'manage',
+    subject: 'admin'
   },
   {
     title: 'Usuarios',
     to: { name: 'apps-users-list' },
     icon: { icon: 'tabler-users' },
+    action: 'manage',
+    subject: 'admin'
   },
   {
     title: 'Catálogos',
@@ -29,13 +33,13 @@ export default [
         title: 'Sitio de referencia', 
         to: 'forms-reference-site',
         action: 'read',
-        subject: 'brigadier'
+        subject: ['admin', 'brigadier']
       },
       { 
         title: 'Sitio de interés', 
         to: 'forms-interest-site',
         action: 'read',
-        subject: 'brigadier'
+        subject: ['admin', 'brigadier']
       },
     ],
   },

@@ -66,7 +66,6 @@ const handleSelectPointMap = id => {
   const filteredData = allData.value.find(item => item._id === id)
 
   selectedData.value = filteredData
-  console.log(filteredData)
 }
 
 // Función para convertir datos de la API a GeoJSON

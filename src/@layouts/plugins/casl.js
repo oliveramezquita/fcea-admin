@@ -14,8 +14,20 @@ export const can = (action, subject) => {
   if (!vm)
     return false
   const localCan = vm.proxy && '$can' in vm.proxy
-    
-  return localCan ? vm.proxy?.$can(action, subject) : true
+   
+  if (typeof subject === 'object') {
+    if (localCan) {
+      const resp = []
+      subject.forEach(sub => {
+        resp.push(vm.proxy?.$can(action, sub))
+      })
+      return resp.some(r => r)
+    } else {
+      return true
+    }
+  } else {
+    return localCan ? vm.proxy?.$can(action, subject) : true
+  }
 }
 
 /**
@@ -35,6 +47,18 @@ export const canViewNavMenuGroup = item => {
 }
 export const canNavigate = to => {
   const ability = useAbility()
-
-  return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
+  const resp = []
+  to.matched.forEach(route => {
+    if (route.meta.hasOwnProperty('action') && route.meta.hasOwnProperty('subject')) {
+      if (typeof route.meta.subject === 'object') {
+        route.meta.subject.forEach(sub => {
+          resp.push(ability.can(route.meta.action, sub))
+        })
+      }
+    }
+  })
+  if (resp.length > 0)
+    return resp.some(r => r)
+  else
+    return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
 }

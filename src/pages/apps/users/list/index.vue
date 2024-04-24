@@ -2,6 +2,15 @@
 import { useApi } from '@/composables/useApi';
 import AddNewUserDrawer from '@/views/apps/users/list/AddNewUserDrawer.vue';
 import { computed } from 'vue';
+definePage({
+  meta: {
+    action: 'manage',
+    subject: 'admin',
+  },
+})
+
+// User
+const userData = useCookie('userData')
 
 // 👉 Store
 const searchQuery = ref('')
@@ -83,6 +92,11 @@ const roles = [
     value: 'BRIGADIER',
   },
 ]
+
+const isSuperAdminRule = ref(userData.value.role === 'SUPER_ADMIN' ? true : false)
+if (!isSuperAdminRule.value) {
+  selectedRole.value = 'BRIGADIER'
+} 
 
 const { data: institutionsList } = await useApi(`api/institutions-list`)
 
@@ -211,7 +225,8 @@ const trimTextString = str => {
               v-model="selectedRole"
               placeholder="Seleccionar cargo"
               :items="roles"
-              clearable
+              :clearable="isSuperAdminRule"
+              :readonly="!isSuperAdminRule"
               clear-icon="tabler-x"
             />
           </VCol>
@@ -388,6 +403,7 @@ const trimTextString = str => {
     <!-- 👉 Add New User -->
     <AddNewUserDrawer
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
+      v-model:isSuperAdminRule="isSuperAdminRule"
       @user-data="addNewUser"
     />
     <UserInfoEditDialog

@@ -13,3 +13,14 @@ export const redirects = [
         },
     }
 ]
+export const routes = [
+    {
+        path: '/apps/users/view/:tab',
+        name: 'apps-users-view-tab',
+        component: () => import('@/pages/apps/users/view/[tab].vue'),
+        meta: {
+            action: 'read',
+            subject: ['admin', 'brigadier'],
+        },
+    },
+]

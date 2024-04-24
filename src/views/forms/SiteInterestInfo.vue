@@ -1,7 +1,7 @@
 <script setup>
 import { urlFormParse } from '@/utils/urlFormParse';
 import DialogFormsApp from '@/views/forms/dialog/DialogFormsApp.vue';
-import academyCourseIllustration1 from '@images/pages/academy-course-illustration1.png';
+import formIllustration from '@images/illustrations/form_illustration.png';
 const props = defineProps({
   projectData: {
     type: Object,
@@ -64,7 +64,7 @@ if (referenceSiteData.hasOwnProperty('answers')) {
         </template>
       </div>
       <img
-        :src="academyCourseIllustration1"
+        :src="formIllustration"
         class="illustration1 d-none d-md-block"
         height="180"
       >

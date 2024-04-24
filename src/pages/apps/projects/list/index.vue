@@ -4,20 +4,32 @@ import AddNewProjectDrawer from '@/views/apps/projects/list/AddNewProjectDrawer.
 import temporadaLluvias from '@images/illustrations/temporada-lluvias.jpg';
 import temporadaSecas from '@images/illustrations/temporada-secas.jpg';
 import { computed } from 'vue';
-
+definePage({
+  meta: {
+    action: 'manage',
+    subject: 'admin',
+  },
+})
+const userData = useCookie('userData')
+const isSuperAdminRule = ref(userData.value.role === 'SUPER_ADMIN' ? true : false)
 const {
   data: projectsData,
   execute: fetchProjects,
 } = await useApi(createUrl('api/projects'))
 const projects = computed(() => projectsData.value)
-
+const hasAssignedProjects = ref(false)
+const emptyProjects = ref(true)
 const refineProjects = projects => {
   projects.forEach((project, index) => {
     add(projects[index], 'isHover', false)
     add(projects[index], 'color', project.activated ? 'success' : 'secondary')
     
     const interestSites = project.interest_sites_data ? JSON.parse(project.interest_sites_data) : []
-  
+    if ((project.admin_users && project.admin_users.includes(userData.value._id)) || userData.value.role === 'SUPER_ADMIN') {
+      hasAssignedProjects.value = true
+      emptyProjects.value = false
+    }
+    
     add(projects[index], 'info', [
       {
         avatarColor: 'primary',
@@ -65,7 +77,6 @@ const getNumOfUsers = project => {
   let unique = [...new Set(numOfUsers)];
   return unique.length
 }
-
 </script>
 
 <template>
@@ -78,6 +89,7 @@ const getNumOfUsers = project => {
         lg="4"
         sm="6"
         cols="12"
+        v-if="hasAssignedProjects"
       >
         <VCard
           class="logistics-card-statistics cursor-pointer"
@@ -130,30 +142,38 @@ const getNumOfUsers = project => {
         </VCard>
       </VCol>
     </template>
-      <VCol
-        lg="4"
-        sm="6"
-        cols="12"
+    <VCol
+      lg="4"
+      sm="6"
+      cols="12"
+      v-if="isSuperAdminRule"
+    >
+      <VCard
+        class="logistics-card-statistics cursor-pointer"
+        style="border-block-end-color: rgba(var(--v-theme-info), 0.38);"
+        @click="isAddNewProjectDrawerVisible = true"
       >
-        <VCard
-          class="logistics-card-statistics cursor-pointer"
-          style="border-block-end-color: rgba(var(--v-theme-info), 0.38);"
-          @click="isAddNewProjectDrawerVisible = true"
-        >
-          <VCardText class="text-center">
-            <div class="mt-5">
-              <VBtn
-                icon="tabler-map-plus"
-                size="42"
-                color="info"
-                variant="tonal"
-              />
-            </div>
-            <span class="v-card-title text-secondary mt-2 mb-3">Nueva Cuenca</span>
-          </VCardText>
-        </VCard>
-      </VCol>
+        <VCardText class="text-center">
+          <div class="mt-5">
+            <VBtn
+              icon="tabler-map-plus"
+              size="42"
+              color="info"
+              variant="tonal"
+            />
+          </div>
+          <span class="v-card-title text-secondary mt-2 mb-3">Nueva Cuenca</span>
+        </VCardText>
+      </VCard>
+    </VCol>
   </VRow>
+  <template v-if="emptyProjects">
+    <VCard title="Sin cuenca asignada" class="mt-5">
+      <VCardText>
+        No cuentas con alguna cuenca asignada o activa, para más información envíanos un correo a: <a href="mailto:karla.rivera@fcea.org.mx" target="_blank">karla.rivera@fcea.org.mx</a> o comunícate al teléfono: <a href="https://wa.me/525548104412" target="_blank">55 4810 4412</a>.
+      </VCardText>
+    </VCard>
+  </template>
   <AddNewProjectDrawer
     v-model:isDrawerOpen="isAddNewProjectDrawerVisible"
     @project-data="addNewProject"

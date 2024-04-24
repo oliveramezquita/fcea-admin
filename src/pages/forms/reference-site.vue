@@ -3,7 +3,7 @@ import SiteReferenceInfo from '@/views/forms/SiteReferenceInfo.vue';
 definePage({
   meta: {
     action: 'read',
-    subject: 'brigadier',
+    subject: ['admin', 'brigadier'],
   },
 })
 const {
@@ -28,7 +28,10 @@ projects.value.forEach(project => {
 });
 </script>
 <template>
-  <template v-for="project in projects" :key="project._id">
+  <template
+    v-for="project in projects" 
+    :key="project._id" 
+    v-if="!emptyProjects">
     <SiteReferenceInfo
       :project-data="project"
       :user-data="userData"

@@ -44,7 +44,6 @@ const onSubmit = () => {
             alertType.value = "warning"
             alertMessage.value = "La contraseña actual es incorrecta"
           } else {
-            console.log(response)
             alertType.value = "error"
             alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data[0]}`
           }

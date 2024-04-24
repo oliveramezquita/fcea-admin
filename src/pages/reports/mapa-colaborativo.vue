@@ -275,8 +275,6 @@ watch(sites, () => {
         v-model="selectedProject"
         placeholder="Seleccionar cuenca"
         :items="projectList"
-        clearable
-        clear-icon="tabler-x"
         @update:model-value="updateProjects"
       />
     </VCol>

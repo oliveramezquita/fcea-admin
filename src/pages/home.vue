@@ -4,7 +4,7 @@ import homeWater from '@images/illustrations/home_water.png';
 definePage({
   meta: {
     action: 'read',
-    subject: 'brigadier',
+    subject: ['admin', 'brigadier'],
   },
 })
 
@@ -144,7 +144,7 @@ const contactUs = [
                 :text="item.answer"
               />
             </VExpansionPanels>
-            <img v-if="faq.faqTitle === 'Formato de campo'" src="https://calidadagua.mx/wp-content/uploads/2024/04/ruta_resguardo.png" width="100%">
+            <img class="mt-5" v-if="faq.faqTitle === 'Formato de campo'" src="https://calidadagua.mx/wp-content/uploads/2024/04/ruta_resguardo.png" width="100%">
           </VWindowItem>
         </VWindow>
       </VCol>

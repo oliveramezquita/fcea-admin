@@ -3,7 +3,7 @@ import SiteInterestInfo from '@/views/forms/SiteInterestInfo.vue';
 definePage({
   meta: {
     action: 'read',
-    subject: 'brigadier',
+    subject: ['admin', 'brigadier'],
   },
 })
 const {

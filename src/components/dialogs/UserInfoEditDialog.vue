@@ -75,7 +75,7 @@ const dialogModelValueUpdate = val => {
         >
           <VRow>
             <!-- Role -->
-            <VCol
+            <!-- <VCol
               cols="12"
               md="6"
             >
@@ -89,7 +89,7 @@ const dialogModelValueUpdate = val => {
                   { title: 'Brigadista', value: 'BRIGADIER' }]"
               />
             </VCol>
-            <VCol cols="12" md="6"></VCol>
+            <VCol cols="12" md="6"></VCol> -->
             <!-- 👉 First Name -->
             <VCol
               cols="12"

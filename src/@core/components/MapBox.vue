@@ -1,7 +1,7 @@
 <script setup>
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { onMounted, ref, watch } from 'vue'
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   geojsonData: Object,
@@ -27,7 +27,6 @@ const initializeMap = () => {
   map.addControl(new mapboxgl.NavigationControl())
 
   map.on('load', () => {
-    console.log(props.geojsonData)
     if (props.geojsonData) {
       addDataToMap(props.geojsonData)
     }
@@ -146,6 +145,6 @@ watch(() => props.geojsonData, newData => {
 
 <style scoped>
 .map-container {
-  height: 500px;
+  block-size: 500px;
 }
 </style>

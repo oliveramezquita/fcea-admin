@@ -60,7 +60,6 @@ const onSubmit = () => {
             alertType.value = "success"
             alertMessage.value = "La contraseña ha sida restablecida con éxito."
           } else {
-            console.log(response)
             alertType.value = "error"
             alertMessage.value = `Ocurrió un error al momento de asignar la información: ${response?._data[0]}`
           }

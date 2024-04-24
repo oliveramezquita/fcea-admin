@@ -6,22 +6,29 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  isSuperAdminRule: {
+    type: Boolean,
+    required: true
+  },
 })
-
 const emit = defineEmits([
   'update:isDrawerOpen',
+  'isSuperAdminRule',
   'userData',
 ])
-
 const isFormValid = ref(false)
 const refForm = ref()
 const email = ref('')
-const role = ref()
 const roles = ref([
   { title: 'Super Administrador', value: 'SUPER_ADMIN'},
   { title: 'Administrador', value: 'ADMIN' }, 
   { title: 'Brigadista', value: 'BRIGADIER' },
 ])
+const role = ref()
+
+watch(props, () => {
+  role.value = !props.isSuperAdminRule ? 'BRIGADIER' : null
+})
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -88,6 +95,7 @@ const handleDrawerModelValueUpdate = val => {
                   placeholder="Seleccionar cargo"
                   :rules="[requiredValidator]"
                   :items="roles"
+                  :readonly="!props.isSuperAdminRule"
                 />
               </VCol>
               <!-- 👉 Email -->

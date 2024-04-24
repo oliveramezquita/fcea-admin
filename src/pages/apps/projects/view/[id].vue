@@ -2,7 +2,14 @@
 import ProjectInterestSites from '@/views/apps/projects/view/ProjectInterestSites.vue';
 import ProjectReferenceSites from '@/views/apps/projects/view/ProjectReferenceSites.vue';
 import TemporadaLluvias from '@images/illustrations/temporada-lluvias.jpg';
-
+definePage({
+  meta: {
+    action: 'manage',
+    subject: 'admin',
+  },
+})
+const userData = useCookie('userData')
+const isSuperAdminRule = ref(userData.value.role === 'SUPER_ADMIN' ? true : false)
 const currentTab = ref('tab-1')
 const route = useRoute('apps-projects-view-id')
 const { data: projectData } = await useApi(`api/project/${ route.params.id }`)
@@ -81,12 +88,13 @@ const editAdminUsers = async project => {
                   v-model="admins"
                   multiple
                   chips
-                  closable-chips
+                  :closable-chips="isSuperAdminRule"
                   :items="adminUsers"
                   item-title="full_name"
                   item-value="_id"
                   placeholder="Selecciona un administrador"
                   label="Administrador(es)"
+                  :readonly="!isSuperAdminRule"
                 >
                   <template #chip="{ props, item }">
                     <VChip
@@ -102,7 +110,7 @@ const editAdminUsers = async project => {
                       :subtitle="item?.raw?.institution"
                     />
                   </template>
-                  <template #append>
+                  <template #append v-if="isSuperAdminRule">
                     <VSlideXReverseTransition mode="out-in">
                       <VIcon
                         :key="`icon-${isEditing}`"
@@ -124,10 +132,11 @@ const editAdminUsers = async project => {
                 true-value="Activo"
                 false-value="Desactivo"
                 @click="editProject(project)"
+                v-if="isSuperAdminRule"
               />
               <VBtn
                 variant="tonal"
-                color="secondary"
+                color="info"
                 class="ml-5"
                 :to="{name: 'apps-projects-list'}"
               >
