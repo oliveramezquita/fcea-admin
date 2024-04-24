@@ -1,12 +1,12 @@
 <script setup>
-import SitePanelInfo from '@/views/reports/SitePanelInfo.vue'
-import mapboxgl from 'mapbox-gl'
+import SitePanelInfo from '@/views/reports/SitePanelInfo.vue';
+import mapboxgl from 'mapbox-gl';
 import {
   onMounted,
   ref
-} from 'vue'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useDisplay } from 'vuetify'
+} from 'vue';
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+import { useDisplay } from 'vuetify';
 
 definePage({
   meta: {
@@ -126,8 +126,32 @@ const activeIndex = ref(0)
 
 const fetchMapData = async () => {
   const coordinates = geojson.features[0].geometry.coordinates
-  map.value.getSource('sites').setData(geojson);
-  map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 });
+  map.value.getSource('sites').setData(geojson)
+  map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
+  map.value.addSource('cuenca', {
+      type: 'geojson',
+      data: '../src/assets/geojson/ManiatepecCuenca.geojson',
+  })
+  map.value.addLayer({
+    'id': 'maine',
+    'type': 'fill',
+    'source': 'cuenca',
+    'layout': {},
+    'paint': {
+        'fill-color': '#1f97b4', 
+        'fill-opacity': 0.5
+    }
+  })
+  map.value.addLayer({
+    'id': 'outline',
+    'type': 'line',
+    'source': 'cuenca',
+    'layout': {},
+    'paint': {
+        'line-color': '#000',
+        'line-width': 2
+    }
+  })
 }
 
 onMounted(() => {
