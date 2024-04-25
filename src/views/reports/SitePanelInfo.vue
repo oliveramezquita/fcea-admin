@@ -42,7 +42,6 @@ watch(props, () => {
     calculateCbrGrade(siteInfo.value.riparian_forest_quality),
   ])
 })
-console.log(score.value)
 </script>
 <template>
   <VExpansionPanels

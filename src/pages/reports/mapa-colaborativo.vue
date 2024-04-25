@@ -30,12 +30,12 @@ const {
     project: selectedProject,
   }
 }))
-const projectList = siteFilters.value?.projects
-const statesList = siteFilters.value?.states
-const institutionsList = siteFilters.value?.institution
-const sitesList = siteFilters.value?.sites
-
+const projectList = ref(siteFilters.value?.projects)
+const statesList = ref(siteFilters.value?.states)
+const institutionsList = ref(siteFilters.value?.institution)
+const sitesList = ref(siteFilters.value?.sites)
 selectedProject.value = siteFilters.value?.default_project 
+
 
 const {
   data: sitesData,
@@ -190,7 +190,7 @@ onMounted(() => {
       layout: {
           'text-field': ['get', 'point_count_abbreviated'],
           'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 12
+          'text-size': 16
       }
     });
     map.value.addLayer({
@@ -200,8 +200,8 @@ onMounted(() => {
       filter: ['!', ['has', 'point_count']],
       paint: {
           'circle-color': '#11b4da',
-          'circle-radius': 4,
-          'circle-stroke-width': 1,
+          'circle-radius': 6,
+          'circle-stroke-width': 2,
           'circle-stroke-color': '#fff'
       }
     });
@@ -282,7 +282,14 @@ const flyToLocation = (geolocation, index) => {
 const updateProjects = async () => {
   await fetchFilters()
   await fetchSites()
+  
 }
+
+watch(siteFilters, () => {
+  statesList.value = siteFilters.value?.states
+  institutionsList.value = siteFilters.value?.institution
+  sitesList.value = siteFilters.value?.sites
+})
 
 watch(sites, () => {
   fetchFeatureAndTracking()
