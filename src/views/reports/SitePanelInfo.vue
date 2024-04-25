@@ -5,10 +5,13 @@ const props = defineProps({
     required: true,
   },
 })
+const emit = defineEmits([
+  'update:siteInfo',
+])
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
 const siteReference = ref(JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0])
 const panel = ref()
-const {total, color, message} = totalScore([
+const score = ref(totalScore([
   calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
   calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),
   calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.dissolved_oxygen),
@@ -20,8 +23,26 @@ const {total, color, message} = totalScore([
   calculateColiformsGrade(siteInfo.value.fecal_coliforms),
   calculateChGrade(siteInfo.value.hydromorphological_quality),
   calculateCbrGrade(siteInfo.value.riparian_forest_quality),
-])
+]))
 const full = ref(100)
+watch(props, () => {
+  siteInfo.value = structuredClone(toRaw(props.siteInfo))
+  siteReference.value = JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0]
+  score.value = totalScore([
+    calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
+    calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),
+    calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.dissolved_oxygen),
+    calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidity),
+    calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitrates),
+    calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.ammonium),
+    calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.orthophosphates),
+    calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
+    calculateColiformsGrade(siteInfo.value.fecal_coliforms),
+    calculateChGrade(siteInfo.value.hydromorphological_quality),
+    calculateCbrGrade(siteInfo.value.riparian_forest_quality),
+  ])
+})
+console.log(score.value)
 </script>
 <template>
   <VExpansionPanels
@@ -134,20 +155,20 @@ const full = ref(100)
                 v-model="full"
                 :size="54"
                 class="me-4"
-                :color="color"
+                :color="score.color"
               >
                 <span class="text-body-1 text-high-emphasis font-weight-medium">
-                  {{ total }}
+                  {{ score.total }}
                 </span>
               </VProgressCircular>
             </template>
             <VListItemTitle class="font-weight-medium mb-2 me-2">
-              {{ message.category }}
+              {{ score.message.category }}
             </VListItemTitle>
           </VListItem>
         </VList>
         <div class="text-body-2 mt-3">
-          {{ message.interpretation }}
+          {{ score.message.interpretation }}
         </div>
         <h3 class="mt-5">Parámetros físico-químicos</h3>
         <VDivider class="mt-3 mb-5" />

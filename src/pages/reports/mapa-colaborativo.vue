@@ -128,30 +128,7 @@ const fetchMapData = async () => {
   const coordinates = geojson.features[0].geometry.coordinates
   map.value.getSource('sites').setData(geojson)
   map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
-  map.value.addSource('cuenca', {
-      type: 'geojson',
-      data: 'https://api.calidadagua.mx/media/files/ManiatepecCuenca.geojson',
-  })
-  map.value.addLayer({
-    'id': 'maine',
-    'type': 'fill',
-    'source': 'cuenca',
-    'layout': {},
-    'paint': {
-        'fill-color': '#1f97b4', 
-        'fill-opacity': 0.5
-    }
-  })
-  map.value.addLayer({
-    'id': 'outline',
-    'type': 'line',
-    'source': 'cuenca',
-    'layout': {},
-    'paint': {
-        'line-color': '#000',
-        'line-width': 2
-    }
-  })
+  // TODO: Move polygon data here
 }
 
 onMounted(() => {
@@ -173,7 +150,12 @@ onMounted(() => {
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
     });
+    map.value.addSource(`cuenca`, {
+      type: 'geojson',
+      data: 'https://api.calidadagua.mx/media/files/ManiatepecCuenca.geojson',
+    });
     fetchMapData()
+    // Layer of sites
     map.value.addLayer({
       id: 'clusters',
       type: 'circle',
@@ -256,12 +238,32 @@ onMounted(() => {
           )
           .addTo(map.value);
     });
-
     map.value.on('mouseenter', 'clusters', () => {
         map.value.getCanvas().style.cursor = 'pointer';
     });
     map.value.on('mouseleave', 'clusters', () => {
         map.value.getCanvas().style.cursor = '';
+    });
+    // Layers for polygon
+    map.value.addLayer({
+      'id': 'maine',
+      'type': 'fill',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'fill-color': '#1f97b4', 
+          'fill-opacity': 0.5
+      }
+    });
+    map.value.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'line-color': '#000',
+          'line-width': 2
+      }
     });
   })
 })
