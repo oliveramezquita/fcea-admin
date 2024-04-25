@@ -130,7 +130,7 @@ const fetchMapData = async () => {
   map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
   map.value.addSource('cuenca', {
       type: 'geojson',
-      data: '../src/assets/geojson/ManiatepecCuenca.geojson',
+      data: 'https://api.calidadagua.mx/media/files/ManiatepecCuenca.geojson',
   })
   map.value.addLayer({
     'id': 'maine',
