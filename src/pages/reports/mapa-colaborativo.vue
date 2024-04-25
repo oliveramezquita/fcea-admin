@@ -402,7 +402,7 @@ watch(sites, () => {
         <!-- 👉 Perfect Scrollbar -->
         <PerfectScrollbar
           :options="{ wheelPropagation: false, suppressScrollX: true }"
-          style="block-size: calc(100% - 60px);"
+          style="block-size: calc(100% - 180px);"
         >
           <VCardText class="pt-0">
             <div
