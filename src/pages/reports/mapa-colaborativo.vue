@@ -1,4 +1,5 @@
 <script setup>
+import MapFiltersDrawer from '@/views/reports/MapFiltersDrawer.vue';
 import SitePanelInfo from '@/views/reports/SitePanelInfo.vue';
 import mapboxgl from 'mapbox-gl';
 import {
@@ -150,7 +151,7 @@ onMounted(() => {
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
     });
-    map.value.addSource(`cuenca`, {
+    map.value.addSource('cuenca', {
       type: 'geojson',
       data: 'https://api.calidadagua.mx/media/files/ManiatepecCuenca.geojson',
     });
@@ -282,8 +283,19 @@ const flyToLocation = (geolocation, index) => {
 const updateProjects = async () => {
   await fetchFilters()
   await fetchSites()
-  
 }
+
+const updateMap = async filters => {
+  selectedProject.value = filters.project
+  selectedState.value = filters.state
+  selectedInstitution.value = filters.institution
+  selectedSites.value = filters.site
+  dateRange.value = filters.dates
+  await fetchFilters()
+  await fetchSites()
+}
+
+const isMapFiltersDrawerVisible = ref(false)
 
 watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
@@ -298,86 +310,88 @@ watch(sites, () => {
 </script>
 
 <template>
-  <VRow class="filters-layout">
-    <!-- 👉 Select Role -->
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <AppSelect
-        v-model="selectedProject"
-        placeholder="Seleccionar cuenca"
-        :items="projectList"
+  <div class="d-lg-block d-none">
+    <VRow class="filters-layout">
+      <!-- 👉 Select Role -->
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <AppSelect
+          v-model="selectedProject"
+          placeholder="Seleccionar cuenca"
+          :items="projectList"
+          @update:model-value="updateProjects"
+        />
+      </VCol>
+      <!-- 👉 Select Role -->
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <AppSelect
+          v-model="selectedState"
+          placeholder="Seleccionar estado"
+          :items="statesList"
+          clearable
+          clear-icon="tabler-x"
+          @update:model-value="updateProjects"
+        />
+      </VCol>
+      <!-- 👉 Select Plan -->
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <AppSelect
+          v-model="selectedInstitution"
+          placeholder="Seleccionar institución"
+          :items="institutionsList"
+          clearable
+          clear-icon="tabler-x"
+          @update:model-value="updateProjects"
+        />
+      </VCol>
+      <!-- 👉 Select Status -->
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <AppSelect
+          v-model="selectedSites"
+          placeholder="Seleccionar sitio"
+          :items="sitesList"
+          clearable
+          clear-icon="tabler-x"
+          @update:model-value="updateProjects"
+        />
+      </VCol>
+      <VCol
+        cols="12"
+        sm="4"
+      >
+      <AppDateTimePicker
+        v-model="dateRange"
+        placeholder="Selecciona una fecha"
+        :config="{ mode: 'range' }"
         @update:model-value="updateProjects"
       />
-    </VCol>
-    <!-- 👉 Select Role -->
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <AppSelect
-        v-model="selectedState"
-        placeholder="Seleccionar estado"
-        :items="statesList"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects"
-      />
-    </VCol>
-    <!-- 👉 Select Plan -->
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <AppSelect
-        v-model="selectedInstitution"
-        placeholder="Seleccionar institución"
-        :items="institutionsList"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects"
-      />
-    </VCol>
-    <!-- 👉 Select Status -->
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <AppSelect
-        v-model="selectedSites"
-        placeholder="Seleccionar sitio"
-        :items="sitesList"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects"
-      />
-    </VCol>
-    <VCol
-      cols="12"
-      sm="4"
-    >
-    <AppDateTimePicker
-      v-model="dateRange"
-      placeholder="Selecciona una fecha"
-      :config="{ mode: 'range' }"
-      @update:model-value="updateProjects"
-    />
-    </VCol>
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <AppSelect
-        v-model="selectedParameter"
-        placeholder="Seleccionar parámetro"
-        :items="[]"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects"
-      />
-    </VCol>
-  </VRow> 
+      </VCol>
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <AppSelect
+          v-model="selectedParameter"
+          placeholder="Seleccionar parámetro"
+          :items="[]"
+          clearable
+          clear-icon="tabler-x"
+          @update:model-value="updateProjects"
+        />
+      </VCol>
+    </VRow> 
+  </div>
   <VLayout class="fleet-app-layout">
     <VNavigationDrawer
       v-model="isLeftSidebarOpen"
@@ -464,6 +478,13 @@ watch(sites, () => {
         >
           <VIcon icon="tabler-menu-2" />
         </IconBtn>
+        <IconBtn
+          class="d-lg-none filter-toggle-btn rounded-sm"
+          variant="elevated"
+          @click="isMapFiltersDrawerVisible = true"
+        >
+          <VIcon icon="tabler-filter-pin" />
+        </IconBtn>
         <!-- 👉 Fleet map  -->
         <div
           id="mapContainer"
@@ -472,6 +493,15 @@ watch(sites, () => {
       </div>
     </VMain>
   </VLayout>
+  <MapFiltersDrawer
+    v-model:isDrawerOpen="isMapFiltersDrawerVisible"
+    :selected-project="selectedProject"
+    :project-list="projectList"
+    :states-list="statesList"
+    :institutions-list="institutionsList"
+    :sites-list="sitesList"
+    @update-map="updateMap"
+  />
 </template>
 
 <style lang="scss">
@@ -498,6 +528,13 @@ watch(sites, () => {
   z-index: 1;
   inset-block-start: 1rem;
   inset-inline-start: 1rem;
+}
+
+.filter-toggle-btn {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
 }
 
 .navigation-close-btn {
