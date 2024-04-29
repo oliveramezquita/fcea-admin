@@ -9,16 +9,17 @@ const emit = defineEmits([
   'update:siteInfo',
 ])
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
-const siteReference = ref(JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0])
+const siteReference = ref(siteInfo.value.siteReferenceScore)
 const panel = ref()
 const score = ref(totalScore([
   calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
-  calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),
-  calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.dissolved_oxygen),
-  calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidity),
-  calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitrates),
-  calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.ammonium),
-  calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.orthophosphates),
+  calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
+  calculateTemperatureGrade(siteInfo.value.environmental_temperature, siteReference.value?.temperatura_ambiental),
+  calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
+  calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
+  calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
+  calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.amonio),
+  calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.ortofosfatos),
   calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
   calculateColiformsGrade(siteInfo.value.fecal_coliforms),
   calculateChGrade(siteInfo.value.hydromorphological_quality),
@@ -27,15 +28,16 @@ const score = ref(totalScore([
 const full = ref(100)
 watch(props, () => {
   siteInfo.value = structuredClone(toRaw(props.siteInfo))
-  siteReference.value = JSON.parse('site_reference' in siteInfo.value ? siteInfo.value.site_reference : '[]')[0]
+  siteReference.value = siteInfo.value.siteReferenceScore
   score.value = totalScore([
     calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
-    calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.water_temperature),
-    calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.dissolved_oxygen),
-    calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidity),
-    calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitrates),
-    calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.ammonium),
-    calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.orthophosphates),
+    calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
+    calculateTemperatureGrade(siteInfo.value.environmental_temperature, siteReference.value?.temperatura_ambiental),
+    calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
+    calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
+    calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
+    calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.amonio),
+    calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.ortofosfatos),
     calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
     calculateColiformsGrade(siteInfo.value.fecal_coliforms),
     calculateChGrade(siteInfo.value.hydromorphological_quality),
@@ -66,6 +68,16 @@ watch(props, () => {
             <template #append>
               <div class="d-flex align-center gap-x-4">
                   {{ siteInfo.type_site }}
+              </div>
+            </template>
+          </VListItem>
+          <VListItem v-if="siteInfo.siteReferenceScore">
+            <VListItemTitle class="font-weight-medium me-4">
+              Sitio de referencia
+            </VListItemTitle>
+            <template #append>
+              <div class="d-flex align-center gap-x-4">
+                {{ siteInfo.siteReferenceScore?.nombre_sitio }}
               </div>
             </template>
           </VListItem>
@@ -182,7 +194,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateTemperatureGrade(siteInfo.water_temperature, siteReference?.water_temperature)"
+                  :color="calculateTemperatureGrade(siteInfo.water_temperature, siteReference?.temperatura_agua)"
                 >
                   {{ siteInfo.water_temperature }}ºC
                 </VChip>
@@ -199,7 +211,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateTemperatureGrade(siteInfo.environmental_temperature, siteReference?.environmental_temperature)"
+                  :color="calculateTemperatureGrade(siteInfo.environmental_temperature, siteReference?.temperatura_ambiental)"
                 >
                   {{ siteInfo.environmental_temperature }}ºC
                 </VChip>
@@ -233,7 +245,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateSaturationGrade(siteInfo.dissolved_oxygen, siteReference?.dissolved_oxygen)"
+                  :color="calculateSaturationGrade(siteInfo.dissolved_oxygen, siteReference?.oxigeno_disuelto)"
                 >
                   {{ siteInfo.dissolved_oxygen }} mg/L
                 </VChip>
@@ -250,7 +262,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateTurbidityGrade(siteInfo.turbidity, siteReference?.turbidity)"
+                  :color="calculateTurbidityGrade(siteInfo.turbidity, siteReference?.turbidez)"
                 >
                   {{ siteInfo.turbidity }} JTU
                 </VChip>
@@ -267,7 +279,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateNitratesGrade(siteInfo.nitrates, siteReference?.nitrates)"
+                  :color="calculateNitratesGrade(siteInfo.nitrates, siteReference?.nitratos)"
                 >
                   {{ siteInfo.nitrates }} mg/L
                 </VChip>
@@ -284,7 +296,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateAmmoniumGrade(siteInfo.ammonium, siteReference?.ammonium)"
+                  :color="calculateAmmoniumGrade(siteInfo.ammonium, siteReference?.amonio)"
                 >
                   {{ siteInfo.ammonium }} mg/L
                 </VChip>
@@ -301,7 +313,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateOrthophosphatesGrade(siteInfo.orthophosphates, siteReference?.orthophosphates)"
+                  :color="calculateOrthophosphatesGrade(siteInfo.orthophosphates, siteReference?.ortofosfatos)"
                 >
                   {{ siteInfo.orthophosphates }} mg/L
                 </VChip>

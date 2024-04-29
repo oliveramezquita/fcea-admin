@@ -37,7 +37,6 @@ const institutionsList = ref(siteFilters.value?.institution)
 const sitesList = ref(siteFilters.value?.sites)
 selectedProject.value = siteFilters.value?.default_project 
 
-
 const {
   data: sitesData,
   execute: fetchSites,
@@ -111,7 +110,7 @@ const fetchFeatureAndTracking = async () => {
       hydromorphological_quality: site.calidad_hidromorfologica,
       riparian_forest_quality: site.calidad_bosque_ribera,
       date: site.fecha, 
-      site_reference: JSON.stringify(siteTrackingData.value.filter(s => s.id === site.sitio_referencia_id)),
+      siteReferenceScore: site.reference_site_scores,
     }
     siteTrackingData.value.push(siteInfo)
     showPanel.value.push(false)
@@ -280,7 +279,14 @@ const flyToLocation = (geolocation, index) => {
     zoom: 16,
   })
 }
-const updateProjects = async () => {
+const updateProjects = async (ev) => {
+  if (ev == 'projects') {
+    selectedState.value = null
+    selectedInstitution.value = null
+    selectedSites.value = null
+    dateRange.value = null
+    selectedParameter.value = null
+  }
   await fetchFilters()
   await fetchSites()
 }
@@ -321,7 +327,7 @@ watch(sites, () => {
           v-model="selectedProject"
           placeholder="Seleccionar cuenca"
           :items="projectList"
-          @update:model-value="updateProjects"
+          @update:model-value="updateProjects('projects')"
         />
       </VCol>
       <!-- 👉 Select Role -->
@@ -335,7 +341,7 @@ watch(sites, () => {
           :items="statesList"
           clearable
           clear-icon="tabler-x"
-          @update:model-value="updateProjects"
+          @update:model-value="updateProjects('state')"
         />
       </VCol>
       <!-- 👉 Select Plan -->
@@ -349,7 +355,7 @@ watch(sites, () => {
           :items="institutionsList"
           clearable
           clear-icon="tabler-x"
-          @update:model-value="updateProjects"
+          @update:model-value="updateProjects('institution')"
         />
       </VCol>
       <!-- 👉 Select Status -->
@@ -363,7 +369,7 @@ watch(sites, () => {
           :items="sitesList"
           clearable
           clear-icon="tabler-x"
-          @update:model-value="updateProjects"
+          @update:model-value="updateProjects('sites')"
         />
       </VCol>
       <VCol
@@ -374,7 +380,7 @@ watch(sites, () => {
         v-model="dateRange"
         placeholder="Selecciona una fecha"
         :config="{ mode: 'range' }"
-        @update:model-value="updateProjects"
+        @update:model-value="updateProjects('date')"
       />
       </VCol>
       <VCol
@@ -387,7 +393,7 @@ watch(sites, () => {
           :items="[]"
           clearable
           clear-icon="tabler-x"
-          @update:model-value="updateProjects"
+          @update:model-value="updateProjects('parameter')"
         />
       </VCol>
     </VRow> 
