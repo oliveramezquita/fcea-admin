@@ -136,18 +136,32 @@ watch(props, () => {
           </VListItem>
         </VList>
         <VDivider />
-        <VList class="card-list mb-5 mt-5">
-          <VListItem>
-            <VListItemTitle class="font-weight-medium me-4">
-              <a :href="siteInfo.photo1" target="_blank">Fotografía 1</a>
-            </VListItemTitle>
-          </VListItem>
-          <VListItem>
-            <VListItemTitle class="font-weight-medium me-4">
-              <a :href="siteInfo.photo2" target="_blank">Fotografía 2</a>
-            </VListItemTitle>
-          </VListItem>
-        </VList>
+        <div>
+          <VBtn
+            :href="siteInfo.photo1"
+            target="_blank"
+            variant="plain"
+            v-if="siteInfo.photo1"
+          >
+            <VIcon
+              start
+              icon="tabler-photo-scan"
+            />
+            Fotografía 1
+          </VBtn>
+          <VBtn
+            :href="siteInfo.photo2"
+            target="_blank"
+            variant="plain"
+            v-if="siteInfo.photo2"
+          >
+            <VIcon
+              start
+              icon="tabler-photo-scan"
+            />
+            Fotografía 2
+          </VBtn>
+        </div>
       </VExpansionPanelText>
     </VExpansionPanel>
     <VExpansionPanel>
