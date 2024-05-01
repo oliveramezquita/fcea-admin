@@ -291,12 +291,16 @@ const updateProjects = async (ev) => {
     selectedSites.value = null
     dateRange.value = null
     selectedParameter.value = null
-    map.value.removeLayer('maine')
-    map.value.removeLayer('outline')
-    map.value.removeSource('cuenca')
+    resetPolygonData()
   }
   await fetchFilters()
   await fetchSites()
+}
+
+const resetPolygonData = async() => {
+  if (map.value.getLayer('maine')) map.value.removeLayer('maine')
+  if (map.value.getLayer('outline')) map.value.removeLayer('outline')
+  if (map.value.getSource('cuenca')) map.value.removeSource('cuenca')
 }
 
 const updateMap = async filters => {
