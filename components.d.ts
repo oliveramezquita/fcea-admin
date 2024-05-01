@@ -44,6 +44,7 @@ declare module 'vue' {
     CustomRadiosWithImage: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithImage.vue')['default']
     DataFilters: typeof import('./src/@core/components/DataFilters.vue')['default']
     DeleteCatalogDialog: typeof import('./src/components/dialogs/DeleteCatalogDialog.vue')['default']
+    DeleteGeoJsonFileDialog: typeof import('./src/components/dialogs/DeleteGeoJsonFileDialog.vue')['default']
     DeleteUserDialog: typeof import('./src/components/dialogs/DeleteUserDialog.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']

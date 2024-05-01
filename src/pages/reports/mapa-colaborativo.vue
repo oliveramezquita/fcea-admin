@@ -35,6 +35,7 @@ const projectList = ref(siteFilters.value?.projects)
 const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
 const sitesList = ref(siteFilters.value?.sites)
+const geoJsonData = ref(siteFilters.value?.geojson_data)
 selectedProject.value = siteFilters.value?.default_project 
 
 const {
@@ -128,7 +129,35 @@ const fetchMapData = async () => {
   const coordinates = geojson.features[0].geometry.coordinates
   map.value.getSource('sites').setData(geojson)
   map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
-  // TODO: Move polygon data here
+}
+
+const fetchGeoJsonData = async () => {
+  if(geoJsonData.value && !map.value.getSource('cuenca')) {
+    map.value.addSource('cuenca', {
+      type: 'geojson',
+      data: geoJsonData.value,
+    })
+    map.value.addLayer({
+      'id': 'maine',
+      'type': 'fill',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'fill-color': '#1f97b4', 
+          'fill-opacity': 0.5
+      }
+    })
+    map.value.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'line-color': '#000',
+          'line-width': 2
+      }
+    })
+  } 
 }
 
 onMounted(() => {
@@ -149,11 +178,7 @@ onMounted(() => {
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-    });
-    map.value.addSource('cuenca', {
-      type: 'geojson',
-      data: 'https://api.calidadagua.mx/media/files/ManiatepecCuenca.geojson',
-    });
+    })
     fetchMapData()
     // Layer of sites
     map.value.addLayer({
@@ -181,7 +206,7 @@ onMounted(() => {
               40
           ]
       }
-    });
+    })
     map.value.addLayer({
       id: 'cluster-count',
       type: 'symbol',
@@ -192,7 +217,7 @@ onMounted(() => {
           'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
           'text-size': 16
       }
-    });
+    })
     map.value.addLayer({
       id: 'unclustered-point',
       type: 'circle',
@@ -204,31 +229,31 @@ onMounted(() => {
           'circle-stroke-width': 2,
           'circle-stroke-color': '#fff'
       }
-    });
+    })
     map.value.on('click', 'clusters', (e) => {
       const features = map.value.queryRenderedFeatures(e.point, {
           layers: ['clusters']
-      });
-      const clusterId = features[0].properties.cluster_id;
+      })
+      const clusterId = features[0].properties.cluster_id
       map.value.getSource('sites').getClusterExpansionZoom(
           clusterId,
           (err, zoom) => {
-              if (err) return;
+              if (err) return
 
               map.value.easeTo({
                   center: features[0].geometry.coordinates,
                   zoom: zoom
-              });
+              })
           }
-      );
-    });
+      )
+    })
     map.value.on('click', 'unclustered-point', (e) => {
-      const coordinates = e.features[0].geometry.coordinates.slice();
-      const title = e.features[0].properties.title;
-      const cdts = e.features[0].properties.coordinates;
-      const description = e.features[0].properties.description;
+      const coordinates = e.features[0].geometry.coordinates.slice()
+      const title = e.features[0].properties.title
+      const cdts = e.features[0].properties.coordinates
+      const description = e.features[0].properties.description
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
       }
 
       new mapboxgl.Popup()
@@ -236,35 +261,15 @@ onMounted(() => {
           .setHTML(
               `<b>${title}</b><br>${cdts}<br>${description}`
           )
-          .addTo(map.value);
-    });
+          .addTo(map.value)
+    })
     map.value.on('mouseenter', 'clusters', () => {
-        map.value.getCanvas().style.cursor = 'pointer';
-    });
+        map.value.getCanvas().style.cursor = 'pointer'
+    })
     map.value.on('mouseleave', 'clusters', () => {
-        map.value.getCanvas().style.cursor = '';
-    });
-    // Layers for polygon
-    map.value.addLayer({
-      'id': 'maine',
-      'type': 'fill',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'fill-color': '#1f97b4', 
-          'fill-opacity': 0.5
-      }
-    });
-    map.value.addLayer({
-      'id': 'outline',
-      'type': 'line',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'line-color': '#000',
-          'line-width': 2
-      }
-    });
+        map.value.getCanvas().style.cursor = ''
+    })
+    fetchGeoJsonData()
   })
 })
 
@@ -286,6 +291,9 @@ const updateProjects = async (ev) => {
     selectedSites.value = null
     dateRange.value = null
     selectedParameter.value = null
+    map.value.removeLayer('maine')
+    map.value.removeLayer('outline')
+    map.value.removeSource('cuenca')
   }
   await fetchFilters()
   await fetchSites()
@@ -307,6 +315,8 @@ watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
   institutionsList.value = siteFilters.value?.institution
   sitesList.value = siteFilters.value?.sites
+  geoJsonData.value = siteFilters.value?.geojson_data
+  fetchGeoJsonData()
 })
 
 watch(sites, () => {
@@ -380,6 +390,8 @@ watch(sites, () => {
         v-model="dateRange"
         placeholder="Selecciona una fecha"
         :config="{ mode: 'range' }"
+        clearable
+        clear-icon="tabler-x"
         @update:model-value="updateProjects('date')"
       />
       </VCol>
@@ -471,7 +483,21 @@ watch(sites, () => {
                 </div>
               </VExpandTransition>
             </div>
+            <template v-if="siteTrackingData.length === 0">
+              <VAlert
+                prominent
+                type="info"
+                variant="tonal"
+                color="secondary"
+              >
+                <template #text>
+                  <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
+                  <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
+                </template>
+              </VAlert>
+            </template>
           </VCardText>
+
         </PerfectScrollbar>
       </VCard>
     </VNavigationDrawer>

@@ -51,6 +51,60 @@ const editAdminUsers = async project => {
   })
   isEditing.value = true
 }
+const geoJsonFile = ref()
+const loading = ref(false)
+const isAlertVisible = ref(false)
+const alertType = ref('error') 
+const alertMessage = ref()
+const uploadGeoJson = async project => {
+  if (!geoJsonFile.value[0]) {
+    isGeoJsonFileDeleteDialogVisible.value = true
+  } else {
+    loading.value = true
+    let formData = new FormData()
+    formData.append('geojson_file', geoJsonFile.value[0])
+    await $api(`api/project/${project._id}`, {
+      method: 'PATCH',
+      body: formData,
+      onResponse() {
+        loading.value = false
+      },
+      onResponseError({ response }) {
+        loading.value = false
+        alertMessage.value = `Ocurrió un error al momento de subi el archivo: ${response?._data?.message}`
+        isAlertVisible.value = true
+        fetchGeoJsonFile()
+      }
+    })
+  }
+}
+
+const isGeoJsonFileDeleteDialogVisible = ref(false)
+const deleteGeoJsonFile = async project => {
+  await $api(`api/project/${project._id}`, {
+    method: 'PATCH',
+    body: {
+      'geojson_file': null
+    },
+  })
+}
+const cancelDeleteGeoJsonFile = async () => {
+  fetchGeoJsonFile()
+}
+
+const geoJsonFileURL = ref(project.value?.geojson_file)
+const fetchGeoJsonFile = async () => {
+  $api(geoJsonFileURL.value, {
+    method: 'GET',
+    onResponse({ response }) {
+      const filename = geoJsonFileURL.value.replace(/^.*[\\/]/, '')
+      geoJsonFile.value = [new File([response._data], filename, {type: "text/json;charset=utf-8"})]
+    }
+  })
+}
+if (geoJsonFileURL.value) {
+  fetchGeoJsonFile()
+}
 </script>
 
 <template>
@@ -95,6 +149,7 @@ const editAdminUsers = async project => {
                   placeholder="Selecciona un administrador"
                   label="Administrador(es)"
                   :readonly="!isSuperAdminRule"
+                  prepend-icon="tabler-user-cog"
                 >
                   <template #chip="{ props, item }">
                     <VChip
@@ -122,6 +177,25 @@ const editAdminUsers = async project => {
                     </VSlideXReverseTransition>
                   </template>
                 </AppAutocomplete>
+                <VFileInput
+                  accept="application/json"
+                  v-model="geoJsonFile"
+                  :loading="loading"
+                  color="primary"
+                  label="Polígeno GeoJSON"
+                  variant="outlined"
+                  class="mt-5"
+                  @update:model-value="uploadGeoJson(project)"
+                />
+                <VAlert
+                  v-model="isAlertVisible"
+                  closable
+                  close-label="Close Alert"
+                  class="mt-5"
+                  :type="alertType"
+                  variant="tonal">
+                  {{ alertMessage }}
+                </VAlert>
               </div>
             </div>
 
@@ -195,4 +269,10 @@ const editAdminUsers = async project => {
       </VCardText>
     </VCard>
   </div>
+  <DeleteGeoJsonFileDialog
+    v-model:isDialogVisible="isGeoJsonFileDeleteDialogVisible"
+    v-model:projectData="project"
+    @delete-geo-json-file="deleteGeoJsonFile"
+    @cancel-delete-file="cancelDeleteGeoJsonFile"
+  />
 </template>

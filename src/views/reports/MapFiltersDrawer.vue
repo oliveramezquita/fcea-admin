@@ -147,6 +147,8 @@ const updateProjects = async project => {
                   v-model="selectedState"
                   placeholder="Seleccionar estado"
                   :items="statesList"
+                  clearable
+                  clear-icon="tabler-x"
                 />
               </VCol>
               <VCol cols="12">
@@ -154,6 +156,8 @@ const updateProjects = async project => {
                   v-model="selectedInstitution"
                   placeholder="Seleccionar institución"
                   :items="institutionsList"
+                  clearable
+                  clear-icon="tabler-x"
                 />
               </VCol>
               <VCol cols="12">
@@ -161,6 +165,8 @@ const updateProjects = async project => {
                   v-model="selectedSites"
                   placeholder="Seleccionar sitio"
                   :items="sitesList"
+                  clearable
+                  clear-icon="tabler-x"
                 />
               </VCol>
               <VCol cols="12">
@@ -168,6 +174,8 @@ const updateProjects = async project => {
                 v-model="dateRange"
                 placeholder="Selecciona una fecha"
                 :config="{ mode: 'range' }"
+                clearable
+                clear-icon="tabler-x"
               />
               </VCol>
               <VCol cols="12">
@@ -175,6 +183,8 @@ const updateProjects = async project => {
                   v-model="selectedParameter"
                   placeholder="Seleccionar parámetro"
                   :items="[]"
+                  clearable
+                  clear-icon="tabler-x"
                 />
               </VCol>
               <VCol cols="12">

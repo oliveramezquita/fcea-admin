@@ -167,7 +167,7 @@ const getNumOfUsers = project => {
       </VCard>
     </VCol>
   </VRow>
-  <template v-if="emptyProjects">
+  <template v-if="emptyProjects && !isSuperAdminRule">
     <VCard title="Sin cuenca asignada" class="mt-5">
       <VCardText>
         No cuentas con alguna cuenca asignada o activa, para más información envíanos un correo a: <a href="mailto:karla.rivera@fcea.org.mx" target="_blank">karla.rivera@fcea.org.mx</a> o comunícate al teléfono: <a href="https://wa.me/525548104412" target="_blank">55 4810 4412</a>.
