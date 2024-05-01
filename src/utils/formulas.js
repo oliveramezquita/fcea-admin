@@ -167,7 +167,7 @@ export const calculateBioticGrade = (macroinvertebrateScore) => {
 
 export const calculateSaturationGrade = (saturation, saturationReference) => {
     if (saturationReference == null) return null
-    const change = saturation /saturationReference
+    const change = saturation / saturationReference
     if (change >= 0.8)
         return getColor(1)
     else if (change >= 0.6)

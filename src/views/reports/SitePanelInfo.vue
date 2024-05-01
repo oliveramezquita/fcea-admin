@@ -9,12 +9,11 @@ const emit = defineEmits([
   'update:siteInfo',
 ])
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
-const siteReference = ref(siteInfo.value.siteReferenceScore)
+const siteReference = ref(siteInfo.value.site_reference_score)
 const panel = ref()
 const score = ref(totalScore([
   calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
   calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
-  calculateTemperatureGrade(siteInfo.value.environmental_temperature, siteReference.value?.temperatura_ambiental),
   calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
   calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
   calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
@@ -28,11 +27,10 @@ const score = ref(totalScore([
 const full = ref(100)
 watch(props, () => {
   siteInfo.value = structuredClone(toRaw(props.siteInfo))
-  siteReference.value = siteInfo.value.siteReferenceScore
+  siteReference.value = siteInfo.value.site_reference_score
   score.value = totalScore([
     calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
     calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
-    calculateTemperatureGrade(siteInfo.value.environmental_temperature, siteReference.value?.temperatura_ambiental),
     calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
     calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
     calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
@@ -71,13 +69,13 @@ watch(props, () => {
               </div>
             </template>
           </VListItem>
-          <VListItem v-if="siteInfo.siteReferenceScore">
+          <VListItem v-if="siteInfo.site_reference_score">
             <VListItemTitle class="font-weight-medium me-4">
               Sitio de referencia
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
-                {{ siteInfo.siteReferenceScore?.nombre_sitio }}
+                {{ siteInfo.site_reference_score?.nombre_sitio }}
               </div>
             </template>
           </VListItem>
@@ -130,7 +128,17 @@ watch(props, () => {
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
-                {{ siteInfo.altitude }}
+                {{ siteInfo.altitude }} m
+              </div>
+            </template>
+          </VListItem>
+          <VListItem>
+            <VListItemTitle class="font-weight-medium me-4">
+              Caudal
+            </VListItemTitle>
+            <template #append>
+              <div class="d-flex align-center gap-x-4">
+                {{ siteInfo.water_flow }} m³/s
               </div>
             </template>
           </VListItem>
@@ -215,7 +223,7 @@ watch(props, () => {
               </div>
             </template>
           </VListItem>
-          <VListItem>
+          <!--<VListItem>
             <VListItemTitle class="font-weight-medium me-4">
               Temperatura del ambiente
             </VListItemTitle>
@@ -231,7 +239,7 @@ watch(props, () => {
                 </VChip>
               </div>
             </template>
-          </VListItem>
+          </VListItem>-->
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
               pH

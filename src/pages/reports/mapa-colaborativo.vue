@@ -96,6 +96,7 @@ const fetchFeatureAndTracking = async () => {
       season: site.temporada,
       photo1: site.fotografia1,
       photo2: site.fotografia2,
+      water_flow: site.caudal,
       ph: site.ph,
       ammonium: site.amonio,
       orthophosphates: site.ortofosfatos,
@@ -111,7 +112,7 @@ const fetchFeatureAndTracking = async () => {
       hydromorphological_quality: site.calidad_hidromorfologica,
       riparian_forest_quality: site.calidad_bosque_ribera,
       date: site.fecha, 
-      siteReferenceScore: site.reference_site_scores,
+      site_reference_score: site.reference_site_scores,
     }
     siteTrackingData.value.push(siteInfo)
     showPanel.value.push(false)
