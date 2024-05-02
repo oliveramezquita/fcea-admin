@@ -81,9 +81,11 @@ const fetchFeatureAndTracking = async () => {
       }
     }
     featureCollection.value.features.push(feature)
+    const monitoringDate = new Date(site.fecha)
     let siteInfo = {
       id: site._id,
       name: site.nombre_sitio,
+      is_reference_site: site.es_sitio_referencia,
       type_site: site.es_sitio_referencia ? 'Sitio de referencia' : 'Sitio de interés',
       icon: site.es_sitio_referencia ? 'tabler-map-2' : 'tabler-map-check',
       latitude: site.latitud,
@@ -111,7 +113,7 @@ const fetchFeatureAndTracking = async () => {
       macroinvertebrates_rating: site.calificacion_macroinvertebrados,
       hydromorphological_quality: site.calidad_hidromorfologica,
       riparian_forest_quality: site.calidad_bosque_ribera,
-      date: site.fecha, 
+      date: monitoringDate.toLocaleString(), 
       site_reference_score: site.reference_site_scores,
     }
     siteTrackingData.value.push(siteInfo)

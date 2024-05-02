@@ -142,6 +142,16 @@ watch(props, () => {
               </div>
             </template>
           </VListItem>
+          <VListItem>
+            <VListItemTitle class="font-weight-medium me-4">
+              Fecha del monitoreo
+            </VListItemTitle>
+            <template #append>
+              <div class="d-flex align-center gap-x-4">
+                {{ siteInfo.date }}
+              </div>
+            </template>
+          </VListItem>
         </VList>
         <VDivider />
         <div>
@@ -177,7 +187,8 @@ watch(props, () => {
         collapse-icon="tabler-minus"
         expand-icon="tabler-plus"
       >
-      Evaluación de la calidad ecológica
+        <span v-if="!siteInfo.is_reference_site">Evaluación de la calidad ecológica</span>
+        <span v-if="siteInfo.is_reference_site">Resultados de la calidad ecológica</span>
       </VExpansionPanelTitle>
 
       <VExpansionPanelText>
