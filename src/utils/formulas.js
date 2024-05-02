@@ -188,7 +188,7 @@ export const getScoreMessage = (grade) => {
         {category: 'Mala', interpretation: 'Los elementos físico-químicos, biológicos y paisajísticos del ecosistema acuático se encuentran muy alterados. La intensidad de las actividades humanas está afectando de manera importante al ecosistema, el cual presenta una contaminación alta, un paisaje alterado y condiciones adversas para la vida acuática.'},
         {category: 'Muy Mala', interpretation: 'El ecosistema acuático está afectado drásticamente y presenta una contaminación muy alta. Los elementos físico-químicos, biológicos y paisajísticos se encuentran fuertemente alterados por la influencia humana, lo cual ha generado una ruptura en la dinámica natural del ecosistema con la consecuente disminución de la biodiversidad y pérdida de servicios ecosistémicos.'},
     ]
-    return message[grade]
+    return message[grade-1]
 }
 
 export const totalScore = (list) => {
@@ -196,16 +196,27 @@ export const totalScore = (list) => {
     let total = 0
     Object.values(list).forEach(value => {
         if (value != null)
-            total = total + colors.indexOf(value)
+            total = total + (colors.indexOf(value) + 1)
+        else 
+            total = total + 1
     })
-    let grade = 1
-    if (total > 15)
+    let grade = null
+    let score = null
+    if (total >= 11 && total <= 15) {
+        grade = 1
+        score = 5
+    } else if (total >= 16 && total <= 25) {
         grade = 2
-    else if (total > 25)
+        score = 4
+    } else if (total >= 26 && total <= 35) {
         grade = 3
-    else if (total > 35)
+        score = 3
+    } else if (total >= 36 && total <= 46) {
         grade = 4
-    else if (total > 46)
+        score = 2
+    } else if (total >= 47) {
         grade = 5
-    return {total: total, color: getColor(grade), message: getScoreMessage(grade)}
+        score = 1
+    }
+    return {total: score, color: getColor(grade), message: getScoreMessage(grade)}
 }

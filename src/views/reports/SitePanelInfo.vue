@@ -186,7 +186,7 @@ watch(props, () => {
             <template #prepend>
               <VProgressCircular
                 v-model="full"
-                :size="54"
+                :size="38"
                 class="me-4"
                 :color="score.color"
               >
