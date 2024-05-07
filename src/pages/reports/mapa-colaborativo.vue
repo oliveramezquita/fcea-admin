@@ -84,6 +84,7 @@ const fetchFeatureAndTracking = async () => {
       is_reference_site: site.es_sitio_referencia,
       type_site: site.es_sitio_referencia ? 'Sitio de referencia' : 'Sitio de interés',
       icon: site.es_sitio_referencia ? 'tabler-map-2' : 'tabler-map-check',
+      color: site.scores.total ? site.scores?.total[2]: 'secondary',
       latitude: site.latitud,
       longitude: site.longitud,
       altitude: site.altitud,
@@ -109,7 +110,8 @@ const fetchFeatureAndTracking = async () => {
       macroinvertebrates_rating: site.calificacion_macroinvertebrados,
       hydromorphological_quality: site.calidad_hidromorfologica,
       riparian_forest_quality: site.calidad_bosque_ribera,
-      date: monitoringDate.toLocaleString(), 
+      date: monitoringDate, 
+      scores: site.scores,
       site_reference_score: site.reference_site_scores,
     }
     siteTrackingData.value.push(siteInfo)
@@ -529,7 +531,7 @@ const updateGraph = async graph => {
           </template>
         </VCardItem>
 
-        <VTabs
+        <!-- <VTabs
           v-model="currentTab"
           grow
           stacked
@@ -545,70 +547,69 @@ const updateGraph = async graph => {
             />
             <span>{{ tab.title }}</span>
           </VTab>
-        </VTabs>
+        </VTabs> -->
         <!-- 👉 Perfect Scrollbar -->
         <PerfectScrollbar
           :options="{ wheelPropagation: false, suppressScrollX: true }"
           style="block-size: calc(100% - 125px);"
         >
-          <VWindow v-model="currentTab">
-            <VWindowItem>
-                <VCardText class="pt-5">
+          <!-- <VWindow v-model="currentTab">
+            <VWindowItem> -->
+              <VCardText class="pt-5">
+                <div
+                  v-for="(site, index) in siteTrackingData"
+                  :key="index"
+                  class="mb-6"
+                >
                   <div
-                    v-for="(site, index) in siteTrackingData"
-                    :key="index"
-                    class="mb-6"
+                    class="d-flex align-center justify-space-between cursor-pointer"
+                    @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
                   >
-                    <div
-                      class="d-flex align-center justify-space-between cursor-pointer"
-                      @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
-                    >
-                      <div class="d-flex gap-x-4 align-center">
-                        <VAvatar
-                          :icon="site.icon"
-                          variant="tonal"
-                          color="secondary"
-                        />
-                        <div>
-                          <div class="text-body-1 text-high-emphasis">
-                            {{ site.name }}
-                          </div>
-                          <div class="text-body-1">
-                            {{ site.location }}
-                          </div>
+                    <div class="d-flex gap-x-4 align-center">
+                      <VAvatar
+                        :icon="site.icon"
+                        :color="site.color"
+                      />
+                      <div>
+                        <div class="text-body-1 text-high-emphasis">
+                          {{ site.name }}
+                        </div>
+                        <div class="text-body-1">
+                          {{ site.location }}
                         </div>
                       </div>
-                      <IconBtn size="small">
-                        <VIcon
-                          :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
-                          class="text-high-emphasis"
-                        />
-                      </IconBtn>
                     </div>
-                    <VExpandTransition mode="out-in">
-                      <div v-show="showPanel[index]">
-                        <div class="mt-5">
-                          <SitePanelInfo :site-info="site" />
-                        </div>
-                      </div>
-                    </VExpandTransition>
+                    <IconBtn size="small">
+                      <VIcon
+                        :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
+                        class="text-high-emphasis"
+                      />
+                    </IconBtn>
                   </div>
-                  <template v-if="siteTrackingData.length === 0">
-                    <VAlert
-                      prominent
-                      type="info"
-                      variant="tonal"
-                      color="secondary"
-                    >
-                      <template #text>
-                        <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
-                        <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
-                      </template>
-                    </VAlert>
-                  </template>
-                </VCardText>
-              </VWindowItem>
-              <VWindowItem>
+                  <VExpandTransition mode="out-in">
+                    <div v-show="showPanel[index]">
+                      <div class="mt-5">
+                        <SitePanelInfo :site-info="site" />
+                      </div>
+                    </div>
+                  </VExpandTransition>
+                </div>
+                <template v-if="siteTrackingData.length === 0">
+                  <VAlert
+                    prominent
+                    type="info"
+                    variant="tonal"
+                    color="secondary"
+                  >
+                    <template #text>
+                      <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
+                      <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
+                    </template>
+                  </VAlert>
+                </template>
+              </VCardText>
+            <!-- </VWindowItem>
+            <VWindowItem>
               <VCardText class="pt-5">
                 <VRadioGroup
                   v-model="radioGroup"
@@ -629,7 +630,7 @@ const updateGraph = async graph => {
                   :title="graphTitle" />
               </VCardText>
             </VWindowItem>
-          </VWindow>
+          </VWindow> -->
         </PerfectScrollbar>
       </VCard>
     </VNavigationDrawer>

@@ -9,38 +9,10 @@ const emit = defineEmits([
   'update:siteInfo',
 ])
 const siteInfo = ref(structuredClone(toRaw(props.siteInfo)))
-const siteReference = ref(siteInfo.value.site_reference_score)
 const panel = ref()
-const score = ref(totalScore([
-  calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
-  calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
-  calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
-  calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
-  calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
-  calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.amonio),
-  calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.ortofosfatos),
-  calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
-  calculateColiformsGrade(siteInfo.value.fecal_coliforms),
-  calculateChGrade(siteInfo.value.hydromorphological_quality),
-  calculateCbrGrade(siteInfo.value.riparian_forest_quality),
-]))
-const full = ref(100)
+const percentScore = ref(siteInfo.value.scores.total[0] * 20)
 watch(props, () => {
   siteInfo.value = structuredClone(toRaw(props.siteInfo))
-  siteReference.value = siteInfo.value.site_reference_score
-  score.value = totalScore([
-    calculatePhGrade(siteInfo.value.ph, siteReference.value?.ph),
-    calculateTemperatureGrade(siteInfo.value.water_temperature, siteReference.value?.temperatura_agua),
-    calculateSaturationGrade(siteInfo.value.dissolved_oxygen, siteReference.value?.oxigeno_disuelto),
-    calculateTurbidityGrade(siteInfo.value.turbidity, siteReference.value?.turbidez),
-    calculateNitratesGrade(siteInfo.value.nitrates, siteReference.value?.nitratos),
-    calculateAmmoniumGrade(siteInfo.value.ammonium, siteReference.value?.amonio),
-    calculateOrthophosphatesGrade(siteInfo.value.orthophosphates, siteReference.value?.ortofosfatos),
-    calculateBioticGrade(siteInfo.value.macroinvertebrates_rating),
-    calculateColiformsGrade(siteInfo.value.fecal_coliforms),
-    calculateChGrade(siteInfo.value.hydromorphological_quality),
-    calculateCbrGrade(siteInfo.value.riparian_forest_quality),
-  ])
 })
 </script>
 <template>
@@ -148,7 +120,17 @@ watch(props, () => {
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
-                {{ siteInfo.date }}
+                {{ `${("0" + siteInfo.date.getDate()).slice(-2)}/${("0"+(siteInfo.date.getMonth()+1)).slice(-2)}/${siteInfo.date.getFullYear()}` }}
+              </div>
+            </template>
+          </VListItem>
+          <VListItem>
+            <VListItemTitle class="font-weight-medium me-4">
+              Hora del monitoreo
+            </VListItemTitle>
+            <template #append>
+              <div class="d-flex align-center gap-x-4">
+                {{ `${("0" + siteInfo.date.getHours()).slice(-2)}:${("0" + siteInfo.date.getMinutes()).slice(-2)}` }}
               </div>
             </template>
           </VListItem>
@@ -196,23 +178,23 @@ watch(props, () => {
           <VListItem>
             <template #prepend>
               <VProgressCircular
-                v-model="full"
+                v-model="percentScore"
                 :size="38"
                 class="me-4"
-                :color="score.color"
+                :color="siteInfo.scores.total ? siteInfo.scores?.total[2] : null"
               >
                 <span class="text-body-1 text-high-emphasis font-weight-medium">
-                  {{ score.total }}
+                  {{ siteInfo.scores?.total[0] }}
                 </span>
               </VProgressCircular>
             </template>
             <VListItemTitle class="font-weight-medium mb-2 me-2">
-              {{ score.message.category }}
+              {{ siteInfo.scores?.interpretation[0] }}
             </VListItemTitle>
           </VListItem>
         </VList>
         <div class="text-body-2 mt-3">
-          {{ score.message.interpretation }}
+          {{ siteInfo.scores?.interpretation[1] }}
         </div>
         <h3 class="mt-5">Parámetros físico-químicos</h3>
         <VDivider class="mt-3 mb-5" />
@@ -227,7 +209,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateTemperatureGrade(siteInfo.water_temperature, siteReference?.temperatura_agua)"
+                  :color="siteInfo.scores.water_temperature ? siteInfo.scores?.water_temperature[1] : null"
                 >
                   {{ siteInfo.water_temperature }}ºC
                 </VChip>
@@ -261,7 +243,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculatePhGrade(siteInfo.ph, siteReference?.ph)"
+                  :color="siteInfo.scores.ph ? siteInfo.scores?.ph[1] : null"
                 >
                   {{ siteInfo.ph }}
                 </VChip>
@@ -278,7 +260,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateSaturationGrade(siteInfo.dissolved_oxygen, siteReference?.oxigeno_disuelto)"
+                  :color="siteInfo.scores.saturation ? siteInfo.scores?.saturation[1] : null"
                 >
                   {{ siteInfo.dissolved_oxygen }} mg/L
                 </VChip>
@@ -295,7 +277,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateTurbidityGrade(siteInfo.turbidity, siteReference?.turbidez)"
+                  :color="siteInfo.scores.turbidity ? siteInfo.scores?.turbidity[1] : null"
                 >
                   {{ siteInfo.turbidity }} JTU
                 </VChip>
@@ -312,7 +294,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateNitratesGrade(siteInfo.nitrates, siteReference?.nitratos)"
+                  :color="siteInfo.scores.nitrates ? siteInfo.scores?.nitrates[1] : null"
                 >
                   {{ siteInfo.nitrates }} mg/L
                 </VChip>
@@ -329,7 +311,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateAmmoniumGrade(siteInfo.ammonium, siteReference?.amonio)"
+                  :color="siteInfo.scores.ammonium ? siteInfo.scores?.ammonium[1] : null"
                 >
                   {{ siteInfo.ammonium }} mg/L
                 </VChip>
@@ -346,7 +328,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateOrthophosphatesGrade(siteInfo.orthophosphates, siteReference?.ortofosfatos)"
+                  :color="siteInfo.scores.orthophosphates ? siteInfo.scores?.orthophosphates[1] : null"
                 >
                   {{ siteInfo.orthophosphates }} mg/L
                 </VChip>
@@ -367,7 +349,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateChGrade(siteInfo.hydromorphological_quality)"
+                  :color="siteInfo.scores?.ch[1]"
                 >
                   {{ siteInfo.hydromorphological_quality }} puntos
                 </VChip>
@@ -384,7 +366,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateCbrGrade(siteInfo.riparian_forest_quality)"
+                  :color="siteInfo.scores?.cbr[1]"
                 >
                   {{ siteInfo.riparian_forest_quality }} puntos
                 </VChip>
@@ -405,7 +387,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateColiformsGrade(siteInfo.fecal_coliforms)"
+                  :color="siteInfo.scores?.fecal_coliforms[1]"
                 >
                   {{ siteInfo.total_coliforms }}
                 </VChip>
@@ -422,7 +404,7 @@ watch(props, () => {
                   label
                   size="small"
                   variant="elevated"
-                  :color="calculateBioticGrade(siteInfo.macroinvertebrates_rating)"
+                  :color="siteInfo.scores?.macroinvertebrates_rating[1]"
                 >
                   {{ siteInfo.macroinvertebrates_rating }} puntos
                 </VChip>
