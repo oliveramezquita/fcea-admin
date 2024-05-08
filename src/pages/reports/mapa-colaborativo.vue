@@ -551,7 +551,7 @@ const updateGraph = async graph => {
         <!-- 👉 Perfect Scrollbar -->
         <PerfectScrollbar
           :options="{ wheelPropagation: false, suppressScrollX: true }"
-          style="block-size: calc(100% - 125px);"
+          style="block-size: calc(100% - 80px);"
         >
           <!-- <VWindow v-model="currentTab">
             <VWindowItem> -->

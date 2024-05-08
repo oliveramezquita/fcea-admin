@@ -65,6 +65,7 @@ declare global {
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const formatDate: typeof import('./src/@core/utils/formatters.js')['formatDate']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']
+  const generateArrayOfYears: typeof import('./src/utils/functions.js')['generateArrayOfYears']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getColor: typeof import('./src/utils/formulas.js')['getColor']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
@@ -439,6 +440,7 @@ declare module 'vue' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
+    readonly generateArrayOfYears: UnwrapRef<typeof import('./src/utils/functions.js')['generateArrayOfYears']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
@@ -804,6 +806,7 @@ declare module '@vue/runtime-core' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
+    readonly generateArrayOfYears: UnwrapRef<typeof import('./src/utils/functions.js')['generateArrayOfYears']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>

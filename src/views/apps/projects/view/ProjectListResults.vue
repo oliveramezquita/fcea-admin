@@ -25,6 +25,7 @@ const ignoreKeys = [
   'es_sitio_referencia',
   'nombre_sitio',
   'create_date',
+  'scores',
 ]
 const items = []
 Object.keys(projectData.value).forEach(key => {

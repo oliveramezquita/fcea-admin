@@ -1,7 +1,9 @@
 <script setup>
+import ProjectData from '@/views/apps/projects/view/ProjectData.vue';
 import ProjectInterestSites from '@/views/apps/projects/view/ProjectInterestSites.vue';
 import ProjectReferenceSites from '@/views/apps/projects/view/ProjectReferenceSites.vue';
 import TemporadaLluvias from '@images/illustrations/temporada-lluvias.jpg';
+import { watch } from 'vue';
 definePage({
   meta: {
     action: 'manage',
@@ -14,6 +16,9 @@ const currentTab = ref('tab-1')
 const route = useRoute('apps-projects-view-id')
 const { data: projectData } = await useApi(`api/project/${ route.params.id }`)
 const status = ref()
+const season = ref(projectData.value.season)
+const month = ref(projectData.value.month)
+const year = ref(projectData.value.year)
 const {
   data: usersData
 } = await useApi(createUrl('api/users', {
@@ -29,10 +34,6 @@ if (project.value) {
 const objReferenceSite = JSON.parse(project.value.reference_sites_data)
 const existsSiteReference = ref(objReferenceSite.hasOwnProperty('answers'))
 const adminUsers = ref(usersData.value.data.filter(user => user.role === 'ADMIN' && user.activated))
-const admins = ref()
-const isEditing = ref(false)
-
-admins.value = project.value?.admin_users
 
 const editProject = async project => {
   await $api(`api/project/${project._id}`, {
@@ -42,56 +43,7 @@ const editProject = async project => {
     },
   })
 }
-const editAdminUsers = async project => {
-  await $api(`api/project/${project._id}`, {
-    method: 'PATCH',
-    body: {
-      'admin_users': admins.value
-    },
-  })
-  isEditing.value = true
-}
 const geoJsonFile = ref()
-const loading = ref(false)
-const isAlertVisible = ref(false)
-const alertType = ref('error') 
-const alertMessage = ref()
-const uploadGeoJson = async project => {
-  if (!geoJsonFile.value[0]) {
-    isGeoJsonFileDeleteDialogVisible.value = true
-  } else {
-    loading.value = true
-    let formData = new FormData()
-    formData.append('geojson_file', geoJsonFile.value[0])
-    await $api(`api/project/${project._id}`, {
-      method: 'PATCH',
-      body: formData,
-      onResponse() {
-        loading.value = false
-      },
-      onResponseError({ response }) {
-        loading.value = false
-        alertMessage.value = `Ocurrió un error al momento de subi el archivo: ${response?._data?.message}`
-        isAlertVisible.value = true
-        fetchGeoJsonFile()
-      }
-    })
-  }
-}
-
-const isGeoJsonFileDeleteDialogVisible = ref(false)
-const deleteGeoJsonFile = async project => {
-  await $api(`api/project/${project._id}`, {
-    method: 'PATCH',
-    body: {
-      'geojson_file': null
-    },
-  })
-}
-const cancelDeleteGeoJsonFile = async () => {
-  fetchGeoJsonFile()
-}
-
 const geoJsonFileURL = ref(project.value?.geojson_file)
 const fetchGeoJsonFile = async () => {
   $api(geoJsonFileURL.value, {
@@ -105,6 +57,12 @@ const fetchGeoJsonFile = async () => {
 if (geoJsonFileURL.value) {
   fetchGeoJsonFile()
 }
+const updateProjectData = projectUpdated => {
+  season.value = projectUpdated.season
+  month.value = projectUpdated.month
+  year.value = projectUpdated.year
+}
+watch([season, month, year])
 </script>
 
 <template>
@@ -130,76 +88,16 @@ if (geoJsonFileURL.value) {
                 label
                 size="small"
               >
-                {{ project.season }}
+                {{ season }}
               </VChip>
             </div>
           </div>
 
           <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap gap-5">
             <div class="d-flex flex-wrap justify-center justify-sm-start flex-grow-1 gap-6">
-              <div class="w-50">
-                <AppAutocomplete
-                  v-model="admins"
-                  multiple
-                  chips
-                  :closable-chips="isSuperAdminRule"
-                  :items="adminUsers"
-                  item-title="full_name"
-                  item-value="_id"
-                  placeholder="Selecciona un administrador"
-                  label="Administrador(es)"
-                  :readonly="!isSuperAdminRule"
-                  prepend-icon="tabler-user-cog"
-                >
-                  <template #chip="{ props, item }">
-                    <VChip
-                      v-bind="props"
-                      :text="item.raw.full_name"
-                    />
-                  </template>
-
-                  <template #item="{ props, item }">
-                    <VListItem
-                      v-bind="props"
-                      :title="item?.raw?.full_name"
-                      :subtitle="item?.raw?.institution"
-                    />
-                  </template>
-                  <template #append v-if="isSuperAdminRule">
-                    <VSlideXReverseTransition mode="out-in">
-                      <VIcon
-                        :key="`icon-${isEditing}`"
-                        :color="isEditing ? 'success' : 'info'"
-                        :icon="isEditing ? 'tabler-checks' : 'tabler-device-floppy'"
-                        :size="22"
-                        @click="editAdminUsers(project)"
-                      />
-                    </VSlideXReverseTransition>
-                  </template>
-                </AppAutocomplete>
-                <VFileInput
-                  accept="application/json"
-                  v-model="geoJsonFile"
-                  :loading="loading"
-                  color="primary"
-                  label="Polígeno GeoJSON"
-                  variant="outlined"
-                  class="mt-5"
-                  @update:model-value="uploadGeoJson(project)"
-                />
-                <VAlert
-                  v-model="isAlertVisible"
-                  closable
-                  close-label="Close Alert"
-                  class="mt-5"
-                  :type="alertType"
-                  variant="tonal">
-                  {{ alertMessage }}
-                </VAlert>
+              <div class="text-h5 pt-1" v-if="year && month">
+                {{ `${month} ${year}` }}
               </div>
-            </div>
-
-            <div class="d-flex justify-space-between align-center">
               <VSwitch
                 v-model="status"
                 :label="status.toString()"
@@ -208,6 +106,9 @@ if (geoJsonFileURL.value) {
                 @click="editProject(project)"
                 v-if="isSuperAdminRule"
               />
+            </div>
+
+            <div class="d-flex justify-space-between align-center">
               <VBtn
                 variant="tonal"
                 color="info"
@@ -230,6 +131,13 @@ if (geoJsonFileURL.value) {
       >
         <VTab>
           <VIcon
+            icon="tabler-list-letters"
+            class="mb-2"
+          />
+          <span>Datos de la cuenca</span>
+        </VTab>
+        <VTab>
+          <VIcon
             icon="tabler-map-2"
             class="mb-2"
           />
@@ -246,7 +154,15 @@ if (geoJsonFileURL.value) {
       </VTabs>
 
       <VCardText>
-        <VWindow v-model="currentTab">
+        <VWindow v-model="currentTab" class="disable-tab-transition">
+          <VWindowItem>
+            <ProjectData
+            :project-data="project"
+            :users-data="adminUsers"
+            :is-super-admin-rule="isSuperAdminRule"
+            :geo-json-file="geoJsonFile"
+            @updateProjectData="updateProjectData" />
+          </VWindowItem>
           <VWindowItem>
             <ProjectReferenceSites :project-data="project" :users-data="usersData.data" />
           </VWindowItem>
@@ -269,10 +185,4 @@ if (geoJsonFileURL.value) {
       </VCardText>
     </VCard>
   </div>
-  <DeleteGeoJsonFileDialog
-    v-model:isDialogVisible="isGeoJsonFileDeleteDialogVisible"
-    v-model:projectData="project"
-    @delete-geo-json-file="deleteGeoJsonFile"
-    @cancel-delete-file="cancelDeleteGeoJsonFile"
-  />
 </template>
