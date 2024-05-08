@@ -17,11 +17,13 @@ const fetchFaqs = async () => {
   faqs.value = data.faqs
 }
 
-const activeTab = ref('Cuencas')
+const activeTab = ref('Monitoreo Comunitario del Agua')
 const activeQuestion = ref(0)
 
 watch(activeTab, () => activeQuestion.value = 0)
 watch(faqSearchQuery, fetchFaqs, { immediate: true })
+
+const userData = useCookie('userData')
 
 const contactUs = [
   {
@@ -50,10 +52,13 @@ const contactUs = [
           <img :src="fceaLogoWhite" alt="Fondo para la Comunicación y la Educación Ambiental, A.C." width="250" class="mx-auto">
           <h4
             class="text-h4 text-center text-primary-darken-1 text-wrap mx-auto">
-            Bienvenidos al<br><span class="text-white">Administrador para el Monitoreo de la Calidad del agua</span>
+            Bienvenida, bienvenido al<br><span class="text-white">Administrador de la plataforma para el Monitoreo Comunitario del Agua</span>
           </h4>
-          <p class="text-center text-wrap text-primary-darken-1 text-body-1 mx-auto mb-0">
-            La Plataforma de Monitoreo de Ecosistemas Acuáticos es una iniciativa del Fondo para la Comunicación y la Educación Ambiental, A.C.
+          <p class="text-center text-wrap text-primary-darken-1 text-body-1 mx-auto mb-0" v-if="userData.role === 'BRIGADIER'">
+            En esta página puedes acceder a los formatos de campo digitales para capturar los resultados del monitoreo comunitario del agua en tu cuenca.
+          </p>
+          <p class="text-center text-wrap text-primary-darken-1 text-body-1 mx-auto mb-0" v-if="userData.role !== 'BRIGADIER'">
+            En esta página puedes organizar los monitoreos en tu cuenca; determinar los sitios de referencia y de evaluación, asignar a las personas responsables de la captura de los datos y vincular los formatos de campo digitales.  
           </p>
         </div>
       </VCardText>
@@ -139,12 +144,13 @@ const contactUs = [
             >
               <VExpansionPanel
                 v-for="item in faq.faqs"
-                :key="item.question"
-                :title="item.question"
-                :text="item.answer"
-              />
+                :key="item.question">
+                <VExpansionPanelTitle>{{ item.question }}</VExpansionPanelTitle>
+                <VExpansionPanelText>
+                  <p v-for="answer in item.answer" v-html="answer"></p>
+                </VExpansionPanelText>
+              </VExpansionPanel>
             </VExpansionPanels>
-            <img class="mt-5" v-if="faq.faqTitle === 'Formato de campo'" src="https://calidadagua.mx/wp-content/uploads/2024/04/ruta_resguardo.png" width="100%">
           </VWindowItem>
         </VWindow>
       </VCol>
