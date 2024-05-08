@@ -15,8 +15,8 @@
     <!-- 👉 Footer: right content -->
     <span class="d-md-flex gap-x-4 text-primary d-none">
       <a
-        href=""
-        target="noopener noreferrer"
+        href="https://simplebox.mx/contacto/"
+        target="_blank"
       >Soporte</a>
     </span>
   </div>
