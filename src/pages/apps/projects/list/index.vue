@@ -1,8 +1,6 @@
 <script setup>
 import { useApi } from '@/composables/useApi';
 import AddNewProjectDrawer from '@/views/apps/projects/list/AddNewProjectDrawer.vue';
-import temporadaLluvias from '@images/illustrations/temporada-lluvias.jpg';
-import temporadaSecas from '@images/illustrations/temporada-secas.jpg';
 import { computed } from 'vue';
 definePage({
   meta: {
@@ -32,13 +30,16 @@ const refineProjects = projects => {
     
     add(projects[index], 'info', [
       {
-        avatarColor: 'primary',
+        avatarIcon: 'tabler-map-2',
+        title: 'Sitio de referencia',
+        count: -1,
+      },
+      {
         avatarIcon: 'tabler-map-check',
         title: 'Sitios de interés',
         count: interestSites.answers ? interestSites.answers.length : 0,
       },
       {
-        avatarColor: 'warning',
         avatarIcon: 'tabler-users-group',
         title: 'Brigadistas',
         count: getNumOfUsers(projects[index])
@@ -98,11 +99,32 @@ const getNumOfUsers = project => {
           @mouseleave="project.isHover = false"
           :to="{ name: 'apps-projects-view-id', params: { id: project._id } }"
         >
-          <VImg :src="temporadaLluvias" v-if="project.season === 'Lluvias' " />
-          <VImg :src="temporadaSecas" v-if="project.season === 'Secas' " />
+          <VImg :src="setBackgroundSeason(project.season)" />
           <VCardItem>
-            <VCardTitle>{{ project.name }}</VCardTitle>
-            <VCardSubtitle>SRF: {{ getSiteName(project.reference_sites_data) }}</VCardSubtitle>
+            <VCardTitle>
+              <div class="d-flex gap-2 align-center mb-2 flex-wrap">
+                <h5 class="text-h5">{{ project.name }}</h5>
+                <div class="d-flex gap-x-2">
+                  <VChip
+                    variant="tonal"
+                    :color="project.season === 'Lluvias' ? 'info' : 'warning'"
+                    label
+                    size="small"
+                  >
+                    {{ project.season }}
+                  </VChip>
+                  <VChip
+                    variant="tonal"
+                    :color="project.activated ? 'success' : 'secondary'"
+                    label
+                    size="small"
+                  >
+                    {{ project.activated ? 'Activo' : 'Desactivo' }}
+                  </VChip>
+                </div>
+              </div>
+            </VCardTitle>
+            <VCardSubtitle>{{ project.year && project.month ? `${project.month} ${project.year}` : '' }}</VCardSubtitle>
           </VCardItem>
           <VCardText>
             <VList class="card-list">
@@ -112,7 +134,7 @@ const getNumOfUsers = project => {
               >
                 <template #prepend>
                   <VAvatar
-                    :color="info.avatarColor"
+                    
                     variant="tonal"
                     size="34"
                     rounded
@@ -132,7 +154,7 @@ const getNumOfUsers = project => {
                 <template #append>
                   <div class="d-flex gap-x-4">
                     <div class="text-body-1">
-                      {{ info.count }}
+                      {{ info.count >= 0 ? info.count : getSiteName(project.reference_sites_data)}}
                     </div>
                   </div>
                 </template>

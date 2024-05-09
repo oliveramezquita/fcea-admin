@@ -2,7 +2,6 @@
 import ProjectData from '@/views/apps/projects/view/ProjectData.vue';
 import ProjectInterestSites from '@/views/apps/projects/view/ProjectInterestSites.vue';
 import ProjectReferenceSites from '@/views/apps/projects/view/ProjectReferenceSites.vue';
-import TemporadaLluvias from '@images/illustrations/temporada-lluvias.jpg';
 import { watch } from 'vue';
 definePage({
   meta: {
@@ -68,12 +67,7 @@ watch([season, month, year])
 <template>
   <div>
     <VCard class="mb-6">
-      <VImg
-        :src="TemporadaLluvias"
-        min-height="125"
-        max-height="250"
-        cover
-      />
+      <VImg :src="setBackgroundSeason(project.season, 'large')" width="100%" />
 
       <VCardText class="d-flex align-bottom flex-sm-row flex-column justify-center gap-x-6">
         <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">

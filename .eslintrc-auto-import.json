@@ -376,6 +376,7 @@
     "TotalScore": true,
     "totalScore": true,
     "getScoreMessage": true,
-    "generateArrayOfYears": true
+    "generateArrayOfYears": true,
+    "setBackgroundSeason": true
   }
 }
