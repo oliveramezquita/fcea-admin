@@ -30,7 +30,6 @@ const {
 const projectList = ref(siteFilters.value?.projects)
 const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
-const sitesList = ref(siteFilters.value?.sites)
 const geoJsonData = ref(siteFilters.value?.geojson_data)
 selectedProject.value = siteFilters.value?.default_project 
 
@@ -73,7 +72,8 @@ const fetchFeatureAndTracking = async () => {
         title: `${site.nombre_sitio} - ${site.codigo_sitio}`,
         coordinates: `${site.latitud}, ${site.longitud}`,
         description: `${site.ciudad}, ${site.estado}`,
-
+        score: site.scores.total[0],
+        interpretation: `Calidad: ${site.scores.interpretation[0]}`
       }
     }
     featureCollection.value.features.push(feature)
@@ -226,7 +226,21 @@ onMounted(() => {
       source: 'sites',
       filter: ['!', ['has', 'point_count']],
       paint: {
-          'circle-color': '#11b4da',
+          'circle-color': [
+            'match',
+            ['get', 'score'],
+            5,
+            '#5b961e',
+            4,
+            '#92d050',
+            3,
+            '#f6f602',
+            2,
+            '#ffc000',
+            1,
+            '#e92312',
+            '#737682'
+          ],
           'circle-radius': 6,
           'circle-stroke-width': 2,
           'circle-stroke-color': '#fff'
@@ -254,6 +268,7 @@ onMounted(() => {
       const title = e.features[0].properties.title
       const cdts = e.features[0].properties.coordinates
       const description = e.features[0].properties.description
+      const interpretation = e.features[0].properties.interpretation
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
           coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
       }
@@ -261,7 +276,7 @@ onMounted(() => {
       new mapboxgl.Popup()
           .setLngLat(coordinates)
           .setHTML(
-              `<b>${title}</b><br>${cdts}<br>${description}`
+              `<b>${title}</b><br>${cdts}<br>${description}<br>${interpretation}`
           )
           .addTo(map.value)
     })
@@ -320,7 +335,6 @@ const isMapFiltersDrawerVisible = ref(false)
 watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
   institutionsList.value = siteFilters.value?.institution
-  sitesList.value = siteFilters.value?.sites
   geoJsonData.value = siteFilters.value?.geojson_data
   fetchGeoJsonData()
 })
@@ -406,7 +420,7 @@ const updateGraph = async graph => {
 </script>
 
 <template>
-  <div class="d-lg-block d-none">
+  <div class="d-lg-none d-none">
     <VRow class="filters-layout">
       <!-- 👉 Select Role -->
       <VCol
@@ -420,7 +434,6 @@ const updateGraph = async graph => {
           @update:model-value="updateProjects('projects')"
         />
       </VCol>
-      <!-- 👉 Select Role -->
       <VCol
         cols="12"
         sm="4"
@@ -434,7 +447,6 @@ const updateGraph = async graph => {
           @update:model-value="updateProjects('state')"
         />
       </VCol>
-      <!-- 👉 Select Plan -->
       <VCol
         cols="12"
         sm="4"
@@ -448,15 +460,14 @@ const updateGraph = async graph => {
           @update:model-value="updateProjects('institution')"
         />
       </VCol>
-      <!-- 👉 Select Status -->
       <VCol
         cols="12"
         sm="4"
       >
         <AppSelect
           v-model="selectedSites"
-          placeholder="Seleccionar sitio"
-          :items="sitesList"
+          placeholder="Seleccionar monitoreo"
+          :items="[]"
           clearable
           clear-icon="tabler-x"
           @update:model-value="updateProjects('sites')"
@@ -495,7 +506,7 @@ const updateGraph = async graph => {
         <AppSelect
           v-model="selectedSeason"
           placeholder="Seleccionar temporada"
-          :items="['Lluvias 2024']"
+          :items="[]"
           clearable
           clear-icon="tabler-x"
           @update:model-value="updateProjects('season')"
@@ -643,13 +654,15 @@ const updateGraph = async graph => {
         >
           <VIcon icon="tabler-menu-2" />
         </IconBtn>
-        <IconBtn
-          class="d-lg-none filter-toggle-btn rounded-sm"
+        <VBtn
+          class="d-lg-block filter-toggle-btn rounded-sm"
           variant="elevated"
+          color="white"
           @click="isMapFiltersDrawerVisible = true"
         >
-          <VIcon icon="tabler-filter-pin" />
-        </IconBtn>
+          <VIcon start icon="tabler-filter-pin" />
+          Filtros
+        </VBtn>
         <!-- 👉 Fleet map  -->
         <div
           id="mapContainer"
@@ -664,7 +677,6 @@ const updateGraph = async graph => {
     :project-list="projectList"
     :states-list="statesList"
     :institutions-list="institutionsList"
-    :sites-list="sitesList"
     @update-map="updateMap"
   />
 </template>
