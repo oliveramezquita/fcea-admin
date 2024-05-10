@@ -1,4 +1,5 @@
 <script setup>
+import { toRaw } from 'vue';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 
 const props = defineProps({
@@ -10,7 +11,19 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  selectedMonitoringPeriod: {
+    type: String,
+    required: true,
+  },
   projectList: {
+    type: Array,
+    required: true,
+  },
+  monitoringPeriodList: {
+    type: Array,
+    required: true,
+  },
+  seasonsList: {
     type: Array,
     required: true,
   },
@@ -22,15 +35,14 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  sitesList: {
-    type: Array,
-    required: true,
-  },
 })
 const selectedProject = ref(structuredClone(toRaw(props.selectedProject)))
-const statesList = ref(structuredClone(toRaw(props.projectList)))
+const selectedMonitoringPeriod = ref(structuredClone(toRaw(props.selectedMonitoringPeriod)))
+const projectList = ref(structuredClone(toRaw(props.projectList)))
+const monitoringPeriodList = ref(structuredClone(toRaw(props.monitoringPeriodList)))
+const seasonsList = ref(structuredClone(toRaw(props.seasonsList)))
+const statesList = ref(structuredClone(toRaw(props.statesList)))
 const institutionsList = ref(structuredClone(toRaw(props.institutionsList)))
-const sitesList = ref(structuredClone(toRaw(props.sitesList)))
 
 const emit = defineEmits([
   'update:isDrawerOpen',
@@ -38,26 +50,19 @@ const emit = defineEmits([
 ])
 const isFormValid = ref(false)
 const refForm = ref()
+const selectedSeason = ref()
 const selectedState = ref()
 const selectedInstitution = ref()
-const selectedSites = ref()
 const dateRange = ref()
-const selectedParameter = ref()
 
 watch(props, () => {
   selectedProject.value = structuredClone(toRaw(props.selectedProject))
-  statesList.value = structuredClone(toRaw(props.statesList))
-  institutionsList.value = structuredClone(toRaw(props.institutionsList))
-  sitesList.value = structuredClone(toRaw(props.sitesList))
+  selectedMonitoringPeriod.value = structuredClone(toRaw(props.selectedMonitoringPeriod))
 })
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
   emit('update:isDrawerOpen', false)
-  nextTick(() => {
-    refForm.value?.reset()
-    refForm.value?.resetValidation()
-  })
 }
 
 const onSubmit = () => {
@@ -65,16 +70,13 @@ const onSubmit = () => {
     if (valid) {
       emit('updateMap', {
         project: selectedProject.value,
+        monitoringPeriod: selectedMonitoringPeriod.value,
+        season: selectedSeason.value,
         state: selectedState.value,
         institution: selectedInstitution.value,
-        site: selectedSites.value,
         dates: dateRange.value,
       })
       emit('update:isDrawerOpen', false)
-      // nextTick(() => {
-      //   refForm.value?.reset()
-      //   refForm.value?.resetValidation()
-      // })
     }
   })
 }
@@ -85,10 +87,10 @@ const handleDrawerModelValueUpdate = val => {
 
 const updateProjects = async project => {
   nextTick(() => {
+    selectedSeason.value = null
     selectedState.value = null
     selectedInstitution.value = null
-    selectedSites.value = null
-
+    dateRange.value = null
   })
   if (project) {
     $api(`api/site-filters?project=${project}`, {
@@ -96,9 +98,11 @@ const updateProjects = async project => {
           onResponse({ response }) {
             if (response.ok) {
               const data = response._data
+              selectedMonitoringPeriod.value = data.default_project.monitoring_period
+              monitoringPeriodList.value = data.monitoring_periods
+              seasonsList.value = data.seasons
               statesList.value = data.states
               institutionsList.value = data.institution
-              sitesList.value = data.sites
             }
           }
     })
@@ -137,15 +141,32 @@ const updateProjects = async project => {
               <VCol cols="12">
                 <AppSelect
                   v-model="selectedProject"
-                  placeholder="Seleccionar cuenca"
+                  placeholder="Selecciona una cuenca"
                   :items="projectList"
                   @update:model-value="updateProjects"
                 />
               </VCol>
               <VCol cols="12">
                 <AppSelect
+                  v-model="selectedMonitoringPeriod"
+                  placeholder="Selecciona un período de monitoreo"
+                  :items="monitoringPeriodList"
+                  @update:model-value="updateProjects"
+                />
+              </VCol>
+              <VCol cols="12">
+                <AppSelect
+                  v-model="selectedSeason"
+                  placeholder="Selecciona una temporada"
+                  :items="seasonsList"
+                  clearable
+                  clear-icon="tabler-x"
+                />
+              </VCol>
+              <VCol cols="12">
+                <AppSelect
                   v-model="selectedState"
-                  placeholder="Seleccionar estado"
+                  placeholder="Selecciona un estado"
                   :items="statesList"
                   clearable
                   clear-icon="tabler-x"
@@ -154,17 +175,8 @@ const updateProjects = async project => {
               <VCol cols="12">
                 <AppSelect
                   v-model="selectedInstitution"
-                  placeholder="Seleccionar institución"
+                  placeholder="Selecciona una institución"
                   :items="institutionsList"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol>
-              <VCol cols="12">
-                <AppSelect
-                  v-model="selectedSites"
-                  placeholder="Seleccionar sitio"
-                  :items="sitesList"
                   clearable
                   clear-icon="tabler-x"
                 />
@@ -172,20 +184,11 @@ const updateProjects = async project => {
               <VCol cols="12">
               <AppDateTimePicker
                 v-model="dateRange"
-                placeholder="Selecciona una fecha"
+                placeholder="Selecciona una fecha de monitoreo"
                 :config="{ mode: 'range' }"
                 clearable
                 clear-icon="tabler-x"
               />
-              </VCol>
-              <VCol cols="12">
-                <AppSelect
-                  v-model="selectedParameter"
-                  placeholder="Seleccionar parámetro"
-                  :items="[]"
-                  clearable
-                  clear-icon="tabler-x"
-                />
               </VCol>
               <VCol cols="12">
                 <VBtn

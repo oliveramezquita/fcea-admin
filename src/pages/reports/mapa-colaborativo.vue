@@ -13,11 +13,11 @@ definePage({
   },
 })
 const selectedProject = ref()
-const selectedState = ref()
-const selectedInstitution = ref()
-const selectedSites = ref()
+const selectedMonitoringPeriod = ref()
+const season = ref()
+const state = ref()
+const institution = ref()
 const dateRange = ref()
-const selectedParameter = ref()
 
 const {
   data: siteFilters,
@@ -25,13 +25,18 @@ const {
 } = await useApi(createUrl(`api/site-filters`, {
   query: {
     project: selectedProject,
+    monitoring_period: selectedMonitoringPeriod,
   }
 }))
 const projectList = ref(siteFilters.value?.projects)
 const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
+const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
+const seasonsList = ref(siteFilters.value?.seasons)
 const geoJsonData = ref(siteFilters.value?.geojson_data)
-selectedProject.value = siteFilters.value?.default_project 
+
+selectedProject.value = siteFilters.value?.default_project['name']
+selectedMonitoringPeriod.value = siteFilters.value?.default_project['monitoring_period']
 
 const {
   data: sitesData,
@@ -39,9 +44,10 @@ const {
 } = await useApi(createUrl('api/public-sites', {
   query: {
     project: selectedProject,
-    state: selectedState,
-    institution: selectedInstitution,
-    site: selectedSites,
+    monitoring_period: selectedMonitoringPeriod,
+    season: season,
+    state: state,
+    institution: institution,
     dates: dateRange,
   }
 }))
@@ -243,7 +249,7 @@ onMounted(() => {
           ],
           'circle-radius': 6,
           'circle-stroke-width': 2,
-          'circle-stroke-color': '#fff'
+          'circle-stroke-color': '#000'
       }
     })
     map.value.on('click', 'clusters', (e) => {
@@ -305,9 +311,7 @@ const updateProjects = async (ev) => {
   if (ev == 'projects') {
     selectedState.value = null
     selectedInstitution.value = null
-    selectedSites.value = null
     dateRange.value = null
-    selectedParameter.value = null
     resetPolygonData()
   }
   await fetchFilters()
@@ -322,10 +326,12 @@ const resetPolygonData = async() => {
 
 const updateMap = async filters => {
   selectedProject.value = filters.project
-  selectedState.value = filters.state
-  selectedInstitution.value = filters.institution
-  selectedSites.value = filters.site
+  selectedMonitoringPeriod.value = filters.monitoringPeriod
+  season.value = filters.season
+  state.value = filters.state
+  institution.value = filters.institution
   dateRange.value = filters.dates
+  resetPolygonData()
   await fetchFilters()
   await fetchSites()
 }
@@ -420,100 +426,6 @@ const updateGraph = async graph => {
 </script>
 
 <template>
-  <div class="d-lg-none d-none">
-    <VRow class="filters-layout">
-      <!-- 👉 Select Role -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedProject"
-          placeholder="Seleccionar cuenca"
-          :items="projectList"
-          @update:model-value="updateProjects('projects')"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedState"
-          placeholder="Seleccionar estado"
-          :items="statesList"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('state')"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedInstitution"
-          placeholder="Seleccionar institución"
-          :items="institutionsList"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('institution')"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedSites"
-          placeholder="Seleccionar monitoreo"
-          :items="[]"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('sites')"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-      <AppDateTimePicker
-        v-model="dateRange"
-        placeholder="Selecciona una fecha"
-        :config="{ mode: 'range' }"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects('date')"
-      />
-      </VCol>
-      <!-- <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedParameter"
-          placeholder="Seleccionar parámetro"
-          :items="[]"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('parameter')"
-        />
-      </VCol> -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedSeason"
-          placeholder="Seleccionar temporada"
-          :items="[]"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('season')"
-        />
-      </VCol>
-    </VRow> 
-  </div>
   <VLayout class="fleet-app-layout">
     <VNavigationDrawer
       v-model="isLeftSidebarOpen"
@@ -529,7 +441,8 @@ const updateGraph = async graph => {
       >
         <VCardItem>
           <VCardTitle>
-            Mapa Colaborativo
+            <h5 class="text-h5">Mapa Colaborativo</h5>
+            <h5 class="text-body-1">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
           </VCardTitle>
 
           <template #append>
@@ -566,7 +479,7 @@ const updateGraph = async graph => {
         >
           <!-- <VWindow v-model="currentTab">
             <VWindowItem> -->
-              <VCardText class="pt-5">
+              <VCardText class="pt-0">
                 <div
                   v-for="(site, index) in siteTrackingData"
                   :key="index"
@@ -674,7 +587,10 @@ const updateGraph = async graph => {
   <MapFiltersDrawer
     v-model:isDrawerOpen="isMapFiltersDrawerVisible"
     :selected-project="selectedProject"
+    :selected-monitoring-period="selectedMonitoringPeriod"
     :project-list="projectList"
+    :monitoring-period-list="monitoringPeriodList"
+    :seasons-list="seasonsList"
     :states-list="statesList"
     :institutions-list="institutionsList"
     @update-map="updateMap"
