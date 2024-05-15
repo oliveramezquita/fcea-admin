@@ -58,6 +58,17 @@ const handleDrawerModelValueUpdate = val => {
 }
 watch(props, () => {
   institution.value = structuredClone(toRaw(props.institutionData))
+  if (institution.value.logo) {
+    $api(institution.value.logo, {
+      method: 'GET',
+      onResponse({ response }) {
+        const filename = institution.value.logo.replace(/^.*[\\/]/, '')
+        logo.value = [new File([response._data], filename, {type: "text/json;charset=utf-8"})]
+      }
+    })
+  } else {
+    logo.value = null
+  }
 })
 </script>
 <template>
@@ -108,7 +119,7 @@ watch(props, () => {
                   type="submit"
                   class="me-3"
                 >
-                  Agregar
+                  {{ props.typeForm === 'new' ? 'Agregar' : 'Actualizar' }}
                 </VBtn>
                 <VBtn
                   type="reset"

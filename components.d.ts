@@ -43,6 +43,7 @@ declare module 'vue' {
     CustomRadiosWithIcon: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithIcon.vue')['default']
     CustomRadiosWithImage: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithImage.vue')['default']
     DataFilters: typeof import('./src/@core/components/DataFilters.vue')['default']
+    DeleteBasinDialog: typeof import('./src/components/dialogs/DeleteBasinDialog.vue')['default']
     DeleteCatalogDialog: typeof import('./src/components/dialogs/DeleteCatalogDialog.vue')['default']
     DeleteGeoJsonFileDialog: typeof import('./src/components/dialogs/DeleteGeoJsonFileDialog.vue')['default']
     DeleteUserDialog: typeof import('./src/components/dialogs/DeleteUserDialog.vue')['default']

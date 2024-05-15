@@ -8,19 +8,18 @@ const {
   execute: fetchBasin
 } = await useApi(createUrl(`api/basin/${ route.params.id }`))
 const basin = computed(() => basinData.value)
+const name = ref(basin.value.name)
 const institution = ref()
-const isFormValid = ref(false)
 const refForm = ref()
 const geoJsonFile = ref()
+const geoJsonFileURL = ref(basin.value?.geojson_file)
 const isAddNewInstitutionDrawerVisible = ref(false)
 const typeForm = ref()
 const addOrEditInstitution = async data => {
-  if (data.type === 'new') {
-    await $api(`api/basin/${basin.value._id}`, {
-      method: 'PATCH',
-      body: data.formData,
-    })
-  }
+  await $api(`api/basin/${basin.value._id}`, {
+    method: 'PATCH',
+    body: data.formData,
+  })
   fetchBasin()
 }
 const addNewInstitution = () => {
@@ -33,9 +32,57 @@ const editInstitution = i => {
   typeForm.value = 'edit'
   isAddNewInstitutionDrawerVisible.value = true
 }
-const onSubmit = () => {
-
+const deleteInstitution = async institutionName => {
+  const formData = new FormData()
+  formData.set('name', institutionName)
+  formData.set('delete', true)
+  await $api(`api/basin/${basin.value._id}`, {
+    method: 'PATCH',
+    body: formData,
+  })
+  fetchBasin()
 }
+const isAlertVisible = ref(false)
+const alertType = ref() 
+const alertMessage = ref() 
+const onSubmit = () => {
+  refForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      const formData = new FormData()
+      formData.set('name', name.value)
+      if (geoJsonFile.value?.length > 0)
+        formData.set('geojson_file', geoJsonFile.value[0])
+      $api(`api/basin/${basin.value._id}`, {
+        method: 'PUT',
+        body: formData,
+        onResponse({ response }) {
+          if (response.ok) {
+            alertType.value = "success"
+            alertMessage.value = "Los datos de la cuenca han sido actualizados exitosamente"
+          } else {
+            alertType.value = response.status === 404 ? "warning" : "error"
+            alertMessage.value = `Ocurrió un error al momento de actualizar los datos: ${response?._data?.message}`
+          }
+          isAlertVisible.value = true
+        }
+      })
+      nextTick(() => {
+        refForm.value?.resetValidation()
+      })
+    }
+  })
+}
+onMounted(() => {
+  if (basin.value.geojson_file) {
+    $api(geoJsonFileURL.value, {
+      method: 'GET',
+      onResponse({ response }) {
+        const filename = geoJsonFileURL.value.replace(/^.*[\\/]/, '')
+        geoJsonFile.value = [new File([response._data], filename, {type: "text/json;charset=utf-8"})]
+      }
+    })
+  }
+})
 </script>
 <template>
   <VCard>
@@ -47,20 +94,19 @@ const onSubmit = () => {
       </template>
       <VForm
         ref="refForm"
-        v-model="isFormValid"
         @submit.prevent="onSubmit"
       >
         <VRow>
           <VCol cols="12" md="6">
             <AppTextField
-              v-model="basin.name"
+              v-model="name"
               :rules="[requiredValidator]"
               label="Nombre"
               placeholder="Nombre de la cuenca"
               prepend-icon="tabler-map-plus"
             />
           </VCol>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="6" class="mt-md-6">
             <VFileInput
               accept="application/json"
               v-model="geoJsonFile"
@@ -68,7 +114,7 @@ const onSubmit = () => {
               variant="outlined"
             />
           </VCol>
-          <VCol cols="12">
+          <VCol cols="12" v-if="!isAlertVisible">
             <VBtn
               type="submit"
               class="me-3"
@@ -83,6 +129,17 @@ const onSubmit = () => {
             >
               Regresar
             </VBtn>
+          </VCol>
+          <VCol cols="12">
+            <VAlert
+              v-model="isAlertVisible"
+              closable
+              close-label="Close Alert"
+              class="mt-5"
+              :type="alertType"
+              variant="tonal">
+              {{ alertMessage }}
+            </VAlert>
           </VCol>
         </VRow>
       </VForm>
@@ -117,7 +174,7 @@ const onSubmit = () => {
         >
           <VListItem>
             <template #prepend>
-              <VAvatar size="48" :variant="!institution.logo ? 'tonal' : undefined" class="mt-2">
+              <VAvatar size="48" :variant="!institution.logo ? 'tonal' : undefined">
                 <VImg
                   v-if="institution.logo"
                   :src="institution.logo"
@@ -138,12 +195,16 @@ const onSubmit = () => {
                 @click="editInstitution(institution)">
                 Editar
               </VBtn>
-              <VBtn size="small" color="secondary" variant="outlined">
+              <VBtn
+                size="small"
+                color="secondary"
+                variant="outlined"
+                @click="deleteInstitution(institution.name)">
                 Eliminar
               </VBtn>
             </template>
           </VListItem>
-          <VDivider v-if="index !== basin.institutions.length - 1" />
+          <VDivider v-if="index !== basin.institutions.length - 1" class="mt-2 mb-2" />
         </template>
       </VList>
     </VCardText>

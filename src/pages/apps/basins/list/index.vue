@@ -9,16 +9,16 @@ const {
 const basins = computed(() => basinsData.value)
 const headers = [
   {
-    title: '',
-    key: 'data-table-expand',
-  },
-  {
     title: 'Nombre',
     key: 'name',
   },
   {
     title: 'Archivo GeoJSON',
     key: 'geojson_file',
+  },
+  {
+    title: 'Instituciones',
+    key: 'institutions',
   },
   {
     title: 'Acciones',
@@ -32,11 +32,23 @@ const createBasin = async basin => {
     method: 'POST',
     body: basin,
   })
-
   fetchBasins()
 }
-const showDeleteBasinConfirmation = () => {
-
+const institutionsParse = institutions => {
+  const nameOfInstitutionsList = institutions.map(i => i.name)
+  const nameOfInstitutions = nameOfInstitutionsList.toString()
+  if (nameOfInstitutions !== '')
+    return nameOfInstitutions.length > 35 ? `${nameOfInstitutions?.substring(0,35)}...` : nameOfInstitutions
+}
+const selectedBasin = ref()
+const isBasinDeleteDialogVisible = ref(false)
+const showDeleteBasinConfirmation = async basin => {
+  selectedBasin.value = basin
+  isBasinDeleteDialogVisible.value = true
+}
+const deleteBasin = async basinId => {
+  await $api(`api/basin/${ basinId }`, { method: 'DELETE' })
+  fetchBasins()
 }
 </script>
 <template>
@@ -68,18 +80,7 @@ const showDeleteBasinConfirmation = () => {
             :headers="headers"
             :items="basins"
             :items-per-page="5"
-            expand-on-click
           >
-            <template #expanded-row="slotProps">
-              <tr class="v-data-table__tr">
-                <td :colspan="headers.length">
-                  <p class="my-1">
-                    Instituciones: 
-                  </p>
-                </td>
-              </tr>
-            </template>
-
             <template #item.name="{ item }">
               <div class="d-flex align-center">
                 <div class="d-flex flex-column ms-3">
@@ -101,6 +102,10 @@ const showDeleteBasinConfirmation = () => {
               >
                 <a :href="item.geojson_file" target="_blank">{{ item.geojson_file.split('/').pop() }}</a>
               </VChip>
+            </template>
+
+            <template #item.institutions="{ item }">
+              <span>{{ institutionsParse(item.institutions) }}</span>
             </template>
 
             <template #item.actions="{ item }">
@@ -134,5 +139,10 @@ const showDeleteBasinConfirmation = () => {
   <AddNewBasinDrawer
     v-model:isDrawerOpen="isAddNewBasinDrawerVisible"
     @create-basin="createBasin"
+  />
+  <DeleteBasinDialog
+    v-model:isDialogVisible="isBasinDeleteDialogVisible"
+    v-model:basin="selectedBasin"
+    @delete-basin="deleteBasin"
   />
 </template>
