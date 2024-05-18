@@ -8,9 +8,9 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  geoJsonFile: {
+  basinsData: {
     type: Array,
-    required: false,
+    required: true,
   },
   isSuperAdminRule: {
     type: Boolean,
@@ -21,23 +21,20 @@ const props = defineProps({
     required: true,
   }
 })
-
 const emit = defineEmits([
   'update:projectData',
   'update:usersData',
-  'update:geoJsonFile',
   'update:isSuperAdminRule',
   'updateProjectData'
 ])
 
 const project = ref(structuredClone(toRaw(props.projectData)))
-project.value.geojson_file = structuredClone(toRaw(props.geoJsonFile))
+const basin = ref(props.basinsData.filter(b => b.name === project.value.name)[0])
+console.log(basin.value)
 const isFormValid = ref(false)
 const refForm = ref()
 const yearList = ref(generateArrayOfYears())
 const monthList = ref(['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'])
-
-
 const isAlertVisible = ref(false)
 const alertType = ref() 
 const alertMessage = ref() 
@@ -45,12 +42,11 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
+      formData.set('name', project.value.name)
       formData.set('season', project.value.season)
       formData.set('admin_users', project.value.admin_users)
       formData.set('year', project.value.year)
       formData.set('month', project.value.month)
-      if (project.value.geojson_file?.length > 0)
-        formData.set('geojson_file', project.value.geojson_file[0])
       
       $api(`api/project/${project.value._id}`, {
         method: 'PATCH',
@@ -73,10 +69,8 @@ const onSubmit = () => {
     }
   })
 }
-
 watch(props, () => {
   project.value = structuredClone(toRaw(props.projectData))
-  project.value.geojson_file = structuredClone(toRaw(props.geoJsonFile))
 })
 </script>
 
@@ -87,6 +81,17 @@ watch(props, () => {
     @submit.prevent="onSubmit"
   >
     <VRow>
+      <VCol cols="12" md="6">
+        <AppAutocomplete
+          v-model="project.name"
+          :items="props.basinsData"
+          item-title="name"
+          item-value="name"
+          placeholder="Selecciona una cuenca"
+          label="Cuenca"
+          prepend-icon="tabler-map-star"
+        />
+      </VCol>
       <!-- 👉 Season -->
       <VCol cols="12" md="6">
         <AppSelect
@@ -96,6 +101,28 @@ watch(props, () => {
           :rules="[requiredValidator]"
           :items="['Secas', 'Lluvias']"
           prepend-icon="tabler-cloud-pin"
+        />
+      </VCol>
+      <!-- 👉 Year -->
+      <VCol cols="12" md="6">
+        <AppSelect
+          v-model="project.year"
+          label="Año"
+          placeholder="Selecciona un año"
+          :rules="[requiredValidator]"
+          :items="yearList"
+          prepend-icon="tabler-calendar"
+        />
+      </VCol>
+        <!-- 👉 Month -->
+      <VCol cols="12" md="6">
+        <AppSelect
+          v-model="project.month"
+          label="Mes"
+          placeholder="Selecciona un mes"
+          :rules="[requiredValidator]"
+          :items="monthList"
+          prepend-icon="tabler-calendar-month"
         />
       </VCol>
       <VCol cols="12" md="6">
@@ -128,44 +155,22 @@ watch(props, () => {
           </template>
         </AppAutocomplete>
       </VCol>
-      <!-- 👉 Year -->
       <VCol cols="12" md="6">
         <AppSelect
-          v-model="project.year"
-          label="Año"
-          placeholder="Selecciona un año"
-          :rules="[requiredValidator]"
-          :items="yearList"
-          prepend-icon="tabler-calendar"
+          v-model="project.institution"
+          label="Institución patrocinadora"
+          item-title="name"
+          placeholder="Selecciona una o mas instituciones"
+          :items="basin.institutions"
+          prepend-icon="tabler-building-community"
         />
       </VCol>
-        <!-- 👉 Month -->
-      <VCol cols="12" md="6">
-        <AppSelect
-          v-model="project.month"
-          label="Mes"
-          placeholder="Selecciona un mes"
-          :rules="[requiredValidator]"
-          :items="monthList"
-          prepend-icon="tabler-calendar-month"
-        />
-      </VCol>
-      <VCol cols="12" md="6" class="mt-3">
-        <VFileInput
-          accept="application/json"
-          v-model="project.geojson_file"
-          color="primary"
-          label="Polígeno GeoJSON"
-          variant="outlined"
-        />
-      </VCol>
-      <!-- 👉 Submit and Cancel -->
       <VCol cols="12" v-if="!isAlertVisible">
         <VBtn
           type="submit"
           class="me-3"
         >
-          Agregar
+          Actualizar
         </VBtn>
       </VCol>
       <VCol cols="12">

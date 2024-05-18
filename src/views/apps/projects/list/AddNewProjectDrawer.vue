@@ -6,6 +6,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  basinsData: {
+    type: Array,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -76,7 +80,7 @@ const handleDrawerModelValueUpdate = val => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Agregar nueva cuenca"
+      title="Agregar nuevo monitoreo"
       @cancel="closeNavigationDrawer"
     />
 
@@ -94,11 +98,13 @@ const handleDrawerModelValueUpdate = val => {
             <VRow>
               <!-- 👉 Proyect -->
               <VCol cols="12">
-                <AppTextField
+                <AppAutocomplete
                   v-model="name"
-                  :rules="[requiredValidator]"
-                  label="Nombre"
-                  placeholder="Nombre de la cuenca"
+                  :items="props.basinsData"
+                  item-title="name"
+                  item-value="name"
+                  placeholder="Selecciona una cuenca"
+                  label="Cuenca"
                 />
               </VCol>
               <!-- 👉 Season -->

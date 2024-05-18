@@ -14,7 +14,7 @@ export default [
     subject: 'admin'
   },
   {
-    title: 'Proyectos',
+    title: 'Monitoreos',
     to: { name: 'apps-projects-list' },
     icon: { icon: 'tabler-folder-pin' },
     action: 'manage',

@@ -1,28 +1,35 @@
 <script setup>
-import { useTheme } from 'vuetify'
-import { getBarChartConfig } from '@core/libs/apex-chart/apexCharConfig'
-
-const vuetifyTheme = useTheme()
-const horizontalBarChartConfig = computed(() => getBarChartConfig(vuetifyTheme.current.value))
-
 const series = [{
-  data: [
-    700,
-    350,
-    480,
-    600,
-    210,
-    550,
-    150,
-  ],
+  data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
 }]
+const chartOptions = {
+  chart: {
+    type: 'bar',
+    height: 350
+  },
+  plotOptions: {
+    bar: {
+      borderRadius: 4,
+      borderRadiusApplication: 'end',
+      horizontal: true,
+    }
+  },
+  dataLabels: {
+    enabled: false
+  },
+  xaxis: {
+    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+      'United States', 'China', 'Germany'
+    ],
+  }
+}
 </script>
 
 <template>
   <VueApexCharts
     type="bar"
     height="400"
-    :options="horizontalBarChartConfig"
+    :options="chartOptions"
     :series="series"
   />
 </template>

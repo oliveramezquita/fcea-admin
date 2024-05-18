@@ -15,6 +15,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  selectedSeason: {
+    type: String,
+    required: true,
+  },
   projectList: {
     type: Array,
     required: true,
@@ -38,6 +42,7 @@ const props = defineProps({
 })
 const selectedProject = ref(structuredClone(toRaw(props.selectedProject)))
 const selectedMonitoringPeriod = ref(structuredClone(toRaw(props.selectedMonitoringPeriod)))
+const selectedSeason = ref(structuredClone(toRaw(props.selectedSeason)))
 const projectList = ref(structuredClone(toRaw(props.projectList)))
 const monitoringPeriodList = ref(structuredClone(toRaw(props.monitoringPeriodList)))
 const seasonsList = ref(structuredClone(toRaw(props.seasonsList)))
@@ -50,7 +55,6 @@ const emit = defineEmits([
 ])
 const isFormValid = ref(false)
 const refForm = ref()
-const selectedSeason = ref()
 const selectedState = ref()
 const selectedInstitution = ref()
 const dateRange = ref()
@@ -58,6 +62,7 @@ const dateRange = ref()
 watch(props, () => {
   selectedProject.value = structuredClone(toRaw(props.selectedProject))
   selectedMonitoringPeriod.value = structuredClone(toRaw(props.selectedMonitoringPeriod))
+  selectedSeason.value = structuredClone(toRaw(props.selectedSeason))
 })
 
 // 👉 drawer close
@@ -85,28 +90,26 @@ const handleDrawerModelValueUpdate = val => {
   emit('update:isDrawerOpen', val)
 }
 
-const updateProjects = async project => {
+const updateProjects = async () => {
   nextTick(() => {
-    selectedSeason.value = null
     selectedState.value = null
     selectedInstitution.value = null
     dateRange.value = null
   })
-  if (project) {
-    $api(`api/site-filters?project=${project}`, {
-          method: 'GET',
-          onResponse({ response }) {
-            if (response.ok) {
-              const data = response._data
-              selectedMonitoringPeriod.value = data.default_project.monitoring_period
-              monitoringPeriodList.value = data.monitoring_periods
-              seasonsList.value = data.seasons
-              statesList.value = data.states
-              institutionsList.value = data.institution
-            }
-          }
-    })
-  }
+  $api(`api/site-filters?project=${selectedProject.value}`, {
+    method: 'GET',
+    onResponse({ response }) {
+      if (response.ok) {
+        const data = response._data
+        selectedMonitoringPeriod.value = data.default_project.monitoring_period
+        selectedSeason.value = data.default_project.season
+        monitoringPeriodList.value = data.monitoring_periods
+        seasonsList.value = data.seasons
+        statesList.value = data.states
+        institutionsList.value = data.institution
+      }
+    }
+  })
 }
 
 </script>
@@ -151,7 +154,6 @@ const updateProjects = async project => {
                   v-model="selectedMonitoringPeriod"
                   placeholder="Selecciona un período de monitoreo"
                   :items="monitoringPeriodList"
-                  @update:model-value="updateProjects"
                 />
               </VCol>
               <VCol cols="12">
@@ -159,8 +161,6 @@ const updateProjects = async project => {
                   v-model="selectedSeason"
                   placeholder="Selecciona una temporada"
                   :items="seasonsList"
-                  clearable
-                  clear-icon="tabler-x"
                 />
               </VCol>
               <VCol cols="12">

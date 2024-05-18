@@ -14,7 +14,7 @@ definePage({
 })
 const selectedProject = ref()
 const selectedMonitoringPeriod = ref()
-const season = ref()
+const selectedSeason = ref()
 const state = ref()
 const institution = ref()
 const dateRange = ref()
@@ -33,10 +33,11 @@ const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
 const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
 const seasonsList = ref(siteFilters.value?.seasons)
-const geoJsonData = ref(siteFilters.value?.geojson_data)
+let geoJsonData = siteFilters.value?.default_project['geojson_data']
 
 selectedProject.value = siteFilters.value?.default_project['name']
 selectedMonitoringPeriod.value = siteFilters.value?.default_project['monitoring_period']
+selectedSeason.value = siteFilters.value?.default_project['season']
 
 const {
   data: sitesData,
@@ -45,7 +46,7 @@ const {
   query: {
     project: selectedProject,
     monitoring_period: selectedMonitoringPeriod,
-    season: season,
+    season: selectedSeason,
     state: state,
     institution: institution,
     dates: dateRange,
@@ -139,10 +140,10 @@ const fetchMapData = async () => {
 }
 
 const fetchGeoJsonData = async () => {
-  if(geoJsonData.value && !map.value.getSource('cuenca')) {
+  if(geoJsonData && !map.value.getSource('cuenca')) {
     map.value.addSource('cuenca', {
       type: 'geojson',
-      data: geoJsonData.value,
+      data: geoJsonData,
     })
     map.value.addLayer({
       'id': 'maine',
@@ -307,16 +308,6 @@ const flyToLocation = (geolocation, index) => {
     zoom: 16,
   })
 }
-const updateProjects = async (ev) => {
-  if (ev == 'projects') {
-    selectedState.value = null
-    selectedInstitution.value = null
-    dateRange.value = null
-    resetPolygonData()
-  }
-  await fetchFilters()
-  await fetchSites()
-}
 
 const resetPolygonData = async() => {
   if (map.value.getLayer('maine')) map.value.removeLayer('maine')
@@ -327,7 +318,7 @@ const resetPolygonData = async() => {
 const updateMap = async filters => {
   selectedProject.value = filters.project
   selectedMonitoringPeriod.value = filters.monitoringPeriod
-  season.value = filters.season
+  selectedSeason.value = filters.season
   state.value = filters.state
   institution.value = filters.institution
   dateRange.value = filters.dates
@@ -341,7 +332,7 @@ const isMapFiltersDrawerVisible = ref(false)
 watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
   institutionsList.value = siteFilters.value?.institution
-  geoJsonData.value = siteFilters.value?.geojson_data
+  geoJsonData = siteFilters.value?.default_project['geojson_data']
   fetchGeoJsonData()
 })
 
@@ -439,7 +430,7 @@ const updateGraph = async graph => {
         class="h-100 fleet-navigation-drawer"
         flat
       >
-        <VCardItem>
+        <VCardItem class="pb-2">
           <VCardTitle>
             <h5 class="text-h5">Mapa Colaborativo</h5>
             <h5 class="text-body-1">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
@@ -479,58 +470,94 @@ const updateGraph = async graph => {
         >
           <!-- <VWindow v-model="currentTab">
             <VWindowItem> -->
-              <VCardText class="pt-0">
-                <div
-                  v-for="(site, index) in siteTrackingData"
+              <VTabs
+                v-model="currentTab"
+                class="disable-tab-transition"
+              >
+                <VTab
+                  v-for="(tab, index) in tabsData"
                   :key="index"
-                  class="mb-6"
                 >
-                  <div
-                    class="d-flex align-center justify-space-between cursor-pointer"
-                    @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
-                  >
-                    <div class="d-flex gap-x-4 align-center">
-                      <VAvatar
-                        :icon="site.icon"
-                        :color="site.color"
-                      />
-                      <div>
-                        <div class="text-body-1 text-high-emphasis">
-                          {{ site.name }}
+                  {{ tab.title }}
+                </VTab>
+              </VTabs>
+              <VCardText class="pt-0">
+                <VWindow v-model="currentTab">
+                  <VWindowItem>
+                    <div
+                      v-for="(site, index) in siteTrackingData"
+                      :key="index"
+                      class="mb-6 mt-5"
+                    >
+                      <div
+                        class="d-flex align-center justify-space-between cursor-pointer"
+                        @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
+                      >
+                        <div class="d-flex gap-x-4 align-center">
+                          <VAvatar
+                            :icon="site.icon"
+                            :color="site.color"
+                          />
+                          <div>
+                            <div class="text-body-1 text-high-emphasis">
+                              {{ site.name }}
+                            </div>
+                            <div class="text-body-1">
+                              {{ site.location }}
+                            </div>
+                          </div>
                         </div>
-                        <div class="text-body-1">
-                          {{ site.location }}
+                        <IconBtn size="small">
+                          <VIcon
+                            :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
+                            class="text-high-emphasis"
+                          />
+                        </IconBtn>
+                      </div>
+                      <VExpandTransition mode="out-in">
+                        <div v-show="showPanel[index]">
+                          <div class="mt-5">
+                            <SitePanelInfo :site-info="site" />
+                          </div>
                         </div>
-                      </div>
+                      </VExpandTransition>
                     </div>
-                    <IconBtn size="small">
-                      <VIcon
-                        :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
-                        class="text-high-emphasis"
-                      />
-                    </IconBtn>
-                  </div>
-                  <VExpandTransition mode="out-in">
-                    <div v-show="showPanel[index]">
-                      <div class="mt-5">
-                        <SitePanelInfo :site-info="site" />
-                      </div>
-                    </div>
-                  </VExpandTransition>
-                </div>
-                <template v-if="siteTrackingData.length === 0">
-                  <VAlert
-                    prominent
-                    type="info"
-                    variant="tonal"
-                    color="secondary"
-                  >
-                    <template #text>
-                      <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
-                      <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
+                    <template v-if="siteTrackingData.length === 0">
+                      <VAlert
+                        prominent
+                        type="info"
+                        variant="tonal"
+                        color="secondary"
+                        class="mt-5"
+                      >
+                        <template #text>
+                          <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
+                          <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
+                        </template>
+                      </VAlert>
                     </template>
-                  </VAlert>
-                </template>
+                  </VWindowItem>
+                  <VWindowItem>
+                    <VRadioGroup
+                      v-model="radioGroup"
+                      false-icon="tabler-chart-histogram"
+                      true-icon="tabler-chart-histogram"
+                      class="mt-5"
+                    >
+                      <VRadio
+                        v-for="(graph, index) in graphsList"
+                        :key="index"
+                        :label="graph.title"
+                        :value="graph.value"
+                        class="mb-2"
+                        @click="updateGraph(graph)"
+                      />
+                    </VRadioGroup>
+                    <GraphDialog
+                      v-model:isDialogVisible="isGraphDialogVisible"
+                      :title="graphTitle" />
+                  </VWindowItem>
+                </VWindow>
               </VCardText>
             <!-- </VWindowItem>
             <VWindowItem>
@@ -588,6 +615,7 @@ const updateGraph = async graph => {
     v-model:isDrawerOpen="isMapFiltersDrawerVisible"
     :selected-project="selectedProject"
     :selected-monitoring-period="selectedMonitoringPeriod"
+    :selected-season="selectedSeason"
     :project-list="projectList"
     :monitoring-period-list="monitoringPeriodList"
     :seasons-list="seasonsList"

@@ -48,16 +48,14 @@ const refineProjects = projects => {
   })
   return projects
 }
-
+const { data: basinsData } = await useApi(createUrl('api/basins'))
 let add = (obj, k, v) => Object.assign(obj, obj[k] 
   ? { [k]: [].concat(obj[k], v) } 
   : { [k]: v })
-
 const getSiteName = referenceSites => {
   const objReferenceSite = JSON.parse(referenceSites)
   return objReferenceSite.answers ? objReferenceSite.answers[0].nombre_sitio : 'PENDIENTE'
 }
-
 const isAddNewProjectDrawerVisible = ref(false)
 const addNewProject = async projectData => {
   await $api('api/projects', {
@@ -68,7 +66,6 @@ const addNewProject = async projectData => {
   // refetch User
   fetchProjects()
 }
-
 const getNumOfUsers = project => {
   const objReferenceSite = JSON.parse(project.reference_sites_data)
   const rfs = objReferenceSite.users ? objReferenceSite.users : []
@@ -184,7 +181,7 @@ const getNumOfUsers = project => {
               variant="tonal"
             />
           </div>
-          <span class="v-card-title text-secondary mt-2 mb-3">Nueva Cuenca</span>
+          <span class="v-card-title text-secondary mt-2 mb-3">Nuevo Monitoreo</span>
         </VCardText>
       </VCard>
     </VCol>
@@ -198,6 +195,7 @@ const getNumOfUsers = project => {
   </template>
   <AddNewProjectDrawer
     v-model:isDrawerOpen="isAddNewProjectDrawerVisible"
+    v-model:basinsData="basinsData"
     @project-data="addNewProject"
   />
 </template>

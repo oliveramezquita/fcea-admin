@@ -14,6 +14,7 @@ const isSuperAdminRule = ref(userData.value.role === 'SUPER_ADMIN' ? true : fals
 const currentTab = ref('tab-1')
 const route = useRoute('apps-projects-view-id')
 const { data: projectData } = await useApi(`api/project/${ route.params.id }`)
+const { data: basinsData } = await useApi(createUrl('api/basins'))
 const status = ref()
 const season = ref(projectData.value.season)
 const month = ref(projectData.value.month)
@@ -26,14 +27,12 @@ const {
   }
 }))
 const project = computed(() => projectData.value)
-
 if (project.value) {
   status.value = project.value.activated ? 'Activo' : 'Desactivo'
 }
 const objReferenceSite = JSON.parse(project.value.reference_sites_data)
 const existsSiteReference = ref(objReferenceSite.hasOwnProperty('answers'))
 const adminUsers = ref(usersData.value.data.filter(user => user.role === 'ADMIN' && user.activated))
-
 const editProject = async project => {
   await $api(`api/project/${project._id}`, {
     method: 'PATCH',
@@ -41,20 +40,6 @@ const editProject = async project => {
       'activated': !project.activated
     },
   })
-}
-const geoJsonFile = ref()
-const geoJsonFileURL = ref(project.value?.geojson_file)
-const fetchGeoJsonFile = async () => {
-  $api(geoJsonFileURL.value, {
-    method: 'GET',
-    onResponse({ response }) {
-      const filename = geoJsonFileURL.value.replace(/^.*[\\/]/, '')
-      geoJsonFile.value = [new File([response._data], filename, {type: "text/json;charset=utf-8"})]
-    }
-  })
-}
-if (geoJsonFileURL.value) {
-  fetchGeoJsonFile()
 }
 const updateProjectData = projectUpdated => {
   season.value = projectUpdated.season
@@ -153,8 +138,8 @@ watch([season, month, year])
             <ProjectData
             :project-data="project"
             :users-data="adminUsers"
+            :basins-data="basinsData"
             :is-super-admin-rule="isSuperAdminRule"
-            :geo-json-file="geoJsonFile"
             @updateProjectData="updateProjectData" />
           </VWindowItem>
           <VWindowItem>
