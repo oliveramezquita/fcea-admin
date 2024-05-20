@@ -1,6 +1,6 @@
 <script setup>
-import ApexChartHorizontalBar from '@/views/charts/apex-chart/ApexChartHorizontalBar.vue';
-import ApexChartNewTechnologiesData from '@/views/charts/apex-chart/ApexChartNewTechnologiesData.vue';
+import ComparativeGraph from '@/views/charts/ComparativeGraph.vue';
+import HistoricalGraph from '@/views/charts/HistoricalGraph.vue';
 
 const props = defineProps({
   isDialogVisible: {
@@ -10,11 +10,21 @@ const props = defineProps({
   title: {
     type: String,
     required: true,
+  },
+  sites: {
+    type: Array,
+    required: true,
   }
 })
 const emit = defineEmits([
   'update:isDialogVisible',
+  'udpate:sites',
 ])
+const sites = ref(structuredClone(toRaw(props.sites)))
+watch(props, () => {
+  sites.value = structuredClone(toRaw(props.sites))
+})
+const graphData = ref(cgvOverallQuality(sites.value))
 
 const dialogVisibleUpdate = val => {
   emit('update:isDialogVisible', val)
@@ -57,16 +67,18 @@ const tabItemText = 'Biscuit cheesecake gingerbread oat cake tiramisu. Marzipan 
         </VTab>
 
       </VTabs>
-      <VCardItem>
-        <VCardTitle class="text-center">{{ props.title }}</VCardTitle>
-      </VCardItem>
       <VCardText>
-        <VWindow v-model="currentTab">
-          <VWindowItem>
-            <ApexChartHorizontalBar />
+        <VWindow v-model="currentTab" class="disable-tab-transition">
+          <VWindowItem class="mt-5">
+            <ComparativeGraph
+              :title="graphData.title"
+              :series="graphData.series"
+              :categories="graphData.categories"
+              :colors="graphData.colors"
+             />
           </VWindowItem>
-          <VWindowItem>
-            <ApexChartNewTechnologiesData />
+          <VWindowItem class="mt-5">
+            <HistoricalGraph />
           </VWindowItem>
         </VWindow>
       </VCardText>

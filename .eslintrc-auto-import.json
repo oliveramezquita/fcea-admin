@@ -377,6 +377,7 @@
     "totalScore": true,
     "getScoreMessage": true,
     "generateArrayOfYears": true,
-    "setBackgroundSeason": true
+    "setBackgroundSeason": true,
+    "cgvOverallQuality": true
   }
 }

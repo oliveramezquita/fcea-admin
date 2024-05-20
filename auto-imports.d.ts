@@ -30,6 +30,7 @@ declare global {
   const calculateSaturationGrade: typeof import('./src/utils/formulas.js')['calculateSaturationGrade']
   const calculateTemperatureGrade: typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']
   const calculateTurbidityGrade: typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']
+  const cgvOverallQuality: typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -406,6 +407,7 @@ declare module 'vue' {
     readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
+    readonly cgvOverallQuality: UnwrapRef<typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -773,6 +775,7 @@ declare module '@vue/runtime-core' {
     readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
+    readonly cgvOverallQuality: UnwrapRef<typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>

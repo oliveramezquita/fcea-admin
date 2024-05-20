@@ -411,7 +411,6 @@ const isGraphDialogVisible = ref(false)
 const graphTitle = ref()
 const updateGraph = async graph => {
   isGraphDialogVisible.value = true
-  console.log(graph.title)
   graphTitle.value = graph.title
 }
 </script>
@@ -555,7 +554,8 @@ const updateGraph = async graph => {
                     </VRadioGroup>
                     <GraphDialog
                       v-model:isDialogVisible="isGraphDialogVisible"
-                      :title="graphTitle" />
+                      :title="graphTitle"
+                      :sites="sites" />
                   </VWindowItem>
                 </VWindow>
               </VCardText>
