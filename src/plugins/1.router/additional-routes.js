@@ -23,4 +23,12 @@ export const routes = [
             subject: ['admin', 'brigadier'],
         },
     },
+    // {
+    //     path: '/apps/basins/view/:id',
+    //     name: 'apps-basins-view-id',
+    //     component: () => import('@/pages/apps/basins/view/[id].vue'),
+    //     meta: {
+    //         navActiveLink: 'apps-basins-list'
+    //     }
+    // }
 ]

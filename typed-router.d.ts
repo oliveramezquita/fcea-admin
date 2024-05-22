@@ -40,6 +40,8 @@ import type {
 declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
+    'apps-basins-list': RouteRecordInfo<'apps-basins-list', '/apps/basins/list', Record<never, never>, Record<never, never>>,
+    'apps-basins-view-id': RouteRecordInfo<'apps-basins-view-id', '/apps/basins/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'apps-catalogs-list': RouteRecordInfo<'apps-catalogs-list', '/apps/catalogs/list', Record<never, never>, Record<never, never>>,
     'apps-catalogs-view-id': RouteRecordInfo<'apps-catalogs-view-id', '/apps/catalogs/view/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'apps-projects-list': RouteRecordInfo<'apps-projects-list', '/apps/projects/list', Record<never, never>, Record<never, never>>,
@@ -54,7 +56,6 @@ declare module 'vue-router/auto/routes' {
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
     'reports-mapa-colaborativo': RouteRecordInfo<'reports-mapa-colaborativo', '/reports/mapa-colaborativo', Record<never, never>, Record<never, never>>,
-    'reports-monitoring-site-information': RouteRecordInfo<'reports-monitoring-site-information', '/reports/monitoring-site-information', Record<never, never>, Record<never, never>>,
     'reset-password': RouteRecordInfo<'reset-password', '/reset-password', Record<never, never>, Record<never, never>>,
   }
 }

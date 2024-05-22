@@ -43,6 +43,7 @@ declare module 'vue' {
     CustomRadiosWithIcon: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithIcon.vue')['default']
     CustomRadiosWithImage: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithImage.vue')['default']
     DataFilters: typeof import('./src/@core/components/DataFilters.vue')['default']
+    DeleteBasinDialog: typeof import('./src/components/dialogs/DeleteBasinDialog.vue')['default']
     DeleteCatalogDialog: typeof import('./src/components/dialogs/DeleteCatalogDialog.vue')['default']
     DeleteGeoJsonFileDialog: typeof import('./src/components/dialogs/DeleteGeoJsonFileDialog.vue')['default']
     DeleteUserDialog: typeof import('./src/components/dialogs/DeleteUserDialog.vue')['default']
@@ -50,6 +51,7 @@ declare module 'vue' {
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
+    GraphDialog: typeof import('./src/components/dialogs/GraphDialog.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     MapBox: typeof import('./src/@core/components/MapBox.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
@@ -70,5 +72,6 @@ declare module 'vue' {
     TwoFactorAuthDialog: typeof import('./src/components/dialogs/TwoFactorAuthDialog.vue')['default']
     UserInfoEditDialog: typeof import('./src/components/dialogs/UserInfoEditDialog.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    VueApexCharts: typeof import('vue3-apexcharts')['default']
   }
 }

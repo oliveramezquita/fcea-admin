@@ -30,6 +30,9 @@ declare global {
   const calculateSaturationGrade: typeof import('./src/utils/formulas.js')['calculateSaturationGrade']
   const calculateTemperatureGrade: typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']
   const calculateTurbidityGrade: typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']
+  const cgvOverallQuality: typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']
+  const compGraphData: typeof import('./src/utils/compGraphData.js')['compGraphData']
+  const comparativeGraphData: typeof import('./src/utils/comparativeGraphData.js')['comparativeGraphData']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -38,6 +41,7 @@ declare global {
   const confirmedValidator: typeof import('./src/@core/utils/validators.js')['confirmedValidator']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
+  const cpGraphData: typeof import('./src/utils/comparativeGraphData.js')['cpGraphData']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGenericProjection: typeof import('@vueuse/math')['createGenericProjection']
@@ -65,12 +69,14 @@ declare global {
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const formatDate: typeof import('./src/@core/utils/formatters.js')['formatDate']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']
+  const generateArrayOfYears: typeof import('./src/utils/functions.js')['generateArrayOfYears']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getColor: typeof import('./src/utils/formulas.js')['getColor']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getPositionsDifference: typeof import('./src/utils/formulas.js')['getPositionsDifference']
   const getScoreMessage: typeof import('./src/utils/formulas.js')['getScoreMessage']
+  const graphData: typeof import('./src/utils/comparativeGraphData.js')['graphData']
   const h: typeof import('vue')['h']
   const iframeResize: typeof import('./src/@core/utils/iframeResize')['default']
   const iframeResizer: typeof import('./src/utils/iframeResizer')['default']
@@ -147,6 +153,8 @@ declare global {
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const resolveVuetifyTheme: typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']
   const setActivePinia: typeof import('pinia')['setActivePinia']
+  const setBackgroundSeason: typeof import('./src/utils/backgroundSeason.js')['setBackgroundSeason']
+  const setComparativeGraphData: typeof import('./src/utils/setComparativeGraphData.js')['setComparativeGraphData']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
@@ -439,12 +447,14 @@ declare module 'vue' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
+    readonly generateArrayOfYears: UnwrapRef<typeof import('./src/utils/functions.js')['generateArrayOfYears']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
+    readonly graphData: UnwrapRef<typeof import('./src/utils/comparativeGraphData.js')['graphData']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -519,6 +529,7 @@ declare module 'vue' {
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly resolveVuetifyTheme: UnwrapRef<typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
+    readonly setBackgroundSeason: UnwrapRef<typeof import('./src/utils/backgroundSeason.js')['setBackgroundSeason']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
@@ -804,12 +815,14 @@ declare module '@vue/runtime-core' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
+    readonly generateArrayOfYears: UnwrapRef<typeof import('./src/utils/functions.js')['generateArrayOfYears']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getColor: UnwrapRef<typeof import('./src/utils/formulas.js')['getColor']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
+    readonly graphData: UnwrapRef<typeof import('./src/utils/comparativeGraphData.js')['graphData']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -884,6 +897,7 @@ declare module '@vue/runtime-core' {
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly resolveVuetifyTheme: UnwrapRef<typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
+    readonly setBackgroundSeason: UnwrapRef<typeof import('./src/utils/backgroundSeason.js')['setBackgroundSeason']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>

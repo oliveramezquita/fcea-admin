@@ -2,10 +2,6 @@
 import MapFiltersDrawer from '@/views/reports/MapFiltersDrawer.vue';
 import SitePanelInfo from '@/views/reports/SitePanelInfo.vue';
 import mapboxgl from 'mapbox-gl';
-import {
-  onMounted,
-  ref
-} from 'vue';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 import { useDisplay } from 'vuetify';
 
@@ -17,11 +13,11 @@ definePage({
   },
 })
 const selectedProject = ref()
-const selectedState = ref()
-const selectedInstitution = ref()
-const selectedSites = ref()
+const selectedMonitoringPeriod = ref()
+const selectedSeason = ref()
+const state = ref()
+const institution = ref()
 const dateRange = ref()
-const selectedParameter = ref()
 
 const {
   data: siteFilters,
@@ -29,14 +25,19 @@ const {
 } = await useApi(createUrl(`api/site-filters`, {
   query: {
     project: selectedProject,
+    monitoring_period: selectedMonitoringPeriod,
   }
 }))
 const projectList = ref(siteFilters.value?.projects)
 const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
-const sitesList = ref(siteFilters.value?.sites)
-const geoJsonData = ref(siteFilters.value?.geojson_data)
-selectedProject.value = siteFilters.value?.default_project 
+const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
+const seasonsList = ref(siteFilters.value?.seasons)
+let geoJsonData = siteFilters.value?.default_project['geojson_data']
+
+selectedProject.value = siteFilters.value?.default_project['name']
+selectedMonitoringPeriod.value = siteFilters.value?.default_project['monitoring_period']
+selectedSeason.value = siteFilters.value?.default_project['season']
 
 const {
   data: sitesData,
@@ -44,9 +45,10 @@ const {
 } = await useApi(createUrl('api/public-sites', {
   query: {
     project: selectedProject,
-    state: selectedState,
-    institution: selectedInstitution,
-    site: selectedSites,
+    monitoring_period: selectedMonitoringPeriod,
+    season: selectedSeason,
+    state: state,
+    institution: institution,
     dates: dateRange,
   }
 }))
@@ -77,7 +79,8 @@ const fetchFeatureAndTracking = async () => {
         title: `${site.nombre_sitio} - ${site.codigo_sitio}`,
         coordinates: `${site.latitud}, ${site.longitud}`,
         description: `${site.ciudad}, ${site.estado}`,
-
+        score: site.scores.total[0],
+        interpretation: `Calidad: ${site.scores.interpretation[0]}`
       }
     }
     featureCollection.value.features.push(feature)
@@ -88,6 +91,7 @@ const fetchFeatureAndTracking = async () => {
       is_reference_site: site.es_sitio_referencia,
       type_site: site.es_sitio_referencia ? 'Sitio de referencia' : 'Sitio de interés',
       icon: site.es_sitio_referencia ? 'tabler-map-2' : 'tabler-map-check',
+      color: site.scores.total ? site.scores?.total[2]: 'secondary',
       latitude: site.latitud,
       longitude: site.longitud,
       altitude: site.altitud,
@@ -113,7 +117,8 @@ const fetchFeatureAndTracking = async () => {
       macroinvertebrates_rating: site.calificacion_macroinvertebrados,
       hydromorphological_quality: site.calidad_hidromorfologica,
       riparian_forest_quality: site.calidad_bosque_ribera,
-      date: monitoringDate.toLocaleString(), 
+      date: monitoringDate, 
+      scores: site.scores,
       site_reference_score: site.reference_site_scores,
     }
     siteTrackingData.value.push(siteInfo)
@@ -135,31 +140,8 @@ const fetchMapData = async () => {
 }
 
 const fetchGeoJsonData = async () => {
-  if(geoJsonData.value && !map.value.getSource('cuenca')) {
-    map.value.addSource('cuenca', {
-      type: 'geojson',
-      data: geoJsonData.value,
-    })
-    map.value.addLayer({
-      'id': 'maine',
-      'type': 'fill',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'fill-color': '#1f97b4', 
-          'fill-opacity': 0.5
-      }
-    })
-    map.value.addLayer({
-      'id': 'outline',
-      'type': 'line',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'line-color': '#000',
-          'line-width': 2
-      }
-    })
+  if(geoJsonData && map.value.getSource('cuenca')) {
+    map.value.getSource('cuenca').setData(geoJsonData)
   } 
 }
 
@@ -168,6 +150,7 @@ onMounted(() => {
   mapboxgl.accessToken = accessToken
   map.value = new mapboxgl.Map({
     container: 'mapContainer',
+    
     center: [
     -101.252860,
       22.210026,
@@ -182,7 +165,12 @@ onMounted(() => {
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
     })
+    map.value.addSource('cuenca', {
+      type: 'geojson',
+      data: null,
+    })
     fetchMapData()
+    fetchGeoJsonData()
     // Layer of sites
     map.value.addLayer({
       id: 'clusters',
@@ -218,7 +206,7 @@ onMounted(() => {
       layout: {
           'text-field': ['get', 'point_count_abbreviated'],
           'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 16
+          'text-size': 16,
       }
     })
     map.value.addLayer({
@@ -227,10 +215,24 @@ onMounted(() => {
       source: 'sites',
       filter: ['!', ['has', 'point_count']],
       paint: {
-          'circle-color': '#11b4da',
+          'circle-color': [
+            'match',
+            ['get', 'score'],
+            5,
+            '#5b961e',
+            4,
+            '#92d050',
+            3,
+            '#f6f602',
+            2,
+            '#ffc000',
+            1,
+            '#e92312',
+            '#737682'
+          ],
           'circle-radius': 6,
           'circle-stroke-width': 2,
-          'circle-stroke-color': '#fff'
+          'circle-stroke-color': '#000'
       }
     })
     map.value.on('click', 'clusters', (e) => {
@@ -255,6 +257,7 @@ onMounted(() => {
       const title = e.features[0].properties.title
       const cdts = e.features[0].properties.coordinates
       const description = e.features[0].properties.description
+      const interpretation = e.features[0].properties.interpretation
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
           coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
       }
@@ -262,7 +265,7 @@ onMounted(() => {
       new mapboxgl.Popup()
           .setLngLat(coordinates)
           .setHTML(
-              `<b>${title}</b><br>${cdts}<br>${description}`
+              `<b>${title}</b><br>${cdts}<br>${description}<br>${interpretation}`
           )
           .addTo(map.value)
     })
@@ -272,7 +275,26 @@ onMounted(() => {
     map.value.on('mouseleave', 'clusters', () => {
         map.value.getCanvas().style.cursor = ''
     })
-    fetchGeoJsonData()
+    map.value.addLayer({
+      'id': 'maine',
+      'type': 'fill',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'fill-color': '#1f97b4', 
+          'fill-opacity': 0.5
+      }
+    })
+    map.value.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'line-color': '#000',
+          'line-width': 2
+      }
+    })
   })
 })
 
@@ -287,18 +309,6 @@ const flyToLocation = (geolocation, index) => {
     zoom: 16,
   })
 }
-const updateProjects = async (ev) => {
-  if (ev == 'projects') {
-    selectedState.value = null
-    selectedInstitution.value = null
-    selectedSites.value = null
-    dateRange.value = null
-    selectedParameter.value = null
-    resetPolygonData()
-  }
-  await fetchFilters()
-  await fetchSites()
-}
 
 const resetPolygonData = async() => {
   if (map.value.getLayer('maine')) map.value.removeLayer('maine')
@@ -308,10 +318,12 @@ const resetPolygonData = async() => {
 
 const updateMap = async filters => {
   selectedProject.value = filters.project
-  selectedState.value = filters.state
-  selectedInstitution.value = filters.institution
-  selectedSites.value = filters.site
+  selectedMonitoringPeriod.value = filters.monitoringPeriod
+  selectedSeason.value = filters.season
+  state.value = filters.state
+  institution.value = filters.institution
   dateRange.value = filters.dates
+  //resetPolygonData()
   await fetchFilters()
   await fetchSites()
 }
@@ -321,8 +333,7 @@ const isMapFiltersDrawerVisible = ref(false)
 watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
   institutionsList.value = siteFilters.value?.institution
-  sitesList.value = siteFilters.value?.sites
-  geoJsonData.value = siteFilters.value?.geojson_data
+  geoJsonData = siteFilters.value?.default_project['geojson_data']
   fetchGeoJsonData()
 })
 
@@ -330,93 +341,82 @@ watch(sites, () => {
   fetchFeatureAndTracking()
   fetchMapData()
 })
+
+const currentTab = ref('Información')
+const tabsData = [
+  {
+    title: 'Información',
+    icon: 'tabler-list-check'
+  },
+  {
+    title: 'Gráficas',
+    icon: 'tabler-chart-infographic'
+  }
+]
+const radioGroup = ref(1)
+const graphsList = [
+  {
+    title: 'Calidad General',
+    value: 'calidad-general'
+  },
+  {
+    title: 'Temperatura',
+    value: 'temperatura_agua,water_temperature'
+  },
+  {
+    title: 'pH',
+    value: 'ph,ph'
+  },
+  {
+    title: 'Oxígeno Disuelto',
+    value: 'oxigeno_disuelto,saturation'
+  },
+  {
+    title: 'Turbidez',
+    value: 'turbidez,turbidity'
+  },
+  {
+    title: 'Nitratos',
+    value: 'nitratos,nitrates'
+  },
+  {
+    title: 'Amonio',
+    value: 'amonio,ammonium'
+  },
+  {
+    title: 'Ortofosfatos',
+    value: 'ortofosfatos,orthophosphates'
+  },
+  {
+    title: 'Calidad de Bosque de Ribera',
+    value: 'calidad_bosque_ribera,cbr'
+  },
+  {
+    title: 'Calidad Hidromorfológica',
+    value: 'calidad_hidromorfologica,ch',
+  },
+  {
+    title: 'Macroinvertebrados',
+    value: 'calificacion_macroinvertebrados,macroinvertebrates_rating'
+  },
+  {
+    title: 'Bacterias Coliformes',
+    value: 'coliformes-totales'
+  },
+  {
+    title: 'Caudal',
+    value: 'caudal'
+  }
+]
+const isGraphDialogVisible = ref(false)
+const graphItem = ref()
+const updateGraph = async graph => {
+  isGraphDialogVisible.value = true
+  graphItem.value = graph
+}
 </script>
 
 <template>
-  <div class="d-lg-block d-none">
-    <VRow class="filters-layout">
-      <!-- 👉 Select Role -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedProject"
-          placeholder="Seleccionar cuenca"
-          :items="projectList"
-          @update:model-value="updateProjects('projects')"
-        />
-      </VCol>
-      <!-- 👉 Select Role -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedState"
-          placeholder="Seleccionar estado"
-          :items="statesList"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('state')"
-        />
-      </VCol>
-      <!-- 👉 Select Plan -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedInstitution"
-          placeholder="Seleccionar institución"
-          :items="institutionsList"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('institution')"
-        />
-      </VCol>
-      <!-- 👉 Select Status -->
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedSites"
-          placeholder="Seleccionar sitio"
-          :items="sitesList"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('sites')"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-      <AppDateTimePicker
-        v-model="dateRange"
-        placeholder="Selecciona una fecha"
-        :config="{ mode: 'range' }"
-        clearable
-        clear-icon="tabler-x"
-        @update:model-value="updateProjects('date')"
-      />
-      </VCol>
-      <VCol
-        cols="12"
-        sm="4"
-      >
-        <AppSelect
-          v-model="selectedParameter"
-          placeholder="Seleccionar parámetro"
-          :items="[]"
-          clearable
-          clear-icon="tabler-x"
-          @update:model-value="updateProjects('parameter')"
-        />
-      </VCol>
-    </VRow> 
-  </div>
   <VLayout class="fleet-app-layout">
     <VNavigationDrawer
       v-model="isLeftSidebarOpen"
@@ -430,9 +430,10 @@ watch(sites, () => {
         class="h-100 fleet-navigation-drawer"
         flat
       >
-        <VCardItem>
+        <VCardItem class="pb-2">
           <VCardTitle>
-            Mapa Colaborativo
+            <h5 class="text-h5">Mapa Colaborativo</h5>
+            <h5 class="text-body-1">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
           </VCardTitle>
 
           <template #append>
@@ -445,66 +446,143 @@ watch(sites, () => {
           </template>
         </VCardItem>
 
+        <!-- <VTabs
+          v-model="currentTab"
+          grow
+          stacked
+          class="disable-tab-transition"
+        >
+          <VTab
+            v-for="(tab, index) in tabsData"
+            :key="index"
+          >
+            <VIcon
+              :icon="tab.icon"
+              class="mb-2"
+            />
+            <span>{{ tab.title }}</span>
+          </VTab>
+        </VTabs> -->
         <!-- 👉 Perfect Scrollbar -->
         <PerfectScrollbar
           :options="{ wheelPropagation: false, suppressScrollX: true }"
-          style="block-size: calc(100% - 180px);"
+          style="block-size: calc(100% - 80px);"
         >
-          <VCardText class="pt-0">
-            <div
-              v-for="(site, index) in siteTrackingData"
-              :key="index"
-              class="mb-6"
-            >
-              <div
-                class="d-flex align-center justify-space-between cursor-pointer"
-                @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
+          <!-- <VWindow v-model="currentTab">
+            <VWindowItem> -->
+              <VTabs
+                v-model="currentTab"
+                class="disable-tab-transition"
               >
-                <div class="d-flex gap-x-4 align-center">
-                  <VAvatar
-                    :icon="site.icon"
-                    variant="tonal"
-                    color="secondary"
-                  />
-                  <div>
-                    <div class="text-body-1 text-high-emphasis">
-                      {{ site.name }}
+                <VTab
+                  v-for="(tab, index) in tabsData"
+                  :key="index"
+                >
+                  {{ tab.title }}
+                </VTab>
+              </VTabs>
+              <VCardText class="pt-0">
+                <VWindow v-model="currentTab">
+                  <VWindowItem>
+                    <div
+                      v-for="(site, index) in siteTrackingData"
+                      :key="index"
+                      class="mb-6 mt-5"
+                    >
+                      <div
+                        class="d-flex align-center justify-space-between cursor-pointer"
+                        @click="flyToLocation(geojson.features[index].geometry.coordinates, index)"
+                      >
+                        <div class="d-flex gap-x-4 align-center">
+                          <VAvatar
+                            :icon="site.icon"
+                            :color="site.color"
+                          />
+                          <div>
+                            <div class="text-body-1 text-high-emphasis">
+                              {{ site.name }}
+                            </div>
+                            <div class="text-body-1">
+                              {{ site.location }}
+                            </div>
+                          </div>
+                        </div>
+                        <IconBtn size="small">
+                          <VIcon
+                            :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
+                            class="text-high-emphasis"
+                          />
+                        </IconBtn>
+                      </div>
+                      <VExpandTransition mode="out-in">
+                        <div v-show="showPanel[index]">
+                          <div class="mt-5">
+                            <SitePanelInfo :site-info="site" />
+                          </div>
+                        </div>
+                      </VExpandTransition>
                     </div>
-                    <div class="text-body-1">
-                      {{ site.location }}
-                    </div>
-                  </div>
-                </div>
-                <IconBtn size="small">
-                  <VIcon
-                    :icon="showPanel[index] ? 'tabler-chevron-down' : $vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
-                    class="text-high-emphasis"
+                    <template v-if="siteTrackingData.length === 0">
+                      <VAlert
+                        prominent
+                        type="info"
+                        variant="tonal"
+                        color="secondary"
+                        class="mt-5"
+                      >
+                        <template #text>
+                          <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
+                          <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
+                        </template>
+                      </VAlert>
+                    </template>
+                  </VWindowItem>
+                  <VWindowItem>
+                    <VRadioGroup
+                      v-model="radioGroup"
+                      false-icon="tabler-chart-histogram"
+                      true-icon="tabler-chart-histogram"
+                      class="mt-5"
+                    >
+                      <VRadio
+                        v-for="(graph, index) in graphsList"
+                        :key="index"
+                        :label="graph.title"
+                        :value="graph.value"
+                        class="mb-2"
+                        @click="updateGraph(graph)"
+                      />
+                    </VRadioGroup>
+                    <GraphDialog
+                      v-model:isDialogVisible="isGraphDialogVisible"
+                      :sites="sites"
+                      :graph-item="graphItem" />
+                  </VWindowItem>
+                </VWindow>
+              </VCardText>
+            <!-- </VWindowItem>
+            <VWindowItem>
+              <VCardText class="pt-5">
+                <VRadioGroup
+                  v-model="radioGroup"
+                  false-icon="tabler-chart-histogram"
+                  true-icon="tabler-chart-histogram"
+                >
+                  <VRadio
+                    v-for="(graph, index) in graphsList"
+                    :key="index"
+                    :label="graph.title"
+                    :value="graph.value"
+                    class="mb-2"
+                    @click="updateGraph(graph)"
                   />
-                </IconBtn>
-              </div>
-              <VExpandTransition mode="out-in">
-                <div v-show="showPanel[index]">
-                  <div class="mt-5">
-                    <SitePanelInfo :site-info="site" />
-                  </div>
-                </div>
-              </VExpandTransition>
-            </div>
-            <template v-if="siteTrackingData.length === 0">
-              <VAlert
-                prominent
-                type="info"
-                variant="tonal"
-                color="secondary"
-              >
-                <template #text>
-                  <div v-if="!selectedProject">No existen cuencas con sitios dados de alta hasta el momento</div>
-                  <div v-if="selectedProject">No existen sitios con las fechas seleccionadass: {{ dateRange }}</div>
-                </template>
-              </VAlert>
-            </template>
-          </VCardText>
-
+                </VRadioGroup>
+                <GraphDialog
+                  v-model:isDialogVisible="isGraphDialogVisible"
+                  :title="graphTitle" />
+              </VCardText>
+            </VWindowItem>
+          </VWindow> -->
         </PerfectScrollbar>
       </VCard>
     </VNavigationDrawer>
@@ -517,13 +595,15 @@ watch(sites, () => {
         >
           <VIcon icon="tabler-menu-2" />
         </IconBtn>
-        <IconBtn
-          class="d-lg-none filter-toggle-btn rounded-sm"
+        <VBtn
+          class="d-lg-block filter-toggle-btn rounded-sm"
           variant="elevated"
+          color="white"
           @click="isMapFiltersDrawerVisible = true"
         >
-          <VIcon icon="tabler-filter-pin" />
-        </IconBtn>
+          <VIcon start icon="tabler-filter-pin" />
+          Filtros
+        </VBtn>
         <!-- 👉 Fleet map  -->
         <div
           id="mapContainer"
@@ -535,10 +615,13 @@ watch(sites, () => {
   <MapFiltersDrawer
     v-model:isDrawerOpen="isMapFiltersDrawerVisible"
     :selected-project="selectedProject"
+    :selected-monitoring-period="selectedMonitoringPeriod"
+    :selected-season="selectedSeason"
     :project-list="projectList"
+    :monitoring-period-list="monitoringPeriodList"
+    :seasons-list="seasonsList"
     :states-list="statesList"
     :institutions-list="institutionsList"
-    :sites-list="sitesList"
     @update-map="updateMap"
   />
 </template>

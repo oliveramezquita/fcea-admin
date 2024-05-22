@@ -63,7 +63,7 @@ export const calculateNitratesGrade = (nitrates, nitratesReference) => {
     if (nitratesReference == null) return null
     if (nitrates < nitratesReference)
         return getColor(1)
-    const magnitudes = (nitrates, nitratesReference) / 0.2
+    const magnitudes = (nitrates - nitratesReference) / 0.2
     if (magnitudes <= 0)
         return getColor(1)
     else if (magnitudes < 1)

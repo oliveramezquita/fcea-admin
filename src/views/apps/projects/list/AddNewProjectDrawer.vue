@@ -6,6 +6,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  basinsData: {
+    type: Array,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -17,7 +21,11 @@ const isFormValid = ref(false)
 const refForm = ref()
 const name = ref('')
 const season = ref()
+const year = ref()
+const month = ref()
 const admins = ref()
+const yearList = ref(generateArrayOfYears())
+const monthList = ref(['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'])
 
 const {
   data: usersData
@@ -43,6 +51,8 @@ const onSubmit = () => {
       emit('projectData', {
         name: name.value,
         season: season.value,
+        year: year.value,
+        month: month.value,
         admin_users: admins.value,
       })
       emit('update:isDrawerOpen', false)
@@ -70,7 +80,7 @@ const handleDrawerModelValueUpdate = val => {
   >
     <!-- 👉 Title -->
     <AppDrawerHeaderSection
-      title="Agregar nueva cuenca"
+      title="Agregar nuevo monitoreo"
       @cancel="closeNavigationDrawer"
     />
 
@@ -86,16 +96,18 @@ const handleDrawerModelValueUpdate = val => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- 👉 Status -->
+              <!-- 👉 Proyect -->
               <VCol cols="12">
-                <AppTextField
+                <AppAutocomplete
                   v-model="name"
-                  :rules="[requiredValidator]"
-                  label="Nombre"
-                  placeholder="Nombre de la cuenca"
+                  :items="props.basinsData"
+                  item-title="name"
+                  item-value="name"
+                  placeholder="Selecciona una cuenca"
+                  label="Cuenca"
                 />
               </VCol>
-              <!-- 👉 Email -->
+              <!-- 👉 Season -->
               <VCol cols="12">
                 <AppSelect
                   v-model="season"
@@ -103,6 +115,26 @@ const handleDrawerModelValueUpdate = val => {
                   placeholder="Selecciona una temporada"
                   :rules="[requiredValidator]"
                   :items="['Secas', 'Lluvias']"
+                />
+              </VCol>
+              <!-- 👉 Year -->
+              <VCol cols="12">
+                <AppSelect
+                  v-model="year"
+                  label="Año"
+                  placeholder="Selecciona un año"
+                  :rules="[requiredValidator]"
+                  :items="yearList"
+                />
+              </VCol>
+               <!-- 👉 Month -->
+               <VCol cols="12">
+                <AppSelect
+                  v-model="month"
+                  label="Mes"
+                  placeholder="Selecciona un mes"
+                  :rules="[requiredValidator]"
+                  :items="monthList"
                 />
               </VCol>
               <VCol cols="12">

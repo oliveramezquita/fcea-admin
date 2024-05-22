@@ -16,9 +16,10 @@ const projectData = ref(structuredClone(toRaw(props.projectData)))
 const userData = ref(structuredClone(toRaw(props.userData)))
 const referenceSiteData = JSON.parse(projectData.value.reference_sites_data)
 const {url, params} = urlFormParse(referenceSiteData.url_form)
+const projectId = encodeURIComponent(projectData.value._id)
 const projectName = encodeURIComponent(projectData.value.name)
 const email = encodeURIComponent(userData.value.email)
-const urlFormsApp = ref(`${url}#${params[0]}=${email}&${params[2]}=${projectName}`)
+const urlFormsApp = ref(`${url}#${params[0]}=${email}&${params[2]}=${projectId}&${params[4]}=${projectName}`)
 const formAvailable = ref(false)
 
 if (!referenceSiteData.hasOwnProperty('answers') && referenceSiteData.hasOwnProperty('url_form') && projectData.value.activated) {

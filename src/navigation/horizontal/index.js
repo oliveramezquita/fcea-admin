@@ -8,8 +8,15 @@ export default [
   },
   {
     title: 'Cuencas',
-    to: { name: 'apps-projects-list' },
+    to: { name: 'apps-basins-list' },
     icon: { icon: 'tabler-map-star' },
+    action: 'manage',
+    subject: 'admin'
+  },
+  {
+    title: 'Monitoreos',
+    to: { name: 'apps-projects-list' },
+    icon: { icon: 'tabler-folder-pin' },
     action: 'manage',
     subject: 'admin'
   },
