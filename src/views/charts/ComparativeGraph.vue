@@ -126,7 +126,7 @@ if (props.title === 'Caudal') {
     return (val ? val : 0) + ' m³/s'
   }
   chartOptions.xaxis.labels.formatter = (val) => {
-    return val + ' m³/s'
+    return (Math.round(val * 100) / 100).toFixed(2) + ' m³/s'
   }
 }
 if (props.title === 'Bacterias Coliformes') {
