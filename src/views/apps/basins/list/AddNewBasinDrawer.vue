@@ -27,8 +27,8 @@ const onSubmit = () => {
     if (valid) {
       const formData = new FormData()
       formData.set('name', name.value)
-      if (geoJsonFile?.length > 0)
-        formData.set('geojson_file', geoJsonFile[0])
+      if (geoJsonFile.value?.length > 0)
+        formData.set('geojson_file', geoJsonFile.value[0])
       emit('createBasin', formData)
       emit('update:isDrawerOpen', false)
       nextTick(() => {
