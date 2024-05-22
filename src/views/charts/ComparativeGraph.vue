@@ -123,7 +123,7 @@ if (props.title === 'Calidad de Bosque de Ribera' || props.title === 'Calidad Hi
 }
 if (props.title === 'Caudal') {
   chartOptions.dataLabels.formatter = (val) => {
-    return val + ' m³/s'
+    return (val ? val : 0) + ' m³/s'
   }
   chartOptions.xaxis.labels.formatter = (val) => {
     return val + ' m³/s'

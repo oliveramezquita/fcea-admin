@@ -134,9 +134,9 @@ const geojson = featureCollection.value
 const activeIndex = ref(0)
 
 const fetchMapData = async () => {
-  const coordinates = geojson.features[0].geometry.coordinates
+  const coordinates = geojson.features[0]?.geometry.coordinates
   map.value.getSource('sites').setData(geojson)
-  map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
+  if (coordinates) map.value.jumpTo({ 'center': [coordinates[0], coordinates[1]], 'zoom': 6.5 })
 }
 
 const fetchGeoJsonData = async () => {

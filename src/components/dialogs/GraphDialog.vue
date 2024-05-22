@@ -72,18 +72,40 @@ watch(props, () => {
       <VCardText>
         <VWindow v-model="currentTab" class="disable-tab-transition">
           <VWindowItem class="mt-5">
+            <VAlert
+              prominent
+              type="info"
+              variant="tonal"
+              color="secondary"
+              class="mt-5"
+              v-if="!comparativeGraphData"
+            >
+              <template #text>No existen datos para graficar hasta el momento</template>
+            </VAlert>
             <ComparativeGraph
               :title="graphItem.title"
               :series="comparativeGraphData.series"
               :categories="comparativeGraphData.categories"
               :colors="comparativeGraphData.colors"
+              v-if="comparativeGraphData"
              />
           </VWindowItem>
           <VWindowItem class="mt-5">
+            <VAlert
+              prominent
+              type="info"
+              variant="tonal"
+              color="secondary"
+              class="mt-5"
+              v-if="!historicalGraphData"
+            >
+              <template #text>No existen datos para graficar hasta el momento</template>
+            </VAlert>
             <HistoricalGraph
             :series="historicalGraphData.series"
             :labels="historicalGraphData.labels"
-            :title="graphItem.title" />
+            :title="graphItem.title"
+            v-if="historicalGraphData" />
           </VWindowItem>
         </VWindow>
       </VCardText>
