@@ -69,7 +69,7 @@ const contactUs = [
         v-show="faqs.length"
         cols="12"
         sm="4"
-        lg="3"
+        lg="4"
         class="position-relative"
       >
         <!-- 👉 Tabs -->
@@ -102,7 +102,7 @@ const contactUs = [
       <VCol
         cols="12"
         sm="8"
-        lg="9"
+        lg="8"
       >
         <!-- 👉 Windows -->
         <VWindow
