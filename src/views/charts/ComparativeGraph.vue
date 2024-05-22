@@ -17,10 +17,6 @@ const props = defineProps({
     required: true,
   }
 }) 
-
-// const series = [{
-//   data: [7.5, 7.5, 7, 9, 7.5, 8]
-// }]
 const chartOptions = {
   chart: {
     type: 'bar',
@@ -38,9 +34,7 @@ const chartOptions = {
       },
     }
   },
-  // colors: ['#5b961e','#5b961e','#5b961e','#f6f602','#5b961e','#5b961e'],
   colors: props.colors,
-  
   dataLabels: {
     enabled: true,
     textAnchor: 'start',
@@ -50,6 +44,9 @@ const chartOptions = {
     offsetX: 0,
     dropShadow: {
       enabled: true
+    },
+    formatter: (val) => {
+      return val
     }
   },
   stroke: {
@@ -57,12 +54,15 @@ const chartOptions = {
     colors: ['#fff']
   },
   xaxis: {
-    //categories: ['La Granada','Río Los Patos','Rio El Filo','Parte Baja','Después de la Presa','Jalcomulco'],
     categories: props.categories,
+    labels: {
+      formatter: (val) => {
+        return val
+      }
+    }
   },
   title: {
       text: props.title,
-      //text: 'Calidad General',
       align: 'center',
       floating: true
   },
@@ -78,6 +78,87 @@ const chartOptions = {
         }
       }
     }
+  },
+  annotations: {}
+}
+if (props.title === 'Calidad General') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' puntos'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return val + ' puntos'
+  }
+}
+if (props.title === 'Temperatura') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' ºC'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return val + ' ºC'
+  }
+}
+if (props.title === 'Oxígeno Disuelto' || props.title === 'Nitratos' || props.title === 'Amonio' || props.title === 'Ortofosfatos') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' mg/L'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return (Math.round(val * 100) / 100).toFixed(1) + ' mg/L'
+  }
+}
+if (props.title === 'Turbidez') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' JTU'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return (Math.round(val * 100) / 100).toFixed(1) + ' JTU'
+  }
+}
+if (props.title === 'Calidad de Bosque de Ribera' || props.title === 'Calidad Hidromorfológica' || props.title === 'Macroinvertebrados') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' pts'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return val + ' pts'
+  }
+}
+if (props.title === 'Caudal') {
+  chartOptions.dataLabels.formatter = (val) => {
+    return val + ' m³/s'
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return val + ' m³/s'
+  }
+}
+if (props.title === 'Bacterias Coliformes') {
+  chartOptions.annotations = {
+    xaxis: [
+    {
+      x: 3,
+      borderColor: '#e92312',
+      label: {
+        borderColor: 'transparent',
+        style: {
+          color: '#000',
+          background: 'transparent',
+        },
+        text: 'Presencia',
+      }
+    },
+    {
+      x: 1,
+      borderColor: '#5b961e',
+      label: {
+        borderColor: 'transparent',
+        style: {
+          color: '#000',
+          background: 'transparent',
+        },
+        text: 'Ausencia',
+      }
+    }]
+  }
+  chartOptions.dataLabels = {
+    enabled: false,
   }
 }
 </script>

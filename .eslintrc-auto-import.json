@@ -378,6 +378,11 @@
     "getScoreMessage": true,
     "generateArrayOfYears": true,
     "setBackgroundSeason": true,
-    "cgvOverallQuality": true
+    "cgvOverallQuality": true,
+    "setComparativeGraphData": true,
+    "comparativeGraphData": true,
+    "compGraphData": true,
+    "graphData": true,
+    "cpGraphData": true
   }
 }

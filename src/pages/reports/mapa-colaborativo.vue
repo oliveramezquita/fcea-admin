@@ -140,31 +140,8 @@ const fetchMapData = async () => {
 }
 
 const fetchGeoJsonData = async () => {
-  if(geoJsonData && !map.value.getSource('cuenca')) {
-    map.value.addSource('cuenca', {
-      type: 'geojson',
-      data: geoJsonData,
-    })
-    map.value.addLayer({
-      'id': 'maine',
-      'type': 'fill',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'fill-color': '#1f97b4', 
-          'fill-opacity': 0.5
-      }
-    })
-    map.value.addLayer({
-      'id': 'outline',
-      'type': 'line',
-      'source': 'cuenca',
-      'layout': {},
-      'paint': {
-          'line-color': '#000',
-          'line-width': 2
-      }
-    })
+  if(geoJsonData && map.value.getSource('cuenca')) {
+    map.value.getSource('cuenca').setData(geoJsonData)
   } 
 }
 
@@ -188,7 +165,12 @@ onMounted(() => {
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
     })
+    map.value.addSource('cuenca', {
+      type: 'geojson',
+      data: null,
+    })
     fetchMapData()
+    fetchGeoJsonData()
     // Layer of sites
     map.value.addLayer({
       id: 'clusters',
@@ -293,7 +275,26 @@ onMounted(() => {
     map.value.on('mouseleave', 'clusters', () => {
         map.value.getCanvas().style.cursor = ''
     })
-    fetchGeoJsonData()
+    map.value.addLayer({
+      'id': 'maine',
+      'type': 'fill',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'fill-color': '#1f97b4', 
+          'fill-opacity': 0.5
+      }
+    })
+    map.value.addLayer({
+      'id': 'outline',
+      'type': 'line',
+      'source': 'cuenca',
+      'layout': {},
+      'paint': {
+          'line-color': '#000',
+          'line-width': 2
+      }
+    })
   })
 })
 
@@ -322,7 +323,7 @@ const updateMap = async filters => {
   state.value = filters.state
   institution.value = filters.institution
   dateRange.value = filters.dates
-  resetPolygonData()
+  //resetPolygonData()
   await fetchFilters()
   await fetchSites()
 }
@@ -359,48 +360,48 @@ const graphsList = [
     value: 'calidad-general'
   },
   {
-    title: 'Temperatuda',
-    value: 'temperatura'
+    title: 'Temperatura',
+    value: 'temperatura_agua,water_temperature'
   },
   {
     title: 'pH',
-    value: 'ph'
+    value: 'ph,ph'
   },
   {
     title: 'Oxígeno Disuelto',
-    value: 'oxigeno-disuelto'
+    value: 'oxigeno_disuelto,saturation'
   },
   {
     title: 'Turbidez',
-    value: 'turbidez'
+    value: 'turbidez,turbidity'
   },
   {
     title: 'Nitratos',
-    value: 'nitratos'
+    value: 'nitratos,nitrates'
   },
   {
     title: 'Amonio',
-    value: 'amonio'
+    value: 'amonio,ammonium'
   },
   {
     title: 'Ortofosfatos',
-    value: 'ortofosfatos'
+    value: 'ortofosfatos,orthophosphates'
   },
   {
     title: 'Calidad de Bosque de Ribera',
-    value: 'cbr'
+    value: 'calidad_bosque_ribera,cbr'
   },
   {
     title: 'Calidad Hidromorfológica',
-    value: 'chr',
+    value: 'calidad_hidromorfologica,ch',
   },
   {
     title: 'Macroinvertebrados',
-    value: 'macroinvertebrados'
+    value: 'calificacion_macroinvertebrados,macroinvertebrates_rating'
   },
   {
     title: 'Bacterias Coliformes',
-    value: 'bacterias-coliformes'
+    value: 'coliformes-totales'
   },
   {
     title: 'Caudal',
@@ -408,10 +409,10 @@ const graphsList = [
   }
 ]
 const isGraphDialogVisible = ref(false)
-const graphTitle = ref()
+const graphItem = ref()
 const updateGraph = async graph => {
   isGraphDialogVisible.value = true
-  graphTitle.value = graph.title
+  graphItem.value = graph
 }
 </script>
 
@@ -554,8 +555,8 @@ const updateGraph = async graph => {
                     </VRadioGroup>
                     <GraphDialog
                       v-model:isDialogVisible="isGraphDialogVisible"
-                      :title="graphTitle"
-                      :sites="sites" />
+                      :sites="sites"
+                      :graph-item="graphItem" />
                   </VWindowItem>
                 </VWindow>
               </VCardText>

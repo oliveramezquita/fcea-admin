@@ -31,6 +31,8 @@ declare global {
   const calculateTemperatureGrade: typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']
   const calculateTurbidityGrade: typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']
   const cgvOverallQuality: typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']
+  const compGraphData: typeof import('./src/utils/compGraphData.js')['compGraphData']
+  const comparativeGraphData: typeof import('./src/utils/comparativeGraphData.js')['comparativeGraphData']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -39,6 +41,7 @@ declare global {
   const confirmedValidator: typeof import('./src/@core/utils/validators.js')['confirmedValidator']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
+  const cpGraphData: typeof import('./src/utils/comparativeGraphData.js')['cpGraphData']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGenericProjection: typeof import('@vueuse/math')['createGenericProjection']
@@ -73,6 +76,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getPositionsDifference: typeof import('./src/utils/formulas.js')['getPositionsDifference']
   const getScoreMessage: typeof import('./src/utils/formulas.js')['getScoreMessage']
+  const graphData: typeof import('./src/utils/comparativeGraphData.js')['graphData']
   const h: typeof import('vue')['h']
   const iframeResize: typeof import('./src/@core/utils/iframeResize')['default']
   const iframeResizer: typeof import('./src/utils/iframeResizer')['default']
@@ -150,6 +154,7 @@ declare global {
   const resolveVuetifyTheme: typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setBackgroundSeason: typeof import('./src/utils/backgroundSeason.js')['setBackgroundSeason']
+  const setComparativeGraphData: typeof import('./src/utils/setComparativeGraphData.js')['setComparativeGraphData']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
@@ -407,7 +412,6 @@ declare module 'vue' {
     readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
-    readonly cgvOverallQuality: UnwrapRef<typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -450,6 +454,7 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
+    readonly graphData: UnwrapRef<typeof import('./src/utils/comparativeGraphData.js')['graphData']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -775,7 +780,6 @@ declare module '@vue/runtime-core' {
     readonly calculateSaturationGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateSaturationGrade']>
     readonly calculateTemperatureGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTemperatureGrade']>
     readonly calculateTurbidityGrade: UnwrapRef<typeof import('./src/utils/formulas.js')['calculateTurbidityGrade']>
-    readonly cgvOverallQuality: UnwrapRef<typeof import('./src/utils/setComparativeGraphData.js')['cgvOverallQuality']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -818,6 +822,7 @@ declare module '@vue/runtime-core' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getPositionsDifference: UnwrapRef<typeof import('./src/utils/formulas.js')['getPositionsDifference']>
     readonly getScoreMessage: UnwrapRef<typeof import('./src/utils/formulas.js')['getScoreMessage']>
+    readonly graphData: UnwrapRef<typeof import('./src/utils/comparativeGraphData.js')['graphData']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>

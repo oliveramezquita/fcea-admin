@@ -42,6 +42,7 @@ const onSubmit = () => {
     if (valid) {
       const formData = new FormData()
       formData.set('name', institution.value.name)
+      formData.set('url', institution.value.url)
       if (logo.value?.length > 0)
         formData.set('logo', logo.value[0])
       emit('addOrEditInstitution', {formData: formData, type: props.typeForm})
@@ -104,6 +105,15 @@ watch(props, () => {
                   label="Nombre"
                   placeholder="Nombre de la institución"
                   prepend-icon="tabler-circle-plus"
+                />
+              </VCol>
+              <VCol cols="12">
+                <AppTextField
+                  v-model="institution.url"
+                  :rules="[requiredValidator]"
+                  label="Sitio Web"
+                  placeholder="URL de Sitio Web"
+                  prepend-icon="tabler-world-www"
                 />
               </VCol>
               <VCol cols="12">

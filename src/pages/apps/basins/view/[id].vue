@@ -185,7 +185,9 @@ onMounted(() => {
             <VListItemTitle>
               {{ institution.name }}
             </VListItemTitle>
-
+            <VListItemSubtitle>
+              <a :href="institution.url" target="_blank">{{ institution.url }}</a>
+            </VListItemSubtitle>
             <template #append>
               <VBtn
                 size="small" 
