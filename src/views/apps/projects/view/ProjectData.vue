@@ -30,7 +30,6 @@ const emit = defineEmits([
 
 const project = ref(structuredClone(toRaw(props.projectData)))
 const basin = ref(props.basinsData.filter(b => b.name === project.value.name)[0])
-console.log(basin.value)
 const isFormValid = ref(false)
 const refForm = ref()
 const yearList = ref(generateArrayOfYears())
@@ -47,6 +46,7 @@ const onSubmit = () => {
       formData.set('admin_users', project.value.admin_users)
       formData.set('year', project.value.year)
       formData.set('month', project.value.month)
+      formData.set('institutions', project.value.institutions)
       
       $api(`api/project/${project.value._id}`, {
         method: 'PATCH',
@@ -157,7 +157,8 @@ watch(props, () => {
       </VCol>
       <VCol cols="12" md="6">
         <AppSelect
-          v-model="project.institution"
+          v-model="project.institutions"
+          multiple
           label="Institución patrocinadora"
           item-title="name"
           placeholder="Selecciona una o mas instituciones"
