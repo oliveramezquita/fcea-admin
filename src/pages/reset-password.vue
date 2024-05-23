@@ -1,8 +1,8 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import waterIntro from '@images/illustrations/water_intro.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
+import resetPasswordImage from '@images/pages/resetpassword-image.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 import CryptoJS from 'crypto-js'
@@ -96,7 +96,7 @@ const onSubmit = () => {
           style="padding-inline: 150px;"
         >
           <VImg
-            :src="waterIntro"
+            :src="resetPasswordImage"
             class="auth-illustration mt-16 mb-2"
             max-height="680"
           />

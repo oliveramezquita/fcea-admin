@@ -1,10 +1,10 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import loginWater from '@images/illustrations/login_water.png'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
 import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
+import loginImage from '@images/pages/login-image.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
@@ -111,8 +111,8 @@ const onSubmit = () => {
           style="padding-inline: 6.25rem;"
         >
           <VImg
-            :src="loginWater"
-            max-width="740"
+            :src="loginImage"
+            max-width="982"
             class="auth-illustration mt-16 mb-2"
           />
         </div>

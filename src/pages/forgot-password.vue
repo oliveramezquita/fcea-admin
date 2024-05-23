@@ -3,6 +3,7 @@ import { useGenerateImageVariant } from '@core/composable/useGenerateImageVarian
 import imageLogin2 from '@images/illustrations/login_water.png'
 import imageLogin3 from '@images/illustrations/water_intro.png'
 import imageLogin1 from '@images/illustrations/water_login_2.png'
+import forgotpasswordImage from '@images/pages/forgotpassword-image.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
@@ -71,9 +72,9 @@ const onSubmit = () => {
           style="padding-inline: 150px;"
         >
           <VImg
-            :src="authThemeImg"
+            :src="forgotpasswordImage"
             class="auth-illustration mt-16 mb-2"
-            max-width="740"
+            max-width="1141"
           />
         </div>
 

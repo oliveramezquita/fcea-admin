@@ -1,7 +1,7 @@
 <script setup>
 import { urlFormParse } from '@/utils/urlFormParse';
 import DialogFormsApp from '@/views/forms/dialog/DialogFormsApp.vue';
-import formIllustration from '@images/illustrations/form_illustration.png';
+import formIllustration from '@images/illustrations/form-illustration.png';
 const props = defineProps({
   projectData: {
     type: Object,

@@ -1,6 +1,6 @@
 <script setup>
 import fceaLogoWhite from '@images/fcea_logo_white.png';
-import homeWater from '@images/illustrations/home_water.png';
+import homeWater from '@images/illustrations/home-water.png';
 definePage({
   meta: {
     action: 'read',
@@ -93,7 +93,7 @@ const contactUs = [
           </VTab>
         </VTabs>
         <VImg
-          :width="245"
+          :width="345"
           :src="homeWater"
           class="d-none d-sm-block mt-4 mx-auto"
         />
