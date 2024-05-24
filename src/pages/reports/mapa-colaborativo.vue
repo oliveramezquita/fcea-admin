@@ -26,6 +26,7 @@ const {
   query: {
     project: selectedProject,
     monitoring_period: selectedMonitoringPeriod,
+    season: selectedSeason
   }
 }))
 const projectList = ref(siteFilters.value?.projects)
@@ -53,6 +54,11 @@ const {
   }
 }))
 const sites = computed(() => sitesData.value)
+
+const {
+  data: historicalGraphsData,
+  execute: fetchHistoricalGraphs,
+} = await useApi(createUrl(`api/historical-graphs/${selectedProject.value}`))
 
 const featureCollection = ref({
   type: 'FeatureCollection',
@@ -326,6 +332,7 @@ const updateMap = async filters => {
   //resetPolygonData()
   await fetchFilters()
   await fetchSites()
+  await fetchHistoricalGraphs()
 }
 
 const isMapFiltersDrawerVisible = ref(false)
@@ -357,7 +364,7 @@ const radioGroup = ref(1)
 const graphsList = [
   {
     title: 'Calidad General',
-    value: 'calidad-general'
+    value: 'calidad_general'
   },
   {
     title: 'Temperatura',
@@ -401,7 +408,7 @@ const graphsList = [
   },
   {
     title: 'Bacterias Coliformes',
-    value: 'coliformes-totales'
+    value: 'coliformes_totales'
   },
   {
     title: 'Caudal',
@@ -556,7 +563,8 @@ const updateGraph = async graph => {
                     <GraphDialog
                       v-model:isDialogVisible="isGraphDialogVisible"
                       :sites="sites"
-                      :graph-item="graphItem" />
+                      :graph-item="graphItem"
+                      :historical-data="historicalGraphsData" />
                   </VWindowItem>
                 </VWindow>
               </VCardText>
@@ -604,6 +612,7 @@ const updateGraph = async graph => {
           <VIcon start icon="tabler-filter-pin" />
           Filtros
         </VBtn>
+        <div class="d-lg-block logos">LOGOS</div>
         <!-- 👉 Fleet map  -->
         <div
           id="mapContainer"
@@ -657,6 +666,13 @@ const updateGraph = async graph => {
   z-index: 1;
   inset-block-start: 1rem;
   inset-inline-end: 1rem;
+}
+
+.logos {
+  position: absolute;
+  z-index: 1;
+  inset-block-end: 1rem;
+  inset-inline-start: 30rem;
 }
 
 .navigation-close-btn {

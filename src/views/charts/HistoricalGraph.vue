@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
   series: {
-    type: Array,
+    type: Object,
     required: true,
   },
   labels: {
@@ -65,41 +65,23 @@ const chartOptions = {
   ],
   dataLabels: {
     enabled: true,
-    style: {
-      colors: [function ({ seriesIndex,dataPointIndex,  w }) {
-        if (w.config.series[seriesIndex].data[dataPointIndex] >= 85 & w.config.series[seriesIndex].data[dataPointIndex] <= 89) {
-          return "#5b961e";
-        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 75 & w.config.series[seriesIndex].data[dataPointIndex] <= 84) {
-          return "#92d050";
-        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 65 & w.config.series[seriesIndex].data[dataPointIndex] <= 74) {
-          return "#f6f602"
-        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 54 & w.config.series[seriesIndex].data[dataPointIndex] <= 64) {
-          return "#ffc000"
-        } else if (w.config.series[seriesIndex].data[dataPointIndex] <= 53) {
-          return "#e92312"
-        }
-      }]
-    }
+    style: {}
   },
   fill: {
     type:'solid',
     opacity: [0.25,1],
   },
-  // labels: ['Secas Enero 2024', 'Lluvias Abril 2024','Lluvias Julio 2024','Secas Octubre 2024'],
   labels: props.labels,
   grid: {
     borderColor: '#e7e7e7',
     row: {
-      colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+      colors: ['#f3f3f3', 'transparent'],
       opacity: 0.5
     },
   },
   markers: {
     size: 1
   },
-  // xaxis: {
-  //   type: 'datetime'
-  // },
   yaxis: {
     title: {
       text: 'Puntaje',
@@ -114,7 +96,6 @@ const chartOptions = {
     }
   },
   title: {
-    // text: 'Calidad General',
     text: props.title,
     align: 'center',
     floating: true
@@ -122,49 +103,143 @@ const chartOptions = {
   tooltip: {
     shared: true,
     intersect: false,
-    y: {
-      formatter: function (y) {
-        if (typeof y !== "undefined") {
-          return y.toFixed(0) + " puntos";
-        }
-        return y;
-  
+    y: {}
+  }
+}
+if (props.title === 'Calidad General') {
+  chartOptions.dataLabels.style = {
+    colors: [function ({ seriesIndex,dataPointIndex,  w }) {
+      if (w.config.series[seriesIndex].data[dataPointIndex] >= 85 & w.config.series[seriesIndex].data[dataPointIndex] <= 89) {
+        return "#5b961e";
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 75 & w.config.series[seriesIndex].data[dataPointIndex] <= 84) {
+        return "#92d050";
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 65 & w.config.series[seriesIndex].data[dataPointIndex] <= 74) {
+        return "#f6f602"
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 54 & w.config.series[seriesIndex].data[dataPointIndex] <= 64) {
+        return "#ffc000"
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] <= 53) {
+        return "#e92312"
       }
+    }]
+  }
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(0) + " puntos";
+      }
+      return y;
     }
   }
 }
-// const series = [
-//   {
-//     name: 'La Granada',
-//     type: 'area',
-//     data: [89,76,66,64]
-//   }, 
-//   {
-//     name: 'Río Los Patos',
-//     type: 'line',
-//     data: [82,78,80,75]
-//   }, 
-//   {
-//     name: 'Río El Filo',
-//     type: 'line',
-//     data: [77,70,65,60]
-//   }, 
-//   {
-//     name: 'Parte Baja',
-//     type: 'line',
-//     data: [67,60,69,72]
-//   }, 
-//   {
-//     name: 'Después de la Presa',
-//     type: 'line',
-//     data: [71,67,60,59]
-//   }, 
-//   {
-//     name: 'Jalcomulco',
-//     type: 'line',
-//     data: [84,81,86,78]
-//   }
-// ]
+if (props.title === 'Temperatura') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(0) + " ºC";
+      }
+      return y;
+    }
+  }
+}
+if (props.title === 'Oxígeno Disuelto' || props.title === 'Nitratos' || props.title === 'Amonio' || props.title === 'Ortofosfatos') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(2) + " mg/L";
+      }
+      return y;
+    }
+  }
+}
+if (props.title === 'Turbidez') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(0) + " JTU";
+      }
+      return y;
+    }
+  }
+}
+if (props.title === 'Calidad de Bosque de Ribera' || props.title === 'Calidad Hidromorfológica') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(0) + " pts";
+      }
+      return y;
+    }
+  }
+  if (props.title === 'Calidad Hidromorfológica') {
+    chartOptions.dataLabels.style = {
+      colors: [function ({ seriesIndex,dataPointIndex,  w }) {
+        if (w.config.series[seriesIndex].data[dataPointIndex] > 100) {
+          return "#5b961e";
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 85) {
+          return "#92d050";
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 47) {
+          return "#f6f602"
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 13) {
+          return "#ffc000"
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] <= 12) {
+          return "#e92312"
+        }
+      }]
+    }
+  }
+  if (props.title === 'Calidad de Bosque de Ribera') {
+    chartOptions.dataLabels.style = {
+      colors: [function ({ seriesIndex,dataPointIndex,  w }) {
+        if (w.config.series[seriesIndex].data[dataPointIndex] > 95) {
+          return "#5b961e";
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 75) {
+          return "#92d050";
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 55) {
+          return "#f6f602"
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 30) {
+          return "#ffc000"
+        } else if (w.config.series[seriesIndex].data[dataPointIndex] <= 29) {
+          return "#e92312"
+        }
+      }]
+    }
+  }
+}
+if (props.title === 'Macroinvertebrados') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(2) + " pts";
+      }
+      return y;
+    }
+  }
+  chartOptions.dataLabels.style = {
+    colors: [function ({ seriesIndex,dataPointIndex,  w }) {
+      if (w.config.series[seriesIndex].data[dataPointIndex] >= 6.1) {
+        return "#5b961e";
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 5.1) {
+        return "#92d050";
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 4.1) {
+        return "#f6f602"
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] >= 3.1) {
+        return "#ffc000"
+      } else if (w.config.series[seriesIndex].data[dataPointIndex] <= 3) {
+        return "#e92312"
+      }
+    }]
+  }
+}
+if (props.title === 'Caudal') {
+  chartOptions.tooltip.y = {
+    formatter: function (y) {
+      if (typeof y !== "undefined") {
+        return y.toFixed(2) + " m³/s";
+      }
+      return y;
+    }
+  }
+}
 </script>
 
 <template>

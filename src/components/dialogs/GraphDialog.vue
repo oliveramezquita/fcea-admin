@@ -15,6 +15,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  historicalData: {
+    type: Object,
+    required: true,
+  }
 })
 const emit = defineEmits([
   'update:isDialogVisible',
@@ -23,16 +27,21 @@ const emit = defineEmits([
 ])
 const graphItem = ref(structuredClone(toRaw(props.graphItem)))
 const sites = ref(structuredClone(toRaw(props.sites)))
-const historicalGraphData = ref({series: [], labels: [], title: ''})
+const historicalGraphData = ref(structuredClone(toRaw(props.historicalData)))
 const dialogVisibleUpdate = val => {
   emit('update:isDialogVisible', val)
 }
 const currentTab = ref('tab-1')
 const comparativeGraphData = ref(sites.value && graphItem.value ? graphData(sites.value, graphItem.value) : null)
+const selectHistoricalGraph = graph => {
+  const keys = graph.value.split(',')
+  return props.historicalData.series[keys[0]]
+}
 watch(props, () => {
   graphItem.value = structuredClone(toRaw(props.graphItem))
   sites.value = structuredClone(toRaw(props.sites))
   comparativeGraphData.value = sites.value && graphItem.value ? graphData(sites.value, graphItem.value) : null
+  historicalGraphData.value = structuredClone(toRaw(props.historicalData))
 })
 </script>
 
@@ -102,7 +111,7 @@ watch(props, () => {
               <template #text>No existen datos para graficar hasta el momento</template>
             </VAlert>
             <HistoricalGraph
-            :series="historicalGraphData.series"
+            :series="selectHistoricalGraph(graphItem)"
             :labels="historicalGraphData.labels"
             :title="graphItem.title"
             v-if="historicalGraphData" />

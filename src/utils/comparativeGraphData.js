@@ -8,11 +8,11 @@ export const graphData = (sites, graphItem) => {
             if (site.es_sitio_referencia) {
                 categories.push(site.nombre_sitio)
                 switch(graphItem.value) {
-                    case 'calidad-general':
+                    case 'calidad_general':
                         series[0].data.push(site.scores.total[3])
                         colors.push(site.scores.total[2])
                         break
-                    case 'coliformes-totales':
+                    case 'coliformes_totales':
                         series[0].data.push(site.scores.fecal_coliforms[0])
                         colors.push(site.scores.fecal_coliforms[1])
                         break
@@ -35,11 +35,11 @@ export const graphData = (sites, graphItem) => {
             if (!site.es_sitio_referencia) {
                 categories.push(site.nombre_sitio)
                 switch(graphItem.value) {
-                    case 'calidad-general':
+                    case 'calidad_general':
                         series[0].data.push(site.scores.total[3])
                         colors.push(site.scores.total[2])
                         break
-                    case 'coliformes-totales':
+                    case 'coliformes_totales':
                         series[0].data.push(site.scores.fecal_coliforms[0])
                         colors.push(site.scores.fecal_coliforms[1])
                         break
