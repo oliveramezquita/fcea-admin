@@ -34,6 +34,8 @@ const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
 const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
 const seasonsList = ref(siteFilters.value?.seasons)
+const institutions = ref(siteFilters.value?.default_project['institutions'])
+console.log(institutions.value)
 let geoJsonData = siteFilters.value?.default_project['geojson_data']
 
 selectedProject.value = siteFilters.value?.default_project['name']
@@ -341,6 +343,7 @@ watch(siteFilters, () => {
   statesList.value = siteFilters.value?.states
   institutionsList.value = siteFilters.value?.institution
   geoJsonData = siteFilters.value?.default_project['geojson_data']
+  institutions.value = siteFilters.value?.default_project['institutions']
   fetchGeoJsonData()
 })
 
@@ -439,8 +442,24 @@ const updateGraph = async graph => {
       >
         <VCardItem class="pb-2">
           <VCardTitle>
-            <h5 class="text-h5">Mapa Colaborativo</h5>
-            <h5 class="text-body-1">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
+            <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap">
+              <div>
+                <h5 class="text-h5">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
+                <h5 class="text-body-1">Mapa Colaborativo</h5>
+              </div>
+              <div v-for="institution in institutions.filter(i => i.name === selectedProject)">
+                <a class="basin-logo" :href="institution.url" target="_blank"><img :src="institution.logo" :alt="institution.name" width="150"></a>
+              </div>
+            </div>
+            <h4 class="text-body-1 mt-2">Donadores:</h4>
+            <VTabs class="v-tabs-pill">
+              <VTab class="logo-tab">
+                <a href="https://sertull.org.mx/" target="_blank"><img src="https://api.calidadagua.mx/media/images/sertull-logo.svg" alt="Fundación sertull" width="120"></a>
+              </VTab>
+              <VTab class="logo-tab" v-for="institution in institutions.filter(i => i.name !== selectedProject)">
+                <a :href="institution.url" target="_blank"><img :src="institution.logo" :alt="institution.name" width="120"></a>
+              </VTab>
+            </VTabs>
           </VCardTitle>
 
           <template #append>
@@ -612,7 +631,6 @@ const updateGraph = async graph => {
           <VIcon start icon="tabler-filter-pin" />
           Filtros
         </VBtn>
-        <div class="d-lg-block logos">LOGOS</div>
         <!-- 👉 Fleet map  -->
         <div
           id="mapContainer"
@@ -668,13 +686,6 @@ const updateGraph = async graph => {
   inset-inline-end: 1rem;
 }
 
-.logos {
-  position: absolute;
-  z-index: 1;
-  inset-block-end: 1rem;
-  inset-inline-start: 30rem;
-}
-
 .navigation-close-btn {
   position: absolute;
   z-index: 1;
@@ -714,6 +725,14 @@ const updateGraph = async graph => {
   background-color: white !important;
   padding-block: 15px;
   padding-inline: 10px;
+}
+
+.logo-tab {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding-block: 0 !important;
+  padding-inline: 0 10px !important;
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
