@@ -35,7 +35,6 @@ const institutionsList = ref(siteFilters.value?.institution)
 const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
 const seasonsList = ref(siteFilters.value?.seasons)
 const institutions = ref(siteFilters.value?.default_project['institutions'])
-console.log(institutions.value)
 let geoJsonData = siteFilters.value?.default_project['geojson_data']
 
 selectedProject.value = siteFilters.value?.default_project['name']
@@ -361,7 +360,11 @@ const tabsData = [
   {
     title: 'Gráficas',
     icon: 'tabler-chart-infographic'
-  }
+  },
+  {
+    title: 'Archivos',
+    icon: 'tabler-file-spreadsheet'
+  },
 ]
 const radioGroup = ref(1)
 const graphsList = [
@@ -448,7 +451,7 @@ const updateGraph = async graph => {
                 <h5 class="text-body-1">Mapa Colaborativo</h5>
               </div>
               <div v-for="institution in institutions.filter(i => i.name === selectedProject)">
-                <a class="basin-logo" :href="institution.url" target="_blank"><img :src="institution.logo" :alt="institution.name" width="150"></a>
+                <a class="basin-logo" :href="institution.url" target="_blank"><img :src="institution.logo" :alt="institution.name" width="140"></a>
               </div>
             </div>
             <h4 class="text-body-1 mt-2">Donadores:</h4>
@@ -584,6 +587,19 @@ const updateGraph = async graph => {
                       :sites="sites"
                       :graph-item="graphItem"
                       :historical-data="historicalGraphsData" />
+                  </VWindowItem>
+                  <VWindowItem>
+                    <VBtn
+                      color="primary"
+                      variant="plain"
+                      :href="siteFilters.default_project.excel_file"
+                      target="_blank"
+                      class="download-btn mt-4">
+                      <VIcon
+                        start
+                        icon="tabler-file-spreadsheet"
+                      />Datos en Excel
+                    </VBtn>
                   </VWindowItem>
                 </VWindow>
               </VCardText>
@@ -733,6 +749,10 @@ const updateGraph = async graph => {
   box-shadow: none !important;
   padding-block: 0 !important;
   padding-inline: 0 10px !important;
+}
+
+.download-btn {
+  padding-inline-start: 0 !important;
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
