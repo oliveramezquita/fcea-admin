@@ -752,7 +752,7 @@ const updateGraph = async graph => {
 }
 
 .download-btn {
-  padding-inline-start: 0 !important;
+  text-transform: none !important;
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
