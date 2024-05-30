@@ -36,7 +36,7 @@ if (!referenceSiteData.hasOwnProperty('answers') && referenceSiteData.hasOwnProp
         <h5 class="text-h5 text-center text-wrap mx-auto">
           Formato de campo digital para un sitio de referencia
         </h5>
-        <h4 class="text-h4 text-center text-wrap mx-auto text-primary"><small class="text-primary-darken-1">Nombre de la cuenca:</small><br>{{ projectData.name }}<br><small class="text-primary-darken-1">Temporada: </small><small>{{ projectData.season }}</small></h4>
+        <h4 class="text-h4 text-center text-wrap mx-auto text-primary"><small class="text-primary-darken-1">Nombre de la cuenca:</small><br>{{ projectData.name }} {{ projectData.month }} {{ projectData.year }}<br><small class="text-primary-darken-1">Temporada: </small><small>{{ projectData.season }}</small></h4>
         <p class="text-center text-wrap text-body-1 mx-auto mb-0">
           El formato de campo digital es un formulario con las preguntas necesarias para recolectar los datos del sitio de referencia
         </p>
