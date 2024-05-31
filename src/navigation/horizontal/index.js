@@ -10,8 +10,6 @@ export default [
     title: 'Cuencas',
     to: { name: 'apps-basins-list' },
     icon: { icon: 'tabler-map-star' },
-    action: 'manage',
-    subject: 'admin'
   },
   {
     title: 'Monitoreos',
