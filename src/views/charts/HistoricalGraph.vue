@@ -63,9 +63,19 @@ const chartOptions = {
     '#607d8b',
     '#ffeb3b',
   ],
+  legend: {
+    formatter: function(seriesName, opts) {
+      console.log(opts)
+      if (opts.seriesIndex === 0) {
+        return `${seriesName} (Sitio de Referencia)`
+      } else {
+        return seriesName
+      }
+    }
+  },
   dataLabels: {
     enabled: true,
-    style: {}
+    style: {},
   },
   fill: {
     type:'solid',
@@ -250,3 +260,11 @@ if (props.title === 'Caudal') {
     :series="props.series"
   />
 </template>
+
+<style lang="scss">
+.apexcharts-legend-series:first-child {
+  .apexcharts-legend-text {
+    font-weight: bold !important;
+  }
+}
+</style>

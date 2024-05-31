@@ -171,3 +171,11 @@ if (props.title === 'Bacterias Coliformes') {
     :series="props.series"
   />
 </template>
+
+<style lang="scss">
+.apexcharts-legend-series:first-child {
+  .apexcharts-legend-text {
+    font-weight: bold !important;
+  }
+}
+</style>

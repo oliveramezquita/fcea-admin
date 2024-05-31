@@ -6,7 +6,7 @@ export const graphData = (sites, graphItem) => {
     if (sites && graphItem) {
         sites.forEach(site => {
             if (site.es_sitio_referencia) {
-                categories.push(site.nombre_sitio)
+                categories.push(`${site.nombre_sitio} (Sitio de Referencia)`)
                 switch(graphItem.value) {
                     case 'calidad_general':
                         series[0].data.push(site.scores.total[3])
@@ -26,7 +26,7 @@ export const graphData = (sites, graphItem) => {
                         if (site.scores[keys[1]]) 
                             colors.push(site.scores[keys[1]][1])
                         else
-                            colors.push('#808390')
+                            colors.push('#5b961e')
                         break
                 }
             }  
