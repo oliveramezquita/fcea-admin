@@ -102,7 +102,7 @@ if (props.title === 'Oxígeno Disuelto' || props.title === 'Nitratos' || props.t
     return val + ' mg/L'
   }
   chartOptions.xaxis.labels.formatter = (val) => {
-    return (Math.round(val * 100) / 100).toFixed(1) + ' mg/L'
+    return (Math.round(val * 100) / 100).toFixed(2) + ' mg/L'
   }
 }
 if (props.title === 'Turbidez') {
@@ -110,7 +110,7 @@ if (props.title === 'Turbidez') {
     return val + ' JTU'
   }
   chartOptions.xaxis.labels.formatter = (val) => {
-    return (Math.round(val * 100) / 100).toFixed(1) + ' JTU'
+    return (Math.round(val * 100) / 100).toFixed(2) + ' JTU'
   }
 }
 if (props.title === 'Calidad de Bosque de Ribera' || props.title === 'Calidad Hidromorfológica' || props.title === 'Macroinvertebrados') {
