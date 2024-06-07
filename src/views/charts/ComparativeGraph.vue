@@ -133,7 +133,7 @@ if (props.title === 'Bacterias Coliformes') {
   chartOptions.annotations = {
     xaxis: [
     {
-      x: 3,
+      x: 1,
       borderColor: '#e92312',
       label: {
         borderColor: 'transparent',
@@ -145,7 +145,7 @@ if (props.title === 'Bacterias Coliformes') {
       }
     },
     {
-      x: 1,
+      x: 0,
       borderColor: '#5b961e',
       label: {
         borderColor: 'transparent',
@@ -159,6 +159,9 @@ if (props.title === 'Bacterias Coliformes') {
   }
   chartOptions.dataLabels = {
     enabled: false,
+  }
+  chartOptions.xaxis.labels.formatter = (val) => {
+    return (Math.round(val * 100) / 100).toFixed(1)
   }
 }
 </script>

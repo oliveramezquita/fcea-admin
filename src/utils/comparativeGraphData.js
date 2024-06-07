@@ -13,7 +13,7 @@ export const graphData = (sites, graphItem) => {
                         colors.push(site.scores.total[2])
                         break
                     case 'coliformes_totales':
-                        series[0].data.push(site.scores.fecal_coliforms[0])
+                        series[0].data.push(site.scores.fecal_coliforms[0] == 1 ? 0 : 1)
                         colors.push(site.scores.fecal_coliforms[1])
                         break
                     case 'caudal':
@@ -40,7 +40,7 @@ export const graphData = (sites, graphItem) => {
                         colors.push(site.scores.total[2])
                         break
                     case 'coliformes_totales':
-                        series[0].data.push(site.scores.fecal_coliforms[0])
+                        series[0].data.push(site.scores.fecal_coliforms[0] == 1 ? 0 : 1)
                         colors.push(site.scores.fecal_coliforms[1])
                         break
                     case 'caudal':
