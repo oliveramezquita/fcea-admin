@@ -286,7 +286,7 @@ watch(props, () => {
           </VListItem>
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              Nitratos
+              Nitrógeno de nitratos
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
@@ -303,7 +303,7 @@ watch(props, () => {
           </VListItem>
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              Amonio
+              Nitrógeno amoniacal
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
@@ -320,7 +320,7 @@ watch(props, () => {
           </VListItem>
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              Fosfatos
+              Ortofosfatos
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
@@ -341,7 +341,7 @@ watch(props, () => {
         <VList class="card-list mb-5">
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              CH
+              Calidad Hidromorfológica
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
@@ -358,7 +358,7 @@ watch(props, () => {
           </VListItem>
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              CBR
+              Calidad del Bosque de Ribera
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
@@ -396,7 +396,7 @@ watch(props, () => {
           </VListItem>
           <VListItem>
             <VListItemTitle class="font-weight-medium me-4">
-              Macroinvertebrados
+              Macroinvertebrados acuáticos
             </VListItemTitle>
             <template #append>
               <div class="d-flex align-center gap-x-4">
