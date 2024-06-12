@@ -34,7 +34,7 @@ const statesList = ref(siteFilters.value?.states)
 const institutionsList = ref(siteFilters.value?.institution)
 const monitoringPeriodList = ref(siteFilters.value?.monitoring_periods)
 const seasonsList = ref(siteFilters.value?.seasons)
-const institutions = ref(siteFilters.value?.default_project['institutions'])
+const institutions = ref(siteFilters.value?.default_project ? siteFilters.value?.default_project['institutions'] : [])
 let geoJsonData = siteFilters.value?.default_project['geojson_data']
 
 selectedProject.value = siteFilters.value?.default_project['name']
@@ -447,7 +447,7 @@ const updateGraph = async graph => {
           <VCardTitle>
             <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap">
               <div>
-                <h5 class="text-h5">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
+                <h5 class="text-h5" v-if="selectedProject && selectedMonitoringPeriod">{{ `${selectedProject} - ${selectedMonitoringPeriod}` }}</h5>
                 <h5 class="text-body-1">Mapa Colaborativo</h5>
               </div>
               <div v-for="institution in institutions.filter(i => i.name === selectedProject)">
@@ -456,7 +456,7 @@ const updateGraph = async graph => {
             </div>
             <h4 class="text-body-1 mt-2">Donadores:</h4>
             <VTabs class="v-tabs-pill">
-              <VTab class="logo-tab">
+              <VTab class="logo-tab" v-if="institutions.length > 0">
                 <a href="https://sertull.org.mx/" target="_blank"><img src="https://api.calidadagua.mx/media/images/sertull-logo.svg" alt="Fundación sertull" width="120"></a>
               </VTab>
               <VTab class="logo-tab" v-for="institution in institutions.filter(i => i.name !== selectedProject)">
@@ -643,6 +643,7 @@ const updateGraph = async graph => {
           variant="elevated"
           color="white"
           @click="isMapFiltersDrawerVisible = true"
+          v-if="siteFilters"
         >
           <VIcon start icon="tabler-filter-pin" />
           Filtros
