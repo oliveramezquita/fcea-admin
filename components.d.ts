@@ -46,6 +46,7 @@ declare module 'vue' {
     DeleteBasinDialog: typeof import('./src/components/dialogs/DeleteBasinDialog.vue')['default']
     DeleteCatalogDialog: typeof import('./src/components/dialogs/DeleteCatalogDialog.vue')['default']
     DeleteGeoJsonFileDialog: typeof import('./src/components/dialogs/DeleteGeoJsonFileDialog.vue')['default']
+    DeleteProjectDialog: typeof import('./src/components/dialogs/DeleteProjectDialog.vue')['default']
     DeleteUserDialog: typeof import('./src/components/dialogs/DeleteUserDialog.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']

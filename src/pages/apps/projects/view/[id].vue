@@ -9,6 +9,7 @@ definePage({
     subject: 'admin',
   },
 })
+const router = useRouter()
 const userData = useCookie('userData')
 const isSuperAdminRule = ref(userData.value.role === 'SUPER_ADMIN' ? true : false)
 const currentTab = ref('tab-1')
@@ -45,6 +46,11 @@ const updateProjectData = projectUpdated => {
   season.value = projectUpdated.season
   month.value = projectUpdated.month
   year.value = projectUpdated.year
+}
+const isProjectDeleteDialogVisible = ref(false)
+const deleteProject = async projectId => {
+  await $api(`api/project/${ projectId }`, { method: 'DELETE' })
+  await router.push('/apps/projects/list')
 }
 watch([season, month, year])
 </script>
@@ -88,6 +94,15 @@ watch([season, month, year])
             </div>
 
             <div class="d-flex justify-space-between align-center">
+              <VBtn
+                variant="tonal"
+                color="error"
+                class="ml-5"
+                @click="isProjectDeleteDialogVisible = true"
+                v-if="isSuperAdminRule"
+              >
+                Eliminar
+              </VBtn>
               <VBtn
                 variant="tonal"
                 color="info"
@@ -164,4 +179,9 @@ watch([season, month, year])
       </VCardText>
     </VCard>
   </div>
+  <DeleteProjectDialog
+    v-model:isDialogVisible="isProjectDeleteDialogVisible"
+    v-model:project="project"
+    @delete-project="deleteProject"
+  />
 </template>
