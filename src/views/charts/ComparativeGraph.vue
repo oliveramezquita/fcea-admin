@@ -135,6 +135,7 @@ if (props.title === 'Bacterias Coliformes') {
     {
       x: 1,
       borderColor: '#e92312',
+      borderWidth: 5,
       label: {
         borderColor: 'transparent',
         style: {
@@ -147,6 +148,7 @@ if (props.title === 'Bacterias Coliformes') {
     {
       x: 0,
       borderColor: '#5b961e',
+      borderWidth: 5,
       label: {
         borderColor: 'transparent',
         style: {
@@ -161,7 +163,7 @@ if (props.title === 'Bacterias Coliformes') {
     enabled: false,
   }
   chartOptions.xaxis.labels.formatter = (val) => {
-    return (Math.round(val * 100) / 100).toFixed(1)
+    return ''
   }
 }
 </script>
