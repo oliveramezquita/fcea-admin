@@ -389,11 +389,11 @@ const graphsList = [
     value: 'turbidez,turbidity'
   },
   {
-    title: 'Nitratos',
+    title: 'Nitrógeno de Nitratos',
     value: 'nitratos,nitrates'
   },
   {
-    title: 'Amonio',
+    title: 'Nitrógeno Amoniacal ',
     value: 'amonio,ammonium'
   },
   {
@@ -454,7 +454,7 @@ const updateGraph = async graph => {
                 <a class="basin-logo" :href="institution.url" target="_blank"><img :src="institution.logo" :alt="institution.name" width="140"></a>
               </div>
             </div>
-            <h4 class="text-body-1 mt-2">Donadores:</h4>
+            <h4 class="text-body-1 mt-2">Donantes:</h4>
             <VTabs class="v-tabs-pill">
               <VTab class="logo-tab" v-if="institutions.length > 0">
                 <a href="https://sertull.org.mx/" target="_blank"><img src="https://api.calidadagua.mx/media/images/sertull-logo.svg" alt="Fundación sertull" width="120"></a>
