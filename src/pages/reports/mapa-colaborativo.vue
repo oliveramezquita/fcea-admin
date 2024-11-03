@@ -59,7 +59,15 @@ const sites = computed(() => sitesData.value)
 const {
   data: historicalGraphsData,
   execute: fetchHistoricalGraphs,
-} = await useApi(createUrl(`api/historical-graphs/${selectedProject.value}`))
+} = await useApi(createUrl(`api/historical-graphs`, {
+  query: {
+    project: selectedProject,
+    monitoring_period: selectedMonitoringPeriod,
+    season: selectedSeason,
+    state: state,
+    institution: institution,
+  }
+}))
 
 const featureCollection = ref({
   type: 'FeatureCollection',
@@ -347,6 +355,7 @@ watch(siteFilters, () => {
 })
 
 watch(sites, () => {
+  fetchHistoricalGraphs()
   fetchFeatureAndTracking()
   fetchMapData()
 })

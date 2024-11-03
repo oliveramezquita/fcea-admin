@@ -28,6 +28,7 @@ const emit = defineEmits([
 const graphItem = ref(structuredClone(toRaw(props.graphItem)))
 const sites = ref(structuredClone(toRaw(props.sites)))
 const historicalGraphData = ref(structuredClone(toRaw(props.historicalData)))
+
 const dialogVisibleUpdate = val => {
   emit('update:isDialogVisible', val)
 }

@@ -65,7 +65,6 @@ const chartOptions = {
   ],
   legend: {
     formatter: function(seriesName, opts) {
-      console.log(opts)
       if (opts.seriesIndex === 0) {
         return `${seriesName} (Sitio de Referencia)`
       } else {
