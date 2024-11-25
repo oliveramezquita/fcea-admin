@@ -20,11 +20,15 @@ const status = ref()
 const season = ref(projectData.value.season)
 const month = ref(projectData.value.month)
 const year = ref(projectData.value.year)
+const itemsPerPage = ref(10000)
+const page = ref(1)
 const {
   data: usersData
 } = await useApi(createUrl('api/users', {
   query: {
     status: true,
+    itemsPerPage,
+    page
   }
 }))
 const project = computed(() => projectData.value)
