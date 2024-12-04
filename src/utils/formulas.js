@@ -49,12 +49,14 @@ export const calculateTurbidityGrade = (turbity, turbityReference) => {
     const change = turbity - turbityReference
     if (change < 5)
         return getColor(1)
-    else if (change <= 10)
+    else if (change >= 5)
         return getColor(2)
-    else if (change <= 15)
+    else if (change >= 10)
         return getColor(3)
-    else if (change <= 20)
+    else if (change >= 15)
         return getColor(4)
+    else if (change >= 20)
+        return getColor(5)
     else
         return getColor(5)
 }
